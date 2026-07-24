@@ -1,1056 +1,1328 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Yataş Group - International B2B Order Portal</title>
-    
-    <!-- PWA & Mobile Meta -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#00205b">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yataş International B2B Portal</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary-navy: #0B192C;
+      --secondary-navy: #1E3E62;
+      --accent-blue: #0056B3;
+      --bg-light: #F8F9FA;
+      --border-color: #E2E8F0;
+      --text-dark: #1F2937;
+      --text-muted: #6B7280;
+      --success-green: #10B981;
+    }
 
-    <!-- Fonts & Third-Party Libraries -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Open Sans', sans-serif;
+    }
 
-    <style>
-        :root {
-            --yatas-navy: #00205b;
-            --yatas-navy-hover: #00143d;
-            --yatas-red: #d71921;
-            --yatas-red-hover: #b51219;
-            --bg-light: #f8fafc;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --accent-gold: #c5a059;
-        }
+    body {
+      background-color: #F3F4F6;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            background-color: var(--bg-light);
-            font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
-            color: var(--text-dark);
-            min-height: 100vh;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+    /* --- NAVBAR --- */
+    header {
+      background-color: #FFFFFF;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
 
-        /* HEADER NAVBAR */
-        header {
-            position: sticky; top: 0; z-index: 1000;
-            background: #ffffff;
-            border-bottom: 2px solid var(--border-color);
-            padding: 12px 28px;
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-        }
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.8rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
 
-        .header-left { display: flex; align-items: center; gap: 20px; }
+    .left-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
 
-        .hamburger-btn {
-            width: 40px; height: 40px;
-            background: var(--yatas-navy);
-            border: none;
-            border-radius: 6px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 18px; transition: background 0.2s;
-            z-index: 1002; position: relative;
-        }
-        .hamburger-btn:hover { background: var(--yatas-red); }
+    .menu-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--primary-navy);
+      cursor: pointer;
+      padding: 0.4rem;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
 
-        .brand-logo-btn {
-            background: transparent; border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; height: 42px;
-        }
-        .brand-logo-btn img { height: 32px; width: auto; object-fit: contain; }
+    .menu-btn:hover {
+      background-color: var(--bg-light);
+    }
 
-        .header-right { display: flex; align-items: center; gap: 14px; }
+    .brand-logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      color: var(--primary-navy);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
 
-        .currency-selector, .lang-selector {
-            background: #fff;
-            border: 1px solid var(--border-color);
-            color: var(--text-dark); padding: 8px 12px; border-radius: 6px;
-            font-size: 13px; font-weight: 600; cursor: pointer; outline: none;
-            font-family: 'Open Sans', sans-serif;
-        }
+    .search-box {
+      flex: 1;
+      max-width: 550px;
+      position: relative;
+    }
 
-        .cart-trigger-btn {
-            position: relative;
-            background: var(--yatas-red);
-            border: none;
-            color: #fff; padding: 9px 20px; border-radius: 6px;
-            font-size: 13px; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 12px rgba(215, 25, 33, 0.25); transition: all 0.2s;
-            font-family: 'Open Sans', sans-serif;
-        }
-        .cart-trigger-btn:hover { background: var(--yatas-red-hover); transform: translateY(-1px); }
+    .search-box input {
+      width: 100%;
+      padding: 0.65rem 1rem 0.65rem 2.8rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
 
-        .cart-badge {
-            background: #fff; color: var(--yatas-red);
-            font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 20px;
-        }
+    .search-box input:focus {
+      border-color: var(--secondary-navy);
+    }
 
-        /* SIDEBAR OVERLAY & NAVIGATION */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 32, 91, 0.4); backdrop-filter: blur(2px);
-            z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
-        }
-        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+    .search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
 
-        .sidebar-nav {
-            position: fixed; left: -340px; top: 0; height: 100vh; width: 320px;
-            background: #ffffff; border-right: 1px solid var(--border-color);
-            z-index: 1001; padding: 80px 20px 30px 20px;
-            display: flex; flex-direction: column; gap: 15px;
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            overflow-y: auto; box-shadow: 5px 0 25px rgba(0,0,0,0.08);
-        }
-        .sidebar-nav.open { left: 0; }
+    .cart-btn {
+      background-color: var(--primary-navy);
+      color: white;
+      border: none;
+      padding: 0.65rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      position: relative;
+      transition: opacity 0.2s;
+    }
 
-        .sidebar-title {
-            font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
-            color: var(--yatas-navy); font-weight: 800; border-bottom: 2px solid var(--yatas-navy);
-            padding-bottom: 8px; margin-bottom: 10px;
-        }
+    .cart-btn:hover {
+      opacity: 0.92;
+    }
 
-        .nav-tree-item { margin-bottom: 8px; }
-        .nav-tree-header {
-            padding: 10px 12px; background: var(--bg-light);
-            border-radius: 6px; font-size: 13px; font-weight: 700; color: var(--yatas-navy);
-            display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .nav-tree-header:hover { background: #e2e8f0; }
-        .nav-tree-children { padding-left: 15px; display: none; margin-top: 5px; }
-        .nav-tree-children.active { display: block; }
+    .cart-badge {
+      background-color: #EF4444;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 50%;
+      padding: 0.15rem 0.45rem;
+    }
 
-        .sub-link {
-            padding: 8px 10px; font-size: 12px; color: var(--text-dark);
-            display: block; cursor: pointer; border-radius: 4px; transition: all 0.2s;
-        }
-        .sub-link:hover, .sub-link.active { color: var(--yatas-red); background: #f1f5f9; font-weight: 600; }
+    /* --- HAMBURGER SIDEBAR --- */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
 
-        /* MAIN CONTENT AREA */
-        main { flex: 1; padding: 28px; max-width: 1600px; margin: 0 auto; width: 100%; }
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
 
-        /* FILTER & SEARCH BAR */
-        .filter-bar {
-            background: #ffffff; border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 16px 20px;
-            margin-bottom: 28px; display: flex; flex-wrap: wrap; gap: 16px;
-            align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
+    .sidebar {
+      position: fixed;
+      top: 0; left: -320px;
+      width: 300px;
+      height: 100%;
+      background: white;
+      z-index: 201;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    }
 
-        .search-input-box { position: relative; flex: 1; min-width: 280px; }
-        .search-input-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .search-input-box input {
-            width: 100%; background: var(--bg-light); border: 1px solid var(--border-color);
-            padding: 10px 14px 10px 40px; border-radius: 6px; color: var(--text-dark); font-size: 13px; outline: none;
-            font-family: 'Open Sans', sans-serif;
-        }
-        .search-input-box input:focus { border-color: var(--yatas-navy); background: #fff; }
+    .sidebar.active {
+      left: 0;
+    }
 
-        .quick-filters { display: flex; gap: 10px; flex-wrap: wrap; }
-        .filter-chip {
-            padding: 7px 16px; background: var(--bg-light);
-            border: 1px solid var(--border-color); border-radius: 20px;
-            font-size: 12px; font-weight: 700; color: var(--text-dark); cursor: pointer; transition: all 0.2s;
-        }
-        .filter-chip:hover, .filter-chip.active { background: var(--yatas-navy); color: #ffffff; border-color: var(--yatas-navy); }
+    .sidebar-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-        /* PRODUCT GRID */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
-        }
+    .sidebar-logo {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--primary-navy);
+      letter-spacing: 0.5px;
+    }
 
-        .product-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px; overflow: hidden;
-            display: flex; flex-direction: column;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-        }
-        .product-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--yatas-navy);
-            box-shadow: 0 10px 25px rgba(0, 32, 91, 0.1);
-        }
+    .close-sidebar-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
 
-        .card-img-wrap {
-            position: relative; width: 100%; height: 210px;
-            background: #f1f5f9; overflow: hidden; display: flex;
-            align-items: center; justify-content: center;
-        }
-        .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-        .product-card:hover .card-img-wrap img { transform: scale(1.03); }
+    .sidebar-menu {
+      padding: 1rem;
+      overflow-y: auto;
+      flex: 1;
+    }
 
-        .card-badge {
-            position: absolute; top: 12px; right: 12px;
-            background: var(--yatas-navy); color: #fff;
-            font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 4px;
-        }
+    .menu-group-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 1rem 0 0.5rem 0.5rem;
+      letter-spacing: 0.5px;
+    }
 
-        .card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .card-brand { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; }
-        .card-title { font-size: 18px; font-weight: 800; margin: 4px 0 12px 0; color: var(--yatas-navy); }
+    /* Accordion Tree */
+    .accordion-item {
+      margin-bottom: 0.3rem;
+    }
 
-        .card-footer {
-            display: flex; align-items: center; justify-content: space-between;
-            border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 8px;
-        }
-        .card-price { font-size: 16px; font-weight: 800; color: var(--yatas-red); }
+    .accordion-header {
+      width: 100%;
+      padding: 0.75rem 0.8rem;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary-navy);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
 
-        /* PRODUCT DETAIL MODAL */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 20, 60, 0.6); backdrop-filter: blur(4px);
-            z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
+    .accordion-header:hover {
+      background: var(--bg-light);
+    }
 
-        .modal-card {
-            background: #ffffff; border-radius: 12px; width: 100%; max-width: 920px;
-            max-height: 90vh; overflow-y: auto; display: flex; flex-wrap: wrap;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; border: 1px solid var(--border-color);
-        }
+    .accordion-header i.chevron {
+      font-size: 0.8rem;
+      transition: transform 0.3s;
+    }
 
-        .modal-close {
-            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
-            background: var(--bg-light); border-radius: 50%; border: 1px solid var(--border-color);
-            color: var(--text-dark); font-size: 16px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-        }
-        .modal-close:hover { background: var(--yatas-red); color: #fff; border-color: var(--yatas-red); }
+    .accordion-header.active i.chevron {
+      transform: rotate(180deg);
+    }
 
-        .modal-left { flex: 1; min-width: 320px; background: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 24px; }
-        .modal-left img { max-width: 100%; max-height: 380px; object-fit: contain; }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding-left: 0.8rem;
+    }
 
-        .modal-right { flex: 1.2; min-width: 340px; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; }
-        .modal-header h2 { font-size: 26px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 4px; }
-        .modal-subtitle { font-size: 12px; color: var(--yatas-red); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; font-weight: 700; }
+    .accordion-link {
+      display: block;
+      padding: 0.55rem 0.8rem;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
 
-        .variant-box {
-            background: var(--bg-light); border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 18px; margin-bottom: 24px;
-        }
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; }
-        .form-group select {
-            width: 100%; background: #ffffff; border: 1px solid var(--border-color);
-            color: var(--text-dark); padding: 10px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; outline: none;
-            font-family: 'Open Sans', sans-serif;
-        }
+    .accordion-link:hover {
+      background: var(--bg-light);
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
 
-        /* 5-COLUMN SPECS GRID */
-        .specs-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 14px; }
-        .spec-item { background: #ffffff; padding: 10px 4px; border-radius: 6px; text-align: center; border: 1px solid var(--border-color); }
-        .spec-item span { display: block; font-size: 8.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-        .spec-item strong { font-size: 11px; color: var(--yatas-navy); font-weight: 800; margin-top: 3px; display: block; }
-        .spec-item strong.highlight-status { color: var(--yatas-red); }
+    /* --- PRODUCT GRID & CARDS --- */
+    main {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+      width: 100%;
+    }
 
-        .qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .qty-picker { display: flex; align-items: center; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: 6px; }
-        .qty-btn { width: 38px; height: 38px; background: none; border: none; color: var(--text-dark); font-size: 16px; cursor: pointer; font-weight: 800; }
-        .qty-input { width: 45px; text-align: center; background: none; border: none; color: var(--text-dark); font-weight: 800; font-size: 14px; }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
 
-        .total-price-tag { font-size: 24px; font-weight: 800; color: var(--yatas-red); }
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
 
-        .add-cart-btn {
-            width: 100%; background: var(--yatas-navy);
-            color: #ffffff; border: none; padding: 14px; border-radius: 6px;
-            font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 32, 91, 0.2); font-family: 'Open Sans', sans-serif;
-        }
-        .add-cart-btn:hover { background: var(--yatas-navy-hover); transform: translateY(-1px); }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+    }
 
-        /* CART DRAWER */
-        .cart-drawer {
-            position: fixed; right: -420px; top: 0; height: 100vh; width: 400px;
-            background: #ffffff; border-left: 1px solid var(--border-color);
-            z-index: 2001; padding: 24px; display: flex; flex-direction: column;
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-        }
-        .cart-drawer.open { right: 0; }
+    .card-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background-color: var(--primary-navy);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      z-index: 2;
+    }
 
-        .cart-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; color: var(--yatas-navy); }
-        .cart-items-list { flex: 1; overflow-y: auto; padding: 15px 0; display: flex; flex-direction: column; gap: 12px; }
+    .product-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      background-color: #FAFAFA;
+    }
 
-        .cart-item-card {
-            background: var(--bg-light); border: 1px solid var(--border-color);
-            border-radius: 6px; padding: 12px; display: flex; gap: 12px; align-items: center;
-        }
-        .cart-item-card img { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; cursor: pointer; }
-        .cart-item-info { flex: 1; cursor: pointer; }
-        .cart-item-info h4 { font-size: 13px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 2px; }
-        .cart-item-info p { font-size: 11px; color: var(--text-muted); }
-        .cart-item-price { font-size: 13px; font-weight: 800; color: var(--yatas-red); margin-top: 4px; }
+    .product-info {
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
 
-        .cart-qty-ctrl {
-            display: flex; align-items: center; gap: 6px;
-            background: #ffffff; border-radius: 4px;
-            padding: 2px 6px; margin-top: 6px; width: fit-content;
-            border: 1px solid var(--border-color);
-        }
-        .cart-qty-ctrl button { background: none; border: none; color: var(--text-dark); font-weight: 800; cursor: pointer; font-size: 12px; padding: 0 4px; }
-        .cart-qty-ctrl span { font-size: 11px; font-weight: 800; min-width: 16px; text-align: center; }
+    .category-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.5px;
+    }
 
-        /* LOGISTICS METER STYLES */
-        .logistics-bar-container {
-            background: var(--bg-light); border-radius: 8px; padding: 14px; margin: 12px 0;
-            border: 1px solid var(--border-color);
-        }
-        .logistics-title { font-size: 11px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-        .logistics-row { margin-bottom: 10px; }
-        .logistics-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: var(--text-dark); font-weight: 600; }
-        .progress-track { width: 100%; height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
-        .progress-fill-hq { height: 100%; background: var(--yatas-navy); width: 0%; transition: width 0.3s; }
-        .progress-fill-truck { height: 100%; background: var(--accent-gold); width: 0%; transition: width 0.3s; }
+    .product-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      margin-bottom: 1rem;
+    }
 
-        .cart-footer { border-top: 2px solid var(--border-color); padding-top: 15px; }
-        .export-excel-btn {
-            width: 100%; background: #10b981; color: #fff; border: none;
-            padding: 13px; border-radius: 6px; font-size: 13px; font-weight: 800;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;
-            font-family: 'Open Sans', sans-serif;
-        }
-        .export-excel-btn:hover { background: #059669; }
+    .price-tag {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary-navy); /* Dark navy kurumsal ton */
+    }
 
-        @media (max-width: 768px) {
-            .cart-drawer { width: 100%; right: -100%; }
-            .modal-card { flex-direction: column; }
-            .modal-left { height: 200px; }
-            .specs-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-    </style>
+    /* --- PRODUCT DETAIL MODAL (Resim 1 Revizyonu) --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .product-modal {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 950px; /* Büyütülmüş modal genişliği */
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    @media (max-width: 768px) {
+      .product-modal { grid-template-columns: 1fr; }
+    }
+
+    .modal-img {
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      object-fit: cover;
+      background: #F9FAFB;
+    }
+
+    .modal-body {
+      padding: 2.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .close-modal-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #F3F4F6;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .modal-category {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #DC2626;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.4rem;
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary-navy);
+      margin-bottom: 1.2rem;
+    }
+
+    .size-select-box {
+      margin-bottom: 1.2rem;
+    }
+
+    .size-select-box label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .size-select-box select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      outline: none;
+    }
+
+    /* Büyütülmüş Spesifikasyon Izgarası */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+      background: #F8FAFC;
+      padding: 0.8rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .spec-item {
+      background: white;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 0.6rem 0.4rem;
+      text-align: center;
+    }
+
+    .spec-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .spec-value {
+      font-size: 0.95rem; /* Font boyutu büyütüldü */
+      font-weight: 800;
+      color: var(--primary-navy);
+    }
+
+    /* Adet Girişi & Ekleme Butonu */
+    .modal-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #F8FAFC;
+    }
+
+    .qty-btn {
+      width: 40px;
+      height: 42px;
+      border: none;
+      background: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--primary-navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qty-btn:hover { background: #E2E8F0; }
+
+    /* Manuel Sayı Girişi Inputu */
+    .qty-input {
+      width: 60px;
+      height: 42px;
+      border: none;
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      background: white;
+      outline: none;
+      -moz-appearance: textfield;
+    }
+
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .modal-price {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary-navy); /* Koyu Kurumsal Renk */
+    }
+
+    .add-to-cart-btn {
+      width: 100%;
+      margin-top: 1.2rem;
+      background-color: var(--primary-navy);
+      color: white;
+      border: none;
+      padding: 0.9rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: background 0.2s;
+    }
+
+    .add-to-cart-btn:hover {
+      background-color: var(--secondary-navy);
+    }
+
+    /* --- CART DRAWER (Resim 2 Revizyonu) --- */
+    .cart-drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 350;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .cart-drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: -420px;
+      width: 400px;
+      max-width: 100%;
+      height: 100%;
+      background: white;
+      z-index: 351;
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+    }
+
+    .cart-drawer.active {
+      right: 0;
+    }
+
+    .cart-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cart-header-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary-navy);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .clear-cart-btn {
+      background: #FEE2E2;
+      color: #DC2626;
+      border: none;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .clear-cart-btn:hover {
+      background: #FCA5A5;
+    }
+
+    .cart-items-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 1.5rem;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 1rem;
+      padding: 0.8rem;
+      background: #F8FAFC;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .cart-item-img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--primary-navy);
+    }
+
+    .cart-item-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .cart-item-price {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+    }
+
+    .remove-item-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #EF4444;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Cart Summary Section */
+    .cart-footer {
+      padding: 1.2rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      background: #FAFAFA;
+    }
+
+    .cart-total-qty-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px stroke var(--border-color);
+    }
+
+    .logistics-card {
+      background: #F1F5F9;
+      border-radius: 8px;
+      padding: 0.8rem;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #E2E8F0;
+    }
+
+    .logistics-header {
+      font-weight: 800;
+      color: var(--primary-navy);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+    }
+
+    .logistics-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+
+    .grand-total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .grand-total-label {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary-navy);
+    }
+
+    .grand-total-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary-navy);
+    }
+
+    .export-excel-btn {
+      width: 100%;
+      background-color: var(--success-green);
+      color: white;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    /* --- FOOTER & SIGNATURE --- */
+    footer {
+      background-color: var(--primary-navy);
+      color: white;
+      padding: 1.5rem;
+      margin-top: 3rem;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-copyright {
+      font-size: 0.85rem;
+      color: #94A3B8;
+    }
+
+    .footer-signature {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #E2E8F0;
+      letter-spacing: 0.5px;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- HEADER NAVIGATION -->
-    <header>
-        <div class="header-left">
-            <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars" id="hamburgerIcon"></i></button>
-            <button class="brand-logo-btn">
-                <img src="yatas_grup_logo.jpg" alt="Yataş Group" onerror="this.src='https://yatasinternational.github.io/Products-Photos/yatas_logo.png'">
-            </button>
-        </div>
+  <!-- NAVBAR -->
+  <header>
+    <div class="nav-container">
+      <div class="left-nav">
+        <button class="menu-btn" id="openSidebarBtn"><i class="fa-solid fa-bars"></i></button>
+        <a href="#" class="brand-logo">
+          YATAŞ <span>INTERNATIONAL</span>
+        </a>
+      </div>
 
-        <div class="header-right">
-            <select class="currency-selector" id="currencySelect" onchange="changeCurrency(this.value)">
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
+      <!-- ARAMA ÇUBUĞU (Aktif) -->
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search by model, category or HS Code...">
+      </div>
+
+      <button class="cart-btn" id="openCartBtn">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Proforma Order</span>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HAMBURGER SIDEBAR (Resim düzenlemeleri dahil) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <!-- "Categories" yazısı kalktı, sadece Kurumsal Logo eklendi -->
+      <div class="sidebar-logo">YATAŞ BEDDING</div>
+      <button class="close-sidebar-btn" id="closeSidebarBtn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    
+    <div class="sidebar-menu">
+      <div class="menu-group-title">Brands & Collections</div>
+      
+      <!-- Akordeon Kategori Ağacı -->
+      <div class="accordion-item">
+        <button class="accordion-header" id="mattressAccHeader">
+          <span><i class="fa-solid fa-bed me-2"></i> Mattress</span>
+          <i class="fa-solid fa-chevron-down chevron"></i>
+        </button>
+        <div class="accordion-content" id="mattressAccContent">
+          <a href="#" class="accordion-link" data-category="Pocket Spring">Pocket Spring</a>
+          <a href="#" class="accordion-link" data-category="Bonnell Spring">Bonnell Spring</a>
+          <a href="#" class="accordion-link" data-category="Foam & Roll Pack">Foam & Roll Pack</a>
+          <a href="#" class="accordion-link" data-category="Orthopedic">Orthopedic Series</a>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span><i class="fa-solid fa-couch me-2"></i> Headboards & Beds</span>
+          <i class="fa-solid fa-chevron-down chevron"></i>
+        </button>
+        <div class="accordion-content">
+          <a href="#" class="accordion-link">Storage Beds (Baza)</a>
+          <a href="#" class="accordion-link">Headboards</a>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span><i class="fa-solid fa-rug me-2"></i> Home Textiles</span>
+          <i class="fa-solid fa-chevron-down chevron"></i>
+        </button>
+        <div class="accordion-content">
+          <a href="#" class="accordion-link">Pillows & Quilts</a>
+          <a href="#" class="accordion-link">Protectors</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CATALOG -->
+  <main>
+    <div class="products-grid" id="productsContainer">
+      <!-- JS Dinamik Yükleyecek -->
+    </div>
+  </main>
+
+  <!-- PRODUCT DETAIL MODAL (Resim 1 - Büyütülmüş ve Düzenlenmiş) -->
+  <div class="modal-overlay" id="productModalOverlay">
+    <div class="product-modal">
+      <button class="close-modal-btn" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      <img src="" alt="" class="modal-img" id="mImg">
+      <div class="modal-body">
+        <div>
+          <div class="modal-category" id="mCategory">YATAŞ BEDDING | MATTRESS</div>
+          <h2 class="modal-title" id="mTitle">Activio</h2>
+
+          <div class="size-select-box">
+            <label>Select Dimension / Size</label>
+            <select id="mSizeSelect">
+              <option value="090X190">090X190</option>
+              <option value="160X200">160X200</option>
+              <option value="180X200">180X200</option>
             </select>
+          </div>
 
-            <select class="lang-selector" id="langSelect" onchange="changeLanguage(this.value)">
-                <option value="TR">TR</option>
-                <option value="EN" selected>EN</option>
-                <option value="DE">DE</option>
-                <option value="RU">RU</option>
-            </select>
-
-            <button class="cart-trigger-btn" onclick="toggleCart()">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span data-i18n="cart">Cart</span>
-                <span class="cart-badge" id="cartBadge">0</span>
-            </button>
+          <!-- Büyütülmüş Spesifikasyon Izgarası -->
+          <div class="specs-grid">
+            <div class="spec-item">
+              <div class="spec-label">HS CODE</div>
+              <div class="spec-value" id="mHsCode">94042910</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-label">UNIT VOL</div>
+              <div class="spec-value" id="mVol">0.513 m³</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-label">UNIT WT</div>
+              <div class="spec-value" id="mWt">22.05 kg</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-label">HEIGHT</div>
+              <div class="spec-value" id="mHeight">31 cm</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-label">STATUS</div>
+              <div class="spec-value" id="mStatus">MTO</div>
+            </div>
+          </div>
         </div>
-    </header>
 
-    <!-- SIDEBAR OVERLAY & DRAWER -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        <div>
+          <div class="modal-action-row">
+            <!-- Manuel Giriş Yapılabilir Adet Kutusu -->
+            <div class="quantity-control">
+              <button class="qty-btn" id="mQtyMinus">-</button>
+              <input type="number" class="qty-input" id="mQtyInput" value="1" min="1">
+              <button class="qty-btn" id="mQtyPlus">+</button>
+            </div>
+            <div class="modal-price" id="mPrice">$179.00</div>
+          </div>
 
-    <div class="sidebar-nav" id="sidebarNav">
-        <div class="sidebar-title" data-i18n="categories">Categories</div>
-        <div id="navigationTree"></div>
+          <button class="add-to-cart-btn" id="addToCartBtn">
+            <i class="fa-solid fa-cart-plus"></i> Add to Proforma Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CART DRAWER (Resim 2 - Manuel Adet + Toplam Adet + Dışa Tıklama ile Kapanma) -->
+  <div class="cart-drawer-overlay" id="cartOverlay"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <div class="cart-header-title">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Proforma Order Summary
+      </div>
+      <div>
+        <button class="clear-cart-btn" id="clearCartBtn"><i class="fa-solid fa-trash me-1"></i> Clear Cart</button>
+        <button class="close-sidebar-btn" id="closeCartBtn" style="margin-left: 10px;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
     </div>
 
-    <!-- MAIN CONTENT AREA -->
-    <main>
-        <!-- SEARCH & FILTER BAR -->
-        <div class="filter-bar">
-            <div class="search-input-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Search product family or description..." oninput="applyFilters()" data-i18n-ph="search_placeholder">
-            </div>
-
-            <div class="quick-filters" id="brandFilterChips">
-                <div class="filter-chip active" onclick="filterByBrand('ALL')" data-i18n="all_brands">All Brands</div>
-            </div>
-        </div>
-
-        <!-- PRODUCT GRID -->
-        <div class="product-grid" id="productGrid"></div>
-    </main>
-
-    <!-- PRODUCT DETAIL MODAL -->
-    <div class="modal-overlay" id="productModal" onclick="handleBackdropClick(event)">
-        <div class="modal-card">
-            <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-            <div class="modal-left">
-                <img id="modalImg" src="" alt="Product Image">
-            </div>
-            <div class="modal-right">
-                <div class="modal-header">
-                    <div class="modal-subtitle" id="modalBrandCategory">Yataş Bedding | Yatak</div>
-                    <h2 id="modalFamilyTitle">Activio</h2>
-                </div>
-
-                <div class="variant-box">
-                    <div class="form-group">
-                        <label data-i18n="select_size">SELECT DIMENSION / SIZE</label>
-                        <select id="sizeSelect" onchange="onSizeChange()"></select>
-                    </div>
-
-                    <!-- 5-COLUMN SPECS GRID -->
-                    <div class="specs-grid">
-                        <div class="spec-item">
-                            <span data-i18n="gtip">HS CODE</span>
-                            <strong id="specGtip">-</strong>
-                        </div>
-                        <div class="spec-item">
-                            <span data-i18n="volume">UNIT VOL</span>
-                            <strong id="specVolume">0 m³</strong>
-                        </div>
-                        <div class="spec-item">
-                            <span data-i18n="weight">UNIT WT</span>
-                            <strong id="specWeight">0 kg</strong>
-                        </div>
-                        <div class="spec-item">
-                            <span data-i18n="height">HEIGHT</span>
-                            <strong id="specHeight">0 cm</strong>
-                        </div>
-                        <div class="spec-item">
-                            <span data-i18n="status">STATUS</span>
-                            <strong id="specStatus" class="highlight-status">MTO</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="qty-row">
-                        <div class="qty-picker">
-                            <button class="qty-btn" onclick="updateModalQty(-1)">-</button>
-                            <input type="text" class="qty-input" id="modalQty" value="1" readonly>
-                            <button class="qty-btn" onclick="updateModalQty(1)">+</button>
-                        </div>
-                        <div class="total-price-tag" id="modalTotalPrice">$0</div>
-                    </div>
-
-                    <button class="add-cart-btn" onclick="addCurrentToCart()">
-                        <i class="fa-solid fa-cart-plus"></i> <span data-i18n="add_to_cart">Add to Proforma Order</span>
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div class="cart-items-list" id="cartItemsList">
+      <!-- Sepet Elemanları JS ile Eklenecek -->
     </div>
 
-    <!-- CART & PROFORMA DRAWER -->
-    <div class="cart-drawer" id="cartDrawer">
-        <div class="cart-header">
-            <h3 data-i18n="cart_title"><i class="fa-solid fa-file-invoice-dollar"></i> Proforma Order Summary</h3>
-            <button class="modal-close" onclick="toggleCart()" style="position:static;"><i class="fa-solid fa-xmark"></i></button>
+    <div class="cart-footer">
+      <!-- Toplam Adet Göstergesi -->
+      <div class="cart-total-qty-bar">
+        <span>Total Order Quantity:</span>
+        <span id="cartTotalQtyVal">0 pcs</span>
+      </div>
+
+      <!-- Lojistik & Araç Kapasite Detayı -->
+      <div class="logistics-card">
+        <div class="logistics-header">
+          <i class="fa-solid fa-truck-front"></i> Logistics & Vehicle Capacity
         </div>
-
-        <div class="cart-items-list" id="cartItemsList"></div>
-
-        <!-- DUAL LOGISTICS CALCULATOR -->
-        <div class="logistics-bar-container">
-            <div class="logistics-title">
-                <i class="fa-solid fa-truck-ramp-box"></i> <span data-i18n="logistics_calc">LOGISTICS & VEHICLE CAPACITY</span>
-            </div>
-
-            <!-- 40' HQ CONTAINER -->
-            <div class="logistics-row">
-                <div class="logistics-label">
-                    <span><i class="fa-solid fa-ship"></i> 40' HQ Container (68 m³)</span>
-                    <strong id="hqCountText">0 Cont. (%0)</strong>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill-hq" id="hqProgressFill"></div>
-                </div>
-            </div>
-
-            <!-- 70 m³ TRUCK -->
-            <div class="logistics-row">
-                <div class="logistics-label">
-                    <span><i class="fa-solid fa-truck-front"></i> Standard Truck (70 m³)</span>
-                    <strong id="truckCountText">0 Truck (%0)</strong>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill-truck" id="truckProgressFill"></div>
-                </div>
-            </div>
-
-            <div style="font-size:10px; color:var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 6px; margin-top:8px;" id="logisticsMeta">
-                Total Vol: 0.00 m³ | Total Wt: 0.0 kg
-            </div>
+        <div class="logistics-row">
+          <span>40' HQ Container (68 m³)</span>
+          <span id="contCap">0 Cont. (%0)</span>
         </div>
-
-        <div class="cart-footer">
-            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:16px; margin-bottom:15px; color:var(--yatas-navy);">
-                <span data-i18n="grand_total">Grand Total:</span>
-                <span id="cartGrandTotal" style="color:var(--yatas-red);">$0</span>
-            </div>
-
-            <button class="export-excel-btn" onclick="exportProformaExcel()">
-                <i class="fa-solid fa-file-excel"></i> <span data-i18n="export_excel">Export Excel Order with Photos</span>
-            </button>
+        <div class="logistics-row">
+          <span>Standard Truck (70 m³)</span>
+          <span id="truckCap">0 Truck (%0)</span>
         </div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem;" id="logisticsMetrics">
+          Total Vol: 0.00 m³ | Total Wt: 0.00 kg
+        </div>
+      </div>
+
+      <div class="grand-total-row">
+        <span class="grand-total-label">Grand Total:</span>
+        <span class="grand-total-val" id="cartGrandTotal">$0.00</span>
+      </div>
+
+      <button class="export-excel-btn">
+        <i class="fa-solid fa-file-excel"></i> Export Excel Order with Photos
+      </button>
     </div>
+  </div>
 
-    <script>
-        // UI DICTIONARY
-        const i18n = {
-            TR: {
-                cart: "Sepet", categories: "Kategoriler", all_brands: "Tüm Markalar",
-                search_placeholder: "Ürün ailesi veya malzeme tanımı arayın...",
-                select_size: "ÖLÇÜ / EBAT SEÇİNİZ", gtip: "GTİP KODU", volume: "BİRİM HACİM", weight: "BİRİM AĞIRLIK", height: "YÜKSEKLİK", status: "DURUM",
-                add_to_cart: "Siparişe Ekle", cart_title: "Proforma Sipariş Özeti",
-                logistics_calc: "LOJİSTİK KAPASİTE VE ARAÇ HESABI", grand_total: "Genel Toplam:",
-                export_excel: "Fotoğraflı Excel Sipariş Listesi İndir", from: "başlayan fiyatlar"
-            },
-            EN: {
-                cart: "Cart", categories: "Categories", all_brands: "All Brands",
-                search_placeholder: "Search product family or description...",
-                select_size: "SELECT DIMENSION / SIZE", gtip: "HS CODE", volume: "UNIT VOL", weight: "UNIT WT", height: "HEIGHT", status: "STATUS",
-                add_to_cart: "Add to Proforma Order", cart_title: "Proforma Order Summary",
-                logistics_calc: "LOGISTICS & VEHICLE CAPACITY", grand_total: "Grand Total:",
-                export_excel: "Export Excel Order with Photos", from: "from"
-            },
-            DE: {
-                cart: "Warenkorb", categories: "Kategorien", all_brands: "Alle Marken",
-                search_placeholder: "Produktfamilie oder Beschreibung suchen...",
-                select_size: "GRÖSSE WÄHLEN", gtip: "HS CODE", volume: "VOLUMEN", weight: "GEWICHT", height: "HÖHE", status: "STATUS",
-                add_to_cart: "In die Proforma-Bestellung", cart_title: "Proforma-Bestellübersicht",
-                logistics_calc: "LOGISTIK- UND FAHRZEUGKAPAZITÄT", grand_total: "Gesamtsumme:",
-                export_excel: "Excel-Bestellung mit Fotos exportieren", from: "ab"
-            },
-            RU: {
-                cart: "Корзина", categories: "Категории", all_brands: "Все бренды",
-                search_placeholder: "Поиск семейства продуктов...",
-                select_size: "ВЫБЕРИТЕ РАЗМЕР", gtip: "ТН ВЭД", volume: "ОБЪЕМ", weight: "ВЕС", height: "ВЫСОТА", status: "СТАТУС",
-                add_to_cart: "Добавить в заказ", cart_title: "Сводка Проформа-Заказа",
-                logistics_calc: "ЛОГИСТИКА И ЕМКОСТЬ ТRANSPORTA", grand_total: "Итого:",
-                export_excel: "Скачать Excel с фото", from: "от"
-            }
-        };
+  <!-- FOOTER & İMZA -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-copyright">Copyright © 2026 Yataş International</div>
+      <div class="footer-signature">Proudly presented by International Sales Development Team</div>
+    </div>
+  </footer>
 
-        const termTranslations = {
-            "Yatak": { EN: "Mattress", DE: "Matratze", RU: "Матрас" },
-            "Baza": { EN: "Base / Boxspring", DE: "Bettkasten", RU: "Основание" },
-            "Başlık": { EN: "Headboard", DE: "Kopfteil", RU: "Изголовье" },
-            "Yastık": { EN: "Pillow", DE: "Kissen", RU: "Подушка" },
-            "Yorgan": { EN: "Duvet", DE: "Bettdecke", RU: "Одеяло" },
-            "Alez": { EN: "Mattress Protector", DE: "Matratzenschoner", RU: "Наматрасник" },
-            "Set": { EN: "Bed Set", DE: "Bett-Set", RU: "Комплект" },
-            "Genel": { EN: "General", DE: "Allgemein", RU: "Общие" }
-        };
+  <!-- JAVASCRIPT -->
+  <script>
+    // Örnek Ürün Veritabanı
+    const productsData = [
+      {
+        id: 1,
+        title: "Activio",
+        category: "YATAŞ BEDDING | MATTRESS",
+        subCategory: "Pocket Spring",
+        price: 179.00,
+        hsCode: "94042910",
+        vol: 0.513,
+        wt: 22.05,
+        height: "31 cm",
+        status: "MTO",
+        sizes: ["090X190", "160X200", "180X200"],
+        img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        id: 2,
+        title: "Athletic RP",
+        category: "YATAŞ BEDDING | MATTRESS",
+        subCategory: "Foam & Roll Pack",
+        price: 101.00,
+        hsCode: "94042190",
+        vol: 0.110,
+        wt: 18.50,
+        height: "25 cm",
+        status: "MTO",
+        sizes: ["080X200", "090X200", "140X200"],
+        img: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        id: 3,
+        title: "Spinal Support Classic",
+        category: "YATAŞ BEDDING | MATTRESS",
+        subCategory: "Orthopedic",
+        price: 145.00,
+        hsCode: "94042910",
+        vol: 0.380,
+        wt: 20.10,
+        height: "28 cm",
+        status: "Stock",
+        sizes: ["090X190", "150X200", "160X200"],
+        img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80"
+      }
+    ];
 
-        function autoTranslateText(text, targetLang) {
-            if (!text || targetLang === 'TR') return text;
-            let translated = text;
-            for (const [trTerm, langMap] of Object.entries(termTranslations)) {
-                if (langMap[targetLang]) {
-                    const regex = new RegExp(`\\b${trTerm}\\b`, 'gi');
-                    translated = translated.replace(regex, langMap[targetLang]);
-                }
-            }
-            return translated;
+    let cart = [];
+    let selectedProduct = null;
+
+    // DOM Elementleri
+    const productsContainer = document.getElementById('productsContainer');
+    const searchInput = document.getElementById('searchInput');
+    const cartDrawer = document.getElementById('cartDrawer');
+    const cartOverlay = document.getElementById('cartOverlay');
+    const openCartBtn = document.getElementById('openCartBtn');
+    const closeCartBtn = document.getElementById('closeCartBtn');
+    const clearCartBtn = document.getElementById('clearCartBtn');
+
+    // Sidebar DOM
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const openSidebarBtn = document.getElementById('openSidebarBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+
+    // Modal DOM
+    const productModalOverlay = document.getElementById('productModalOverlay');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const mQtyInput = document.getElementById('mQtyInput');
+
+    // Ürün Kartlarını Render Etme
+    function renderProducts(items) {
+      productsContainer.innerHTML = '';
+      if(items.length === 0) {
+        productsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 3rem; color: var(--text-muted);">No products found matching your search criteria.</div>';
+        return;
+      }
+
+      items.forEach(prod => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="card-badge">${prod.sizes.length} Sizes</div>
+          <img src="${prod.img}" class="product-img" alt="${prod.title}">
+          <div class="product-info">
+            <div>
+              <div class="category-tag">${prod.category}</div>
+              <div class="product-title">${prod.title}</div>
+            </div>
+            <div class="price-tag">from $${prod.price.toFixed(2)}</div>
+          </div>
+        `;
+        card.addEventListener('click', () => openModal(prod));
+        productsContainer.appendChild(card);
+      });
+    }
+
+    // Dinamik Arama
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase().trim();
+      const filtered = productsData.filter(p => 
+        p.title.toLowerCase().includes(term) || 
+        p.category.toLowerCase().includes(term) ||
+        p.hsCode.includes(term)
+      );
+      renderProducts(filtered);
+    });
+
+    // Akordeon Menü Mantığı
+    document.querySelectorAll('.accordion-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        header.classList.toggle('active');
+        if (header.classList.contains('active')) {
+          content.style.maxHeight = content.scrollHeight + "px";
+        } else {
+          content.style.maxHeight = "0";
         }
+      });
+    });
 
-        let currentLang = 'EN';
-        let currentCurrency = 'USD';
-        let rawProducts = [];
-        let productFamilies = {};
-        let activeBrandFilter = 'ALL';
-        let activeCategoryFilter = null;
-        let activeFamilyFilter = null;
-        let cart = [];
+    // Hamburger Sidebar Kontrolleri
+    openSidebarBtn.addEventListener('click', () => {
+      sidebar.classList.add('active');
+      sidebarOverlay.classList.add('active');
+    });
 
-        let currentActiveFamily = null;
-        let currentSelectedVariant = null;
+    function closeSidebar() {
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    }
+    closeSidebarBtn.addEventListener('click', closeSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            await loadExcelData();
+    // Ürün Detay Modalı Mantığı
+    function openModal(product) {
+      selectedProduct = product;
+      document.getElementById('mImg').src = product.img;
+      document.getElementById('mTitle').textContent = product.title;
+      document.getElementById('mCategory').textContent = product.category;
+      document.getElementById('mHsCode').textContent = product.hsCode;
+      document.getElementById('mVol').textContent = product.vol + ' m³';
+      document.getElementById('mWt').textContent = product.wt + ' kg';
+      document.getElementById('mHeight').textContent = product.height;
+      document.getElementById('mStatus').textContent = product.status;
+      document.getElementById('mPrice').textContent = '$' + product.price.toFixed(2);
+      mQtyInput.value = 1;
+
+      const sizeSelect = document.getElementById('mSizeSelect');
+      sizeSelect.innerHTML = '';
+      product.sizes.forEach(sz => {
+        const opt = document.createElement('option');
+        opt.value = sz;
+        opt.textContent = sz;
+        sizeSelect.appendChild(opt);
+      });
+
+      productModalOverlay.classList.add('active');
+    }
+
+    closeModalBtn.addEventListener('click', () => {
+      productModalOverlay.classList.remove('active');
+    });
+
+    // Modal içi Adet Butonları & Manuel Input Mantığı
+    document.getElementById('mQtyMinus').addEventListener('click', () => {
+      let val = parseInt(mQtyInput.value) || 1;
+      if (val > 1) mQtyInput.value = val - 1;
+    });
+
+    document.getElementById('mQtyPlus').addEventListener('click', () => {
+      let val = parseInt(mQtyInput.value) || 1;
+      mQtyInput.value = val + 1;
+    });
+
+    mQtyInput.addEventListener('change', () => {
+      if (parseInt(mQtyInput.value) < 1 || !mQtyInput.value) mQtyInput.value = 1;
+    });
+
+    // Sepete Ekleme
+    document.getElementById('addToCartBtn').addEventListener('click', () => {
+      const qty = parseInt(mQtyInput.value) || 1;
+      const size = document.getElementById('mSizeSelect').value;
+
+      const existingIndex = cart.findIndex(item => item.id === selectedProduct.id && item.size === size);
+      if (existingIndex > -1) {
+        cart[existingIndex].qty += qty;
+      } else {
+        cart.push({
+          ...selectedProduct,
+          size: size,
+          qty: qty
         });
+      }
 
-        async function loadExcelData() {
-            try {
-                const response = await fetch('tr_yeni.xlsx');
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                rawProducts = XLSX.utils.sheet_to_json(firstSheet);
-                
-                processRawData();
-                buildBrandChips();
-                buildNavigationTree();
-                renderProductGrid();
-            } catch (err) {
-                console.error("tr_yeni.xlsx okunamadı:", err);
-            }
-        }
+      productModalOverlay.classList.remove('active');
+      updateCartUI();
+      openCartDrawer();
+    });
 
-        function processRawData() {
-            productFamilies = {};
-            rawProducts.forEach(item => {
-                const familyName = item['Ürün Ailesi'] || item['Malzeme Tanım'] || 'Diğer';
-                if (!productFamilies[familyName]) {
-                    productFamilies[familyName] = {
-                        familyName: familyName,
-                        brand: item['Marka'] || 'Yataş Group',
-                        category: item['Kategori'] || 'Genel',
-                        productType: item['Ürün Tipi'] || 'Genel',
-                        photoUrl: item['Foto weblink'] || '',
-                        variants: []
-                    };
-                }
-                productFamilies[familyName].variants.push({
-                    code: item['Ürün Kodu'],
-                    size: item['Ölçü'],
-                    desc: item['Malzeme Tanım'],
-                    usdPrice: parseFloat(item['Birim USD Fiyat']) || 0,
-                    eurPrice: parseFloat(item['Birim EUR Fiyat']) || 0,
-                    height: item['Yükseklik CM'] || item['Yükseklik'] || 0,
-                    status: item['Status'] || item['MTO/MTS'] || 'MTO',
-                    barcode: item['Barkod'],
-                    gtip: item['GTIP'] || '-',
-                    volume: parseFloat(item['Birim Hacim M3']) || 0,
-                    weight: parseFloat(item['Birim Ağırlık KG']) || 0
-                });
-            });
-        }
+    // Sepet Çekmecesi Kontrolleri
+    function openCartDrawer() {
+      cartDrawer.classList.add('active');
+      cartOverlay.classList.add('active');
+    }
 
-        function buildBrandChips() {
-            const brands = ['ALL', ...new Set(rawProducts.map(i => i['Marka']).filter(Boolean))];
-            const chipContainer = document.getElementById('brandFilterChips');
-            chipContainer.innerHTML = brands.map(b => `
-                <div class="filter-chip ${b === activeBrandFilter ? 'active' : ''}" onclick="filterByBrand('${b}')">
-                    ${b === 'ALL' ? i18n[currentLang].all_brands : b}
-                </div>
-            `).join('');
-        }
+    function closeCartDrawer() {
+      cartDrawer.classList.remove('active');
+      cartOverlay.classList.remove('active');
+    }
 
-        function buildNavigationTree() {
-            const tree = {};
-            rawProducts.forEach(i => {
-                const b = i['Marka'] || 'Yataş';
-                const c = i['Kategori'] || 'Genel';
-                const fam = i['Ürün Ailesi'] || i['Malzeme Tanım'] || 'Diğer';
-                
-                if (!tree[b]) tree[b] = {};
-                if (!tree[b][c]) tree[b][c] = new Set();
-                tree[b][c].add(fam);
-            });
+    openCartBtn.addEventListener('click', openCartDrawer);
+    closeCartBtn.addEventListener('click', closeCartDrawer);
+    
+    /* REVIZYON: Sepet Açıkken Dışarıya (Overlay) Tıklanınca Kapanması */
+    cartOverlay.addEventListener('click', closeCartDrawer);
 
-            const navContainer = document.getElementById('navigationTree');
-            let html = '';
-            for (const [brand, categories] of Object.entries(tree)) {
-                html += `<div class="nav-tree-item">
-                    <div class="nav-tree-header" onclick="toggleNavAccordion(this)">
-                        <span><i class="fa-solid fa-layer-group"></i> ${brand}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="nav-tree-children">`;
-                for (const [cat, families] of Object.entries(categories)) {
-                    const translatedCat = autoTranslateText(cat, currentLang);
-                    html += `<div style="margin: 4px 0;">
-                        <span class="sub-link" style="font-weight:700; color:var(--yatas-navy);" onclick="filterByCategory('${brand}', '${cat}')">📂 ${translatedCat}</span>`;
-                    
-                    Array.from(families).slice(0, 20).forEach(fam => {
-                        html += `<span class="sub-link" style="padding-left:18px;" onclick="filterByFamily('${brand}', '${cat}', '${fam}')">• ${fam}</span>`;
-                    });
-                    html += `</div>`;
-                }
-                html += `</div></div>`;
-            }
-            navContainer.innerHTML = html;
-        }
+    // Sepet Sıfırlama
+    clearCartBtn.addEventListener('click', () => {
+      if(cart.length > 0 && confirm("Are you sure you want to clear your proforma cart?")) {
+        cart = [];
+        updateCartUI();
+      }
+    });
 
-        function toggleNavAccordion(el) { el.nextElementSibling.classList.toggle('active'); }
+    // Sepet Arayüzü Güncelleme
+    function updateCartUI() {
+      const cartItemsList = document.getElementById('cartItemsList');
+      cartItemsList.innerHTML = '';
 
-        async function renderProductGrid() {
-            const grid = document.getElementById('productGrid');
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+      let grandTotal = 0;
+      let totalQty = 0;
+      let totalVol = 0;
+      let totalWt = 0;
 
-            let families = Object.values(productFamilies);
+      cart.forEach((item, idx) => {
+        const itemTotal = item.price * item.qty;
+        grandTotal += itemTotal;
+        totalQty += item.qty;
+        totalVol += item.vol * item.qty;
+        totalWt += item.wt * item.qty;
 
-            families = families.filter(f => {
-                const matchBrand = (activeBrandFilter === 'ALL' || f.brand === activeBrandFilter);
-                const matchCat = (!activeCategoryFilter || f.category === activeCategoryFilter);
-                const matchFam = (!activeFamilyFilter || f.familyName === activeFamilyFilter);
-                const matchSearch = (f.familyName.toLowerCase().includes(searchVal) || f.variants.some(v => v.desc.toLowerCase().includes(searchVal)));
-                return matchBrand && matchCat && matchFam && matchSearch;
-            });
+        const itemEl = document.createElement('div');
+        itemEl.className = 'cart-item';
+        itemEl.innerHTML = `
+          <button class="remove-item-btn" onclick="removeCartItem(${idx})"><i class="fa-solid fa-trash"></i></button>
+          <img src="${item.img}" class="cart-item-img">
+          <div class="cart-item-details">
+            <div class="cart-item-name">${item.title}</div>
+            <div class="cart-item-sub">${item.size} (${item.status})</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.4rem;">
+              <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+              
+              <!-- Manuel Giriş Yapılabilir Sepet Adet Kutusu -->
+              <div class="quantity-control" style="scale: 0.85; transform-origin: right center;">
+                <button class="qty-btn" onclick="changeCartQty(${idx}, -1)">-</button>
+                <input type="number" class="qty-input" value="${item.qty}" min="1" onchange="manualCartQty(${idx}, this.value)">
+                <button class="qty-btn" onclick="changeCartQty(${idx}, 1)">+</button>
+              </div>
+            </div>
+          </div>
+        `;
+        cartItemsList.appendChild(itemEl);
+      });
 
-            grid.innerHTML = families.map(f => {
-                const minPrice = Math.min(...f.variants.map(v => currentCurrency === 'USD' ? v.usdPrice : v.eurPrice));
-                const currencySymbol = currentCurrency === 'USD' ? '$' : '€';
-                const translatedCat = autoTranslateText(f.category, currentLang);
-                const fromLabel = i18n[currentLang].from || 'from';
+      // Rozet & Toplamlar
+      document.getElementById('cartBadge').textContent = cart.length;
+      document.getElementById('cartGrandTotal').textContent = '$' + grandTotal.toFixed(2);
+      document.getElementById('cartTotalQtyVal').textContent = totalQty + ' pcs';
 
-                return `
-                <div class="product-card" onclick="openProductModal('${f.familyName}')">
-                    <div class="card-img-wrap">
-                        <img src="${f.photoUrl}" alt="${f.familyName}" onerror="this.src='https://via.placeholder.com/300x200?text=Yatas+Bedding'">
-                        <div class="card-badge">${f.variants.length} Sizes</div>
-                    </div>
-                    <div class="card-body">
-                        <div>
-                            <div class="card-brand">${f.brand} | ${translatedCat}</div>
-                            <h3 class="card-title">${f.familyName}</h3>
-                        </div>
-                        <div class="card-footer">
-                            <div class="card-price">${fromLabel} ${currencySymbol}${minPrice}</div>
-                        </div>
-                    </div>
-                </div>
-            `}).join('');
-        }
+      // Lojistik Hesaplama (40 HQ = 68m³, Truck = 70m³)
+      const contPct = ((totalVol / 68) * 100).toFixed(1);
+      const truckPct = ((totalVol / 70) * 100).toFixed(1);
 
-        function openProductModal(familyName, targetCode = null) {
-            currentActiveFamily = productFamilies[familyName];
-            const translatedCat = autoTranslateText(currentActiveFamily.category, currentLang);
-            const translatedType = autoTranslateText(currentActiveFamily.productType, currentLang);
+      document.getElementById('contCap').textContent = `${(totalVol / 68).toFixed(2)} Cont. (%${contPct})`;
+      document.getElementById('truckCap').textContent = `${(totalVol / 70).toFixed(2)} Truck (%${truckPct})`;
+      document.getElementById('logisticsMetrics').textContent = `Total Vol: ${totalVol.toFixed(2)} m³ | Total Wt: ${totalWt.toFixed(2)} kg`;
+    }
 
-            document.getElementById('modalFamilyTitle').innerText = currentActiveFamily.familyName;
-            document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${translatedCat} (${translatedType})`;
-            document.getElementById('modalImg').src = currentActiveFamily.photoUrl;
+    // Sepet İçi Adet Değiştirme
+    window.changeCartQty = function(index, delta) {
+      if (cart[index].qty + delta > 0) {
+        cart[index].qty += delta;
+        updateCartUI();
+      }
+    };
 
-            const sizeSelect = document.getElementById('sizeSelect');
-            sizeSelect.innerHTML = currentActiveFamily.variants.map((v, idx) => {
-                return `<option value="${idx}">${v.size}</option>`;
-            }).join('');
+    window.manualCartQty = function(index, val) {
+      const parsed = parseInt(val);
+      if (parsed > 0) {
+        cart[index].qty = parsed;
+      } else {
+        cart[index].qty = 1;
+      }
+      updateCartUI();
+    };
 
-            if (targetCode) {
-                const foundIdx = currentActiveFamily.variants.findIndex(v => v.code === targetCode);
-                if (foundIdx > -1) sizeSelect.value = foundIdx;
-            }
+    window.removeCartItem = function(index) {
+      cart.splice(index, 1);
+      updateCartUI();
+    };
 
-            document.getElementById('modalQty').value = 1;
-            onSizeChange();
-            document.getElementById('productModal').classList.add('active');
-        }
-
-        function onSizeChange() {
-            const idx = document.getElementById('sizeSelect').value;
-            currentSelectedVariant = currentActiveFamily.variants[idx];
-
-            document.getElementById('specGtip').innerText = currentSelectedVariant.gtip;
-            document.getElementById('specVolume').innerText = `${currentSelectedVariant.volume} m³`;
-            document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
-            document.getElementById('specHeight').innerText = `${currentSelectedVariant.height} cm`;
-            document.getElementById('specStatus').innerText = currentSelectedVariant.status || 'MTO';
-
-            updateModalPrice();
-        }
-
-        function updateModalQty(delta) {
-            const qtyInput = document.getElementById('modalQty');
-            let val = parseInt(qtyInput.value) + delta;
-            if (val < 1) val = 1;
-            qtyInput.value = val;
-            updateModalPrice();
-        }
-
-        function updateModalPrice() {
-            const qty = parseInt(document.getElementById('modalQty').value);
-            const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
-            const symbol = currentCurrency === 'USD' ? '$' : '€';
-            document.getElementById('modalTotalPrice').innerText = `${symbol}${(unitPrice * qty).toFixed(2)}`;
-        }
-
-        function closeModal() { document.getElementById('productModal').classList.remove('active'); }
-
-        function handleBackdropClick(e) {
-            if (e.target === e.currentTarget) {
-                closeModal();
-            }
-        }
-
-        function addCurrentToCart() {
-            const qty = parseInt(document.getElementById('modalQty').value);
-            const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
-
-            const existingIndex = cart.findIndex(i => i.code === currentSelectedVariant.code && i.currency === currentCurrency);
-            if (existingIndex > -1) {
-                cart[existingIndex].qty += qty;
-            } else {
-                cart.push({
-                    family: currentActiveFamily.familyName,
-                    brand: currentActiveFamily.brand,
-                    photoUrl: currentActiveFamily.photoUrl,
-                    code: currentSelectedVariant.code,
-                    size: currentSelectedVariant.size,
-                    desc: currentSelectedVariant.desc,
-                    gtip: currentSelectedVariant.gtip,
-                    volume: currentSelectedVariant.volume,
-                    weight: currentSelectedVariant.weight,
-                    height: currentSelectedVariant.height,
-                    status: currentSelectedVariant.status,
-                    barcode: currentSelectedVariant.barcode,
-                    qty: qty,
-                    unitPrice: unitPrice,
-                    currency: currentCurrency
-                });
-            }
-
-            closeModal();
-            updateCartDisplay();
-            toggleCart(true);
-        }
-
-        function updateCartDisplay() {
-            document.getElementById('cartBadge').innerText = cart.reduce((acc, i) => acc + i.qty, 0);
-
-            const list = document.getElementById('cartItemsList');
-            let totalVal = 0;
-            let totalM3 = 0;
-            let totalKg = 0;
-
-            list.innerHTML = cart.map((item, idx) => {
-                const itemTotal = item.qty * item.unitPrice;
-                totalVal += itemTotal;
-                totalM3 += item.qty * item.volume;
-                totalKg += item.qty * item.weight;
-                const symbol = item.currency === 'USD' ? '$' : '€';
-
-                return `
-                <div class="cart-item-card">
-                    <img src="${item.photoUrl}" onerror="this.src='https://via.placeholder.com/50'" onclick="openProductModal('${item.family}', '${item.code}')">
-                    <div class="cart-item-info" onclick="openProductModal('${item.family}', '${item.code}')">
-                        <h4>${item.family}</h4>
-                        <p>${item.size} (${item.status})</p>
-                        <div class="cart-item-price">${symbol}${itemTotal.toFixed(2)}</div>
-                    </div>
-                    <div>
-                        <button style="background:none; border:none; color:var(--yatas-red); cursor:pointer; font-size:14px; margin-left:auto; display:block;" onclick="removeFromCart(${idx})"><i class="fa-solid fa-trash"></i></button>
-                        <div class="cart-qty-ctrl">
-                            <button onclick="changeCartQty(${idx}, -1)">-</button>
-                            <span>${item.qty}</span>
-                            <button onclick="changeCartQty(${idx}, 1)">+</button>
-                        </div>
-                    </div>
-                </div>
-            `}).join('');
-
-            const mainSymbol = currentCurrency === 'USD' ? '$' : '€';
-            document.getElementById('cartGrandTotal').innerText = `${mainSymbol}${totalVal.toFixed(2)}`;
-
-            calculateLogistics(totalM3, totalKg);
-        }
-
-        function changeCartQty(idx, delta) {
-            if (cart[idx].qty + delta > 0) {
-                cart[idx].qty += delta;
-            } else {
-                cart.splice(idx, 1);
-            }
-            updateCartDisplay();
-        }
-
-        function removeFromCart(idx) { cart.splice(idx, 1); updateCartDisplay(); }
-
-        function calculateLogistics(totalM3, totalKg) {
-            const HQ_CAPACITY = 68.0;
-            const TRUCK_CAPACITY = 70.0;
-
-            const hqExact = totalM3 / HQ_CAPACITY;
-            const hqFull = Math.floor(hqExact);
-            const hqRemainderPercent = Math.round((hqExact - hqFull) * 100);
-            const totalHq = totalM3 > 0 ? Math.ceil(hqExact) : 0;
-
-            const truckExact = totalM3 / TRUCK_CAPACITY;
-            const truckFull = Math.floor(truckExact);
-            const truckRemainderPercent = Math.round((truckExact - truckFull) * 100);
-            const totalTrucks = totalM3 > 0 ? Math.ceil(truckExact) : 0;
-
-            if (totalHq === 0) {
-                document.getElementById('hqCountText').innerText = "0 Cont. (%0)";
-                document.getElementById('hqProgressFill').style.width = "0%";
-            } else if (hqFull === 0) {
-                document.getElementById('hqCountText').innerText = `1 Cont. (%${hqRemainderPercent} full)`;
-                document.getElementById('hqProgressFill').style.width = `${hqRemainderPercent}%`;
-            } else {
-                document.getElementById('hqCountText').innerText = `${hqFull} Full + 1 Cont. (%${hqRemainderPercent} full) [Total: ${totalHq}]`;
-                document.getElementById('hqProgressFill').style.width = `${hqRemainderPercent}%`;
-            }
-
-            if (totalTrucks === 0) {
-                document.getElementById('truckCountText').innerText = "0 Truck (%0)";
-                document.getElementById('truckProgressFill').style.width = "0%";
-            } else if (truckFull === 0) {
-                document.getElementById('truckCountText').innerText = `1 Truck (%${truckRemainderPercent} full)`;
-                document.getElementById('truckProgressFill').style.width = `${truckRemainderPercent}%`;
-            } else {
-                document.getElementById('truckCountText').innerText = `${truckFull} Full + 1 Truck (%${truckRemainderPercent} full) [Total: ${totalTrucks}]`;
-                document.getElementById('truckProgressFill').style.width = `${truckRemainderPercent}%`;
-            }
-
-            document.getElementById('logisticsMeta').innerText = `Total Vol: ${totalM3.toFixed(2)} m³ | Total Wt: ${totalKg.toFixed(1)} kg`;
-        }
-
-        function toggleCart(forceOpen) {
-            const drawer = document.getElementById('cartDrawer');
-            if (forceOpen) drawer.classList.add('open');
-            else drawer.classList.toggle('open');
-        }
-
-        function toggleSidebar() {
-            const nav = document.getElementById('sidebarNav');
-            const overlay = document.getElementById('sidebarOverlay');
-            const icon = document.getElementById('hamburgerIcon');
-
-            nav.classList.toggle('open');
-            overlay.classList.toggle('active');
-
-            if (nav.classList.contains('open')) {
-                icon.className = "fa-solid fa-xmark";
-            } else {
-                icon.className = "fa-solid fa-bars";
-            }
-        }
-
-        function filterByBrand(b) {
-            activeBrandFilter = b;
-            buildBrandChips();
-            renderProductGrid();
-        }
-
-        function filterByCategory(brand, cat) {
-            activeBrandFilter = brand;
-            activeCategoryFilter = cat;
-            activeFamilyFilter = null;
-            renderProductGrid();
-            toggleSidebar();
-        }
-
-        function filterByFamily(brand, cat, fam) {
-            activeBrandFilter = brand;
-            activeCategoryFilter = cat;
-            activeFamilyFilter = fam;
-            renderProductGrid();
-            toggleSidebar();
-        }
-
-        function applyFilters() { renderProductGrid(); }
-
-        function changeCurrency(curr) {
-            currentCurrency = curr;
-            renderProductGrid();
-            updateCartDisplay();
-        }
-
-        function changeLanguage(lang) {
-            currentLang = lang;
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18n[lang][key]) el.innerText = i18n[lang][key];
-            });
-            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-                const key = el.getAttribute('data-i18n-ph');
-                if (i18n[lang][key]) el.placeholder = i18n[lang][key];
-            });
-            buildBrandChips();
-            buildNavigationTree();
-            renderProductGrid();
-        }
-
-        // BÜYÜTÜLMÜŞ FOTOĞRAFLI EXCEL EXPORT (EXCELJS)
-        async function exportProformaExcel() {
-            if (cart.length === 0) {
-                alert("Sepetiniz boş / Cart is empty!");
-                return;
-            }
-
-            const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet('Proforma Order');
-
-            worksheet.columns = [
-                { header: 'Image', key: 'img', width: 20 },
-                { header: 'Brand', key: 'brand', width: 18 },
-                { header: 'Product Family', key: 'family', width: 22 },
-                { header: 'Dimension / Size', key: 'size', width: 16 },
-                { header: 'Status', key: 'status', width: 12 },
-                { header: 'Height (cm)', key: 'height', width: 14 },
-                { header: 'Product Code', key: 'code', width: 18 },
-                { header: 'Barcode', key: 'barcode', width: 18 },
-                { header: 'HS CODE (GTİP)', key: 'gtip', width: 18 },
-                { header: 'Qty', key: 'qty', width: 10 },
-                { header: 'Unit Price', key: 'unitPrice', width: 14 },
-                { header: 'Total Price', key: 'totalPrice', width: 16 },
-                { header: 'Total Vol (m³)', key: 'vol', width: 14 },
-                { header: 'Total Wt (kg)', key: 'wt', width: 14 }
-            ];
-
-            worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
-            worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '00205B' } };
-            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-
-            for (let i = 0; i < cart.length; i++) {
-                const item = cart[i];
-                const row = worksheet.addRow({
-                    brand: item.brand,
-                    family: item.family,
-                    size: item.size,
-                    status: item.status || 'MTO',
-                    height: item.height,
-                    code: item.code,
-                    barcode: item.barcode,
-                    gtip: item.gtip,
-                    qty: item.qty,
-                    unitPrice: `${item.unitPrice} ${item.currency}`,
-                    totalPrice: `${(item.qty * item.unitPrice).toFixed(2)} ${item.currency}`,
-                    vol: (item.qty * item.volume).toFixed(3),
-                    wt: (item.qty * item.weight).toFixed(2)
-                });
-
-                row.height = 60;
-                row.alignment = { vertical: 'middle', horizontal: 'center' };
-
-                try {
-                    const imgResponse = await fetch(item.photoUrl);
-                    const imgBlob = await imgResponse.blob();
-                    const arrayBuffer = await imgBlob.arrayBuffer();
-                    
-                    const imageId = workbook.addImage({
-                        buffer: arrayBuffer,
-                        extension: 'png',
-                    });
-
-                    worksheet.addImage(imageId, {
-                        tl: { col: 0, row: row.number - 1 },
-                        ext: { width: 110, height: 75 }
-                    });
-                } catch (e) {
-                    console.warn("Resim Excel'e eklenemedi:", item.photoUrl);
-                }
-            }
-
-            const buffer = await workbook.xlsx.writeBuffer();
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `Yatas_Proforma_Order_${new Date().toISOString().slice(0,10)}.xlsx`;
-            link.click();
-        }
-    </script>
+    // İlk Yükleme
+    renderProducts(productsData);
+  </script>
 </body>
 </html>
