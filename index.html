@@ -3,688 +3,873 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Yataş International Experience Portal</title>
+    <title>Yataş Group - International Experience & B2B Order Portal</title>
     
-    <!-- PWA Infrastructure -->
+    <!-- PWA & Mobile Meta -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#020617">
 
-    <!-- Excel Export (xlsx) Library -->
+    <!-- Third-Party Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --primary-blue: #002870;
             --neon-blue: #00d2ff;
+            --accent-gold: #c5a059;
+            --dark-bg: #020617;
             --dark-card: #081028;
-            --glass-bg: rgba(2, 6, 23, 0.88);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(2, 6, 23, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(0, 40, 112, 0.25);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            background: #020617;
+            background: var(--dark-bg);
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             color: #fff;
             min-height: 100vh;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        .header {
-            padding: 15px 30px;
-            background: rgba(0, 40, 112, 0.4);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(10px);
+        /* BACKGROUND MESH GRADIENT */
+        .premium-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: var(--dark-bg);
+            overflow: hidden;
+        }
+        .premium-bg::before {
+            content: "";
+            position: absolute;
+            top: -20%; left: -20%; width: 140%; height: 140%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 40, 112, 0.55) 0%, transparent 45%),
+                radial-gradient(circle at 90% 10%, rgba(0, 210, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(0, 40, 112, 0.4) 0%, transparent 50%);
+            filter: blur(60px);
+            animation: bgMotion 25s ease-in-out infinite alternate;
+        }
+        @keyframes bgMotion {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(2%, -3%) scale(1.03); }
+            100% { transform: translate(-2%, 3%) scale(0.98); }
         }
 
-        .brand-logo { height: 32px; filter: brightness(0) invert(1); }
+        /* HEADER NAVBAR */
+        header {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 16px; }
+
+        .hamburger-btn {
+            width: 42px; height: 42px;
+            background: rgba(0, 40, 112, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 18px; transition: all 0.3s;
+            z-index: 1002;
+            position: relative;
+        }
+        .hamburger-btn:hover { background: var(--neon-blue); color: var(--primary-blue); }
+
+        .brand-logo-btn {
+            background: #fff; padding: 6px 14px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            height: 42px; border: none; cursor: pointer;
+        }
+        .brand-logo-btn img { height: 26px; width: auto; object-fit: contain; }
+
+        .header-right { display: flex; align-items: center; gap: 16px; }
+
+        .currency-selector, .lang-selector {
+            background: rgba(0, 40, 112, 0.6);
+            border: 1px solid var(--glass-border);
+            color: #fff; padding: 8px 12px; border-radius: 8px;
+            font-size: 13px; font-weight: 600; cursor: pointer; outline: none;
+        }
+        .currency-selector option, .lang-selector option { background: var(--dark-bg); color: #fff; }
 
         .cart-trigger-btn {
-            background: var(--neon-blue);
-            color: #002870;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+            position: relative;
+            background: linear-gradient(135deg, var(--primary-blue), #0040b0);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            color: #fff; padding: 8px 18px; border-radius: 30px;
+            font-size: 13px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.3s;
+        }
+        .cart-trigger-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,210,255,0.3); }
+
+        .cart-badge {
+            background: var(--neon-blue); color: var(--primary-blue);
+            font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 20px;
         }
 
-        .container {
-            padding: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-            flex: 1;
+        /* SIDEBAR OVERLAY & NAVIGATION */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.6); backdrop-filter: blur(4px);
+            z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar-nav {
+            position: fixed; left: -340px; top: 0; height: 100vh; width: 320px;
+            background: var(--glass-bg); border-right: 1px solid var(--glass-border);
+            z-index: 1001; padding: 80px 20px 30px 20px;
+            display: flex; flex-direction: column; gap: 15px;
+            backdrop-filter: blur(25px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+        }
+        .sidebar-nav.open { left: 0; }
+
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+            color: var(--neon-blue); font-weight: 700; border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 8px; margin-bottom: 10px;
         }
 
-        /* PRODUCT CARD GRID */
-        .grid-products {
+        .nav-tree-item { margin-bottom: 8px; }
+        .nav-tree-header {
+            padding: 10px 12px; background: rgba(255, 255, 255, 0.04);
+            border-radius: 6px; font-size: 13px; font-weight: 600;
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .nav-tree-header:hover { background: rgba(255, 255, 255, 0.1); }
+        .nav-tree-children { padding-left: 15px; display: none; margin-top: 5px; }
+        .nav-tree-children.active { display: block; }
+
+        .sub-link {
+            padding: 8px 10px; font-size: 12px; color: #cbd5e1;
+            display: block; cursor: pointer; border-radius: 4px; transition: all 0.2s;
+        }
+        .sub-link:hover, .sub-link.active { color: var(--neon-blue); background: rgba(0, 210, 255, 0.1); }
+
+        /* MAIN CONTENT AREA */
+        main { flex: 1; padding: 24px; max-width: 1600px; margin: 0 auto; width: 100%; }
+
+        /* FILTER & SEARCH BAR */
+        .filter-bar {
+            background: rgba(0, 40, 112, 0.3); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px); border-radius: 12px; padding: 16px 20px;
+            margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 16px;
+            align-items: center; justify-content: space-between;
+        }
+
+        .search-input-box { position: relative; flex: 1; min-width: 280px; }
+        .search-input-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .search-input-box input {
+            width: 100%; background: rgba(2, 6, 23, 0.6); border: 1px solid var(--glass-border);
+            padding: 10px 14px 10px 40px; border-radius: 8px; color: #fff; font-size: 13px; outline: none;
+        }
+        .search-input-box input:focus { border-color: var(--neon-blue); }
+
+        .quick-filters { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-chip {
+            padding: 6px 14px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .filter-chip:hover, .filter-chip.active { background: var(--neon-blue); color: var(--primary-blue); }
+
+        /* PRODUCT GRID */
+        .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
+            gap: 20px;
         }
 
         .product-card {
-            background: var(--dark-card);
+            background: var(--card-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            overflow: hidden;
+            border-radius: 14px; overflow: hidden;
+            display: flex; flex-direction: column;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
-
         .product-card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-5px);
             border-color: var(--neon-blue);
-            box-shadow: 0 12px 30px rgba(0, 210, 255, 0.15);
+            box-shadow: 0 10px 25px rgba(0, 210, 255, 0.15);
         }
 
-        .card-img-wrapper {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            background: #000;
+        .card-img-wrap {
+            position: relative; width: 100%; height: 210px;
+            background: #000; overflow: hidden; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+        .product-card:hover .card-img-wrap img { transform: scale(1.05); }
+
+        .card-badge {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(0, 40, 112, 0.85); color: var(--neon-blue);
+            font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 4px;
+            backdrop-filter: blur(5px); border: 1px solid var(--glass-border);
         }
 
-        .card-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .badge-sizes {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(0, 40, 112, 0.85);
-            color: var(--neon-blue);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 6px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .card-body { padding: 20px; }
-
-        .card-category {
-            font-size: 11px;
-            color: #8fa0c0;
-            letter-spacing: 1.5px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .card-title {
-            font-size: 22px;
-            font-weight: 800;
-            margin: 4px 0;
-            color: #fff;
-        }
-
-        .card-status {
-            font-size: 12px;
-            color: var(--neon-blue);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 15px;
-        }
+        .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-brand { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; }
+        .card-title { font-size: 18px; font-weight: 800; margin: 4px 0; color: #fff; }
+        .card-meta { font-size: 12px; color: var(--neon-blue); font-weight: 700; margin-bottom: 12px; }
 
         .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            padding-top: 15px;
-            margin-top: 10px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-top: 1px solid var(--glass-border); padding-top: 12px; margin-top: 8px;
+        }
+        .card-price { font-size: 15px; font-weight: 800; color: var(--neon-blue); }
+        .view-btn {
+            background: #fff; color: var(--primary-blue); border: none;
+            padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700;
+            cursor: pointer; transition: all 0.2s; pointer-events: none;
         }
 
-        .price-tag { font-size: 18px; font-weight: 800; color: var(--neon-blue); }
-
-        .btn-configure {
-            background: #ffffff;
-            color: #002870;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 13px;
-            pointer-events: none; /* Kart tıklamasını engellemesin */
-        }
-
-        /* MODAL - PRODUCT CONFIGURATOR */
+        /* PRODUCT DETAIL MODAL */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(12px);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(20px);
+            z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px;
         }
-
         .modal-overlay.active { display: flex; }
 
-        .modal-content {
-            background: #040a1a;
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            width: 850px;
-            max-width: 92vw;
-            display: flex;
-            overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
-            position: relative;
+        .modal-card {
+            background: #020617; border: 1px solid var(--glass-border);
+            border-radius: 16px; width: 100%; max-width: 900px;
+            max-height: 90vh; overflow-y: auto; display: flex; flex-wrap: wrap;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8); position: relative;
         }
 
-        .modal-left { flex: 1; background: #000; display: flex; align-items: center; }
-        .modal-left img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
+            background: rgba(255,255,255,0.1); border-radius: 50%; border: none;
+            color: #fff; font-size: 16px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close:hover { background: #ef4444; }
 
-        .modal-right {
-            flex: 1.1;
-            padding: 35px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
+        .modal-left { flex: 1; min-width: 320px; background: #000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-left img { max-width: 100%; max-height: 380px; object-fit: contain; }
+
+        .modal-right { flex: 1.2; min-width: 340px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; }
+        .modal-header h2 { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+        .modal-subtitle { font-size: 12px; color: var(--neon-blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; font-weight: 700; }
+
+        .variant-box {
+            background: rgba(0, 40, 112, 0.3); border: 1px solid var(--glass-border);
+            border-radius: 10px; padding: 16px; margin-bottom: 20px;
+        }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 6px; font-weight: 700; }
+        .form-group select {
+            width: 100%; background: #020617; border: 1px solid var(--glass-border);
+            color: #fff; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 600; outline: none;
         }
 
-        .close-modal-btn {
-            position: absolute;
-            top: 15px; right: 15px;
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
-        }
+        /* 4-COLUMN SPECS GRID */
+        .specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+        .spec-item { background: rgba(255,255,255,0.03); padding: 8px 4px; border-radius: 6px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .spec-item span { display: block; font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: 700; }
+        .spec-item strong { font-size: 11px; color: #fff; font-weight: 800; margin-top: 2px; display: block; }
 
-        .modal-category { font-size: 11px; color: var(--neon-blue); font-weight: 700; letter-spacing: 1px; }
-        .modal-title { font-size: 28px; font-weight: 800; }
+        .qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .qty-picker { display: flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 6px; }
+        .qty-btn { width: 36px; height: 36px; background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; font-weight: 800; }
+        .qty-input { width: 45px; text-align: center; background: none; border: none; color: #fff; font-weight: 700; font-size: 14px; }
 
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-label { font-size: 10px; font-weight: 700; color: #7e91b5; letter-spacing: 1px; }
+        .total-price-tag { font-size: 22px; font-weight: 800; color: var(--neon-blue); }
 
-        .select-input {
-            width: 100%;
-            background: #091533;
-            border: 1px solid rgba(255,255,255,0.15);
-            color: #fff;
-            padding: 12px 15px;
-            border-radius: 8px;
-            font-weight: 700;
-            outline: none;
-            cursor: pointer;
-        }
-
-        /* 4-COLUMN INFO SPEC GRID */
-        .specs-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 5px;
-        }
-
-        .spec-box {
-            background: #091533;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 8px;
-            padding: 10px 6px;
-            text-align: center;
-        }
-
-        .spec-box .lbl { font-size: 8px; color: #7e91b5; font-weight: 700; display: block; margin-bottom: 2px; }
-        .spec-box .val { font-size: 11px; font-weight: 800; color: #fff; }
-
-        .qty-price-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-
-        .qty-picker {
-            display: flex;
-            align-items: center;
-            background: #091533;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .qty-btn {
-            width: 36px; height: 36px;
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .qty-val { width: 30px; text-align: center; font-size: 14px; font-weight: 800; }
-
-        .modal-price { font-size: 24px; font-weight: 800; color: var(--neon-blue); }
-
-        .btn-add-order {
-            background: var(--neon-blue);
-            color: #002870;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 14px;
-            cursor: pointer;
-            width: 100%;
+        .add-cart-btn {
+            width: 100%; background: linear-gradient(135deg, var(--neon-blue), #0099ff);
+            color: var(--primary-blue); border: none; padding: 14px; border-radius: 8px;
+            font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
             box-shadow: 0 4px 20px rgba(0, 210, 255, 0.25);
         }
+        .add-cart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 210, 255, 0.4); }
 
-        /* DRAWER - PROFORMA ORDER SUMMARY */
-        .drawer-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2500;
-            display: none;
-        }
-
-        .drawer-overlay.active { display: block; }
-
+        /* CART DRAWER */
         .cart-drawer {
-            position: fixed;
-            top: 0; right: -420px;
-            width: 380px;
-            height: 100vh;
-            background: #040a1a;
-            border-left: 1px solid var(--glass-border);
-            z-index: 2600;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: fixed; right: -420px; top: 0; height: 100vh; width: 400px;
+            background: #020617; border-left: 1px solid var(--glass-border);
+            z-index: 2001; padding: 24px; display: flex; flex-direction: column;
+            backdrop-filter: blur(25px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .cart-drawer.open { right: 0; }
 
-        .cart-drawer.active { right: 0; }
-
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .drawer-title { font-size: 18px; font-weight: 800; }
-
-        .cart-items-list {
-            flex: 1;
-            overflow-y: auto;
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .cart-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; }
+        .cart-items-list { flex: 1; overflow-y: auto; padding: 15px 0; display: flex; flex-direction: column; gap: 12px; }
 
         .cart-item-card {
-            background: #091533;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            position: relative;
+            background: rgba(0, 40, 112, 0.25); border: 1px solid var(--glass-border);
+            border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center;
         }
-
-        .cart-item-img {
-            width: 55px; height: 55px;
-            border-radius: 6px;
-            object-fit: cover;
-            cursor: pointer;
-        }
-
+        .cart-item-card img { width: 55px; height: 55px; object-fit: cover; border-radius: 6px; cursor: pointer; }
         .cart-item-info { flex: 1; cursor: pointer; }
-        .cart-item-name { font-size: 13px; font-weight: 800; color: #fff; }
-        .cart-item-size { font-size: 11px; color: #7e91b5; }
+        .cart-item-info h4 { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
+        .cart-item-info p { font-size: 11px; color: #94a3b8; }
         .cart-item-price { font-size: 13px; font-weight: 800; color: var(--neon-blue); margin-top: 4px; }
 
+        /* CART QUANTITY CONTROL BAR */
         .cart-qty-ctrl {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 6px;
-            padding: 2px 6px;
-            margin-top: 6px;
-            width: fit-content;
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(0, 0, 0, 0.4); border-radius: 6px;
+            padding: 2px 6px; margin-top: 6px; width: fit-content;
+            border: 1px solid var(--glass-border);
         }
+        .cart-qty-ctrl button { background: none; border: none; color: #fff; font-weight: 800; cursor: pointer; font-size: 12px; padding: 0 4px; }
+        .cart-qty-ctrl span { font-size: 11px; font-weight: 800; min-width: 16px; text-align: center; }
 
-        .cart-qty-ctrl button {
-            background: none; border: none; color: #fff; font-weight: 800; cursor: pointer; font-size: 12px;
+        /* LOGISTICS METER STYLES */
+        .logistics-bar-container {
+            background: rgba(0, 40, 112, 0.35); border-radius: 12px; padding: 14px; margin: 12px 0;
+            border: 1px solid var(--glass-border);
         }
+        .logistics-title { font-size: 11px; font-weight: 700; color: var(--neon-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .logistics-row { margin-bottom: 10px; }
+        .logistics-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: #cbd5e1; }
+        .progress-track { width: 100%; height: 7px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; }
+        .progress-fill-hq { height: 100%; background: linear-gradient(90deg, var(--neon-blue), #0099ff); width: 0%; transition: width 0.3s; }
+        .progress-fill-truck { height: 100%; background: linear-gradient(90deg, var(--accent-gold), #f59e0b); width: 0%; transition: width 0.3s; }
 
-        .cart-qty-ctrl span { font-size: 11px; font-weight: 800; min-width: 14px; text-align: center; }
-
-        .btn-remove-item {
-            background: none; border: none; color: #ff4757; cursor: pointer; font-size: 14px; padding: 4px;
+        .cart-footer { border-top: 1px solid var(--glass-border); padding-top: 15px; }
+        .export-excel-btn {
+            width: 100%; background: #10b981; color: #fff; border: none;
+            padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;
         }
+        .export-excel-btn:hover { background: #059669; }
 
-        .drawer-footer {
-            border-top: 1px solid var(--glass-border);
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .grand-total-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 18px;
-            font-weight: 800;
-        }
-
-        .btn-export-excel {
-            background: #10b981;
-            color: #fff;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+        @media (max-width: 768px) {
+            .cart-drawer { width: 100%; right: -100%; }
+            .modal-card { flex-direction: column; }
+            .modal-left { height: 200px; }
         }
     </style>
 </head>
 <body>
 
-    <header class="header">
-        <h2 style="font-size: 18px; font-weight: 800; letter-spacing: 1px;">YATAŞ INTERNATIONAL</h2>
-        <button class="cart-trigger-btn" onclick="toggleCartDrawer(true)">
-            🛒 Proforma Summary (<span id="cartCount">0</span>)
-        </button>
+    <div class="premium-bg"></div>
+
+    <!-- HEADER NAVIGATION -->
+    <header>
+        <div class="header-left">
+            <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars" id="hamburgerIcon"></i></button>
+            <button class="brand-logo-btn">
+                <img src="yatas_grup_logo.jpg" alt="Yataş Group" onerror="this.src='https://yatasinternational.github.io/Products-Photos/yatas_logo.png'">
+            </button>
+        </div>
+
+        <div class="header-right">
+            <select class="currency-selector" id="currencySelect" onchange="changeCurrency(this.value)">
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+            </select>
+
+            <select class="lang-selector" id="langSelect" onchange="changeLanguage(this.value)">
+                <option value="TR">TR</option>
+                <option value="EN" selected>EN</option>
+                <option value="DE">DE</option>
+                <option value="RU">RU</option>
+            </select>
+
+            <button class="cart-trigger-btn" onclick="toggleCart()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span data-i18n="cart">Cart</span>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+        </div>
     </header>
 
-    <main class="container">
-        <div class="grid-products" id="productGrid"></div>
+    <!-- SIDEBAR OVERLAY & DRAWER -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <div class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-title" data-i18n="categories">Categories</div>
+        <div id="navigationTree"></div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main>
+        <!-- SEARCH & FILTER BAR -->
+        <div class="filter-bar">
+            <div class="search-input-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search product family or description..." oninput="applyFilters()" data-i18n-ph="search_placeholder">
+            </div>
+
+            <div class="quick-filters" id="brandFilterChips">
+                <div class="filter-chip active" onclick="filterByBrand('ALL')" data-i18n="all_brands">All Brands</div>
+            </div>
+        </div>
+
+        <!-- PRODUCT GRID -->
+        <div class="product-grid" id="productGrid"></div>
     </main>
 
-    <!-- PRODUCT CONFIGURATOR MODAL -->
+    <!-- PRODUCT DETAIL MODAL -->
     <div class="modal-overlay" id="productModal">
-        <div class="modal-content">
-            <button class="close-modal-btn" onclick="closeModal()">✕</button>
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             <div class="modal-left">
-                <img id="modalImg" src="" alt="Product">
+                <img id="modalImg" src="" alt="Product Image">
             </div>
             <div class="modal-right">
+                <div class="modal-header">
+                    <div class="modal-subtitle" id="modalBrandCategory">Yataş Bedding | Yatak</div>
+                    <h2 id="modalFamilyTitle">Activio</h2>
+                </div>
+
+                <div class="variant-box">
+                    <div class="form-group">
+                        <label data-i18n="select_size">SELECT DIMENSION / SIZE</label>
+                        <select id="sizeSelect" onchange="onSizeChange()"></select>
+                    </div>
+
+                    <!-- 4 SPECS GRID (HS CODE, VOL, WT, HEIGHT) -->
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span data-i18n="gtip">HS CODE</span>
+                            <strong id="specGtip">-</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="volume">UNIT VOL</span>
+                            <strong id="specVolume">0 m³</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="weight">UNIT WT</span>
+                            <strong id="specWeight">0 kg</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="height">HEIGHT</span>
+                            <strong id="specHeight">0 cm</strong>
+                        </div>
+                    </div>
+                </div>
+
                 <div>
-                    <span class="modal-category">YATAŞ BEDDING | MATTRESS</span>
-                    <h2 class="modal-title" id="modalTitle">Activio</h2>
-                </div>
+                    <div class="qty-row">
+                        <div class="qty-picker">
+                            <button class="qty-btn" onclick="updateModalQty(-1)">-</button>
+                            <input type="text" class="qty-input" id="modalQty" value="1" readonly>
+                            <button class="qty-btn" onclick="updateModalQty(1)">+</button>
+                        </div>
+                        <div class="total-price-tag" id="modalTotalPrice">$0</div>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label">SELECT DIMENSION / SIZE</label>
-                    <select class="select-input" id="sizeSelect" onchange="onSizeChange()"></select>
+                    <button class="add-cart-btn" onclick="addCurrentToCart()">
+                        <i class="fa-solid fa-cart-plus"></i> <span data-i18n="add_to_cart">Add to Proforma Order</span>
+                    </button>
                 </div>
-
-                <div class="specs-grid">
-                    <div class="spec-box">
-                        <span class="lbl">HS CODE</span>
-                        <span class="val" id="specHsCode">94042910</span>
-                    </div>
-                    <div class="spec-box">
-                        <span class="lbl">UNIT VOL</span>
-                        <span class="val" id="specVol">0.513 m³</span>
-                    </div>
-                    <div class="spec-box">
-                        <span class="lbl">UNIT WT</span>
-                        <span class="val" id="specWt">22.05 kg</span>
-                    </div>
-                    <div class="spec-box">
-                        <span class="lbl">HEIGHT</span>
-                        <span class="val" id="specHeight">31 cm</span>
-                    </div>
-                </div>
-
-                <div class="qty-price-row">
-                    <div class="qty-picker">
-                        <button class="qty-btn" onclick="updateModalQty(-1)">-</button>
-                        <span class="qty-val" id="modalQty">1</span>
-                        <button class="qty-btn" onclick="updateModalQty(1)">+</button>
-                    </div>
-                    <div class="modal-price" id="modalPrice">$179.00</div>
-                </div>
-
-                <button class="btn-add-order" onclick="addToProforma()">🛒 Add to Proforma Order</button>
             </div>
         </div>
     </div>
 
-    <!-- PROFORMA ORDER SUMMARY DRAWER -->
-    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleCartDrawer(false)"></div>
+    <!-- CART & PROFORMA DRAWER -->
     <div class="cart-drawer" id="cartDrawer">
-        <div class="drawer-header">
-            <h3 class="drawer-title">Proforma Order Summary</h3>
-            <button class="close-modal-btn" onclick="toggleCartDrawer(false)">✕</button>
+        <div class="cart-header">
+            <h3 data-i18n="cart_title"><i class="fa-solid fa-file-invoice-dollar"></i> Proforma Order Summary</h3>
+            <button class="modal-close" onclick="toggleCart()" style="position:static;"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="cart-items-list" id="cartItemsList"></div>
 
-        <div class="drawer-footer">
-            <div class="grand-total-row">
-                <span>Grand Total:</span>
-                <span style="color: var(--neon-blue);" id="grandTotal">$0.00</span>
+        <!-- DUAL LOGISTICS CALCULATOR (40' HQ & 70m3 TRUCK) -->
+        <div class="logistics-bar-container">
+            <div class="logistics-title">
+                <i class="fa-solid fa-truck-ramp-box"></i> <span data-i18n="logistics_calc">LOGISTICS & VEHICLE CAPACITY</span>
             </div>
-            <button class="btn-export-excel" onclick="exportToExcel()">
-                📊 Export Excel Order with Photos
+
+            <!-- 40' HQ CONTAINER -->
+            <div class="logistics-row">
+                <div class="logistics-label">
+                    <span><i class="fa-solid fa-ship"></i> 40' HQ Container (68 m³)</span>
+                    <strong id="hqCountText">0 Cont. (%0)</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill-hq" id="hqProgressFill"></div>
+                </div>
+            </div>
+
+            <!-- 70 m³ TRUCK -->
+            <div class="logistics-row">
+                <div class="logistics-label">
+                    <span><i class="fa-solid fa-truck-front"></i> Standard Truck (70 m³)</span>
+                    <strong id="truckCountText">0 Truck (%0)</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill-truck" id="truckProgressFill"></div>
+                </div>
+            </div>
+
+            <div style="font-size:10px; color:#94a3b8; border-top: 1px dashed var(--glass-border); padding-top: 6px;" id="logisticsMeta">
+                Total Vol: 0.00 m³ | Total Wt: 0.0 kg
+            </div>
+        </div>
+
+        <div class="cart-footer">
+            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:16px; margin-bottom:15px;">
+                <span data-i18n="grand_total">Grand Total:</span>
+                <span id="cartGrandTotal" style="color:var(--neon-blue);">$0</span>
+            </div>
+
+            <button class="export-excel-btn" onclick="exportProformaExcel()">
+                <i class="fa-solid fa-file-excel"></i> <span data-i18n="export_excel">Export Excel Order with Photos</span>
             </button>
         </div>
     </div>
 
     <script>
-        // TR DATA SOURCE (MTO/MTS & Yükseklik Entegreli)
-        const productDatabase = {
-            "Activio": {
-                brand: "Yataş Bedding",
-                category: "Yatak",
-                family: "Activio",
-                image: "input_file_0.png",
-                sizes: [
-                    { code: "50501003380001", size: "090X190", status: "MTO", price: 179, height: 31, hsCode: "940429100000", vol: "0.513", wt: "22.05", barcode: "8684177543298" },
-                    { code: "50501003380002", size: "090X200", status: "MTO", price: 179, height: 31, hsCode: "940429100000", vol: "0.540", wt: "23.10", barcode: "8684177543304" },
-                    { code: "50501003380003", size: "100X200", status: "MTS", price: 189, height: 31, hsCode: "940429100000", vol: "0.600", wt: "25.00", barcode: "8684177543311" },
-                    { code: "50501003380004", size: "120X200", status: "MTS", price: 198, height: 31, hsCode: "940429100000", vol: "0.720", wt: "29.50", barcode: "8684177543328" },
-                    { code: "50501003380005", size: "140X190", status: "MTS", price: 217, height: 31, hsCode: "940429100000", vol: "0.798", wt: "33.00", barcode: "8684177543335" },
-                    { code: "50501003380006", size: "140X200", status: "MTO", price: 217, height: 31, hsCode: "940429100000", vol: "0.840", wt: "34.20", barcode: "8684177543342" },
-                    { code: "50501003380007", size: "150X200", status: "MTS", price: 229, height: 31, hsCode: "940429100000", vol: "0.900", wt: "36.50", barcode: "8684177543359" },
-                    { code: "50501003380008", size: "160X200", status: "MTS", price: 257, height: 31, hsCode: "940429100000", vol: "0.960", wt: "39.00", barcode: "8684177543366" }
-                ]
+        // UI DICTIONARY
+        const i18n = {
+            TR: {
+                cart: "Sepet", categories: "Kategoriler", all_brands: "Tüm Markalar",
+                search_placeholder: "Ürün ailesi veya malzeme tanımı arayın...",
+                select_size: "ÖLÇÜ / EBAT SEÇİNİZ", gtip: "GTİP KODU", volume: "BİRİM HACİM", weight: "BİRİM AĞIRLIK", height: "YÜKSEKLİK",
+                add_to_cart: "Siparişe Ekle", cart_title: "Proforma Sipariş Özeti",
+                logistics_calc: "LOJİSTİK KAPASİTE VE ARAÇ HESABI", grand_total: "Genel Toplam:",
+                export_excel: "Fotoğraflı Excel Sipariş Listesi İndir", from: "başlayan fiyatlar"
+            },
+            EN: {
+                cart: "Cart", categories: "Categories", all_brands: "All Brands",
+                search_placeholder: "Search product family or description...",
+                select_size: "SELECT DIMENSION / SIZE", gtip: "HS CODE", volume: "UNIT VOL", weight: "UNIT WT", height: "HEIGHT",
+                add_to_cart: "Add to Proforma Order", cart_title: "Proforma Order Summary",
+                logistics_calc: "LOGISTICS & VEHICLE CAPACITY", grand_total: "Grand Total:",
+                export_excel: "Export Excel Order with Photos", from: "from"
+            },
+            DE: {
+                cart: "Warenkorb", categories: "Kategorien", all_brands: "Alle Marken",
+                search_placeholder: "Produktfamilie oder Beschreibung suchen...",
+                select_size: "GRÖSSE WÄHLEN", gtip: "HS CODE", volume: "VOLUMEN", weight: "GEWICHT", height: "HÖHE",
+                add_to_cart: "In die Proforma-Bestellung", cart_title: "Proforma-Bestellübersicht",
+                logistics_calc: "LOGISTIK- UND FAHRZEUGKAPAZITÄT", grand_total: "Gesamtsumme:",
+                export_excel: "Excel-Bestellung mit Fotos exportieren", from: "ab"
+            },
+            RU: {
+                cart: "Корзина", categories: "Категории", all_brands: "Все бренды",
+                search_placeholder: "Поиск семейства продуктов...",
+                select_size: "ВЫБЕРИТЕ РАЗМЕР", gtip: "ТН ВЭД", volume: "ОБЪЕМ", weight: "ВЕС", height: "ВЫСОТА",
+                add_to_cart: "Добавить в заказ", cart_title: "Сводка Проформа-Заказа",
+                logistics_calc: "ЛОГИСТИКА И ЕМКОСТЬ ТRANSPORTA", grand_total: "Итого:",
+                export_excel: "Скачать Excel с фото", from: "от"
             }
         };
 
-        let currentActiveFamily = "Activio";
-        let selectedSizeObj = null;
-        let currentModalQty = 1;
-        let cart = [];
-
-        // INITIALIZE RENDER
-        window.onload = () => {
-            renderProductGrid();
+        const termTranslations = {
+            "Yatak": { EN: "Mattress", DE: "Matratze", RU: "Матрас" },
+            "Baza": { EN: "Base / Boxspring", DE: "Bettkasten", RU: "Основание" },
+            "Başlık": { EN: "Headboard", DE: "Kopfteil", RU: "Изголовье" },
+            "Yastık": { EN: "Pillow", DE: "Kissen", RU: "Подушка" },
+            "Yorgan": { EN: "Duvet", DE: "Bettdecke", RU: "Одеяло" },
+            "Alez": { EN: "Mattress Protector", DE: "Matratzenschoner", RU: "Наматрасник" },
+            "Set": { EN: "Bed Set", DE: "Bett-Set", RU: "Комплект" },
+            "Genel": { EN: "General", DE: "Allgemein", RU: "Общие" }
         };
 
-        function renderProductGrid() {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
+        function autoTranslateText(text, targetLang) {
+            if (!text || targetLang === 'TR') return text;
+            let translated = text;
+            for (const [trTerm, langMap] of Object.entries(termTranslations)) {
+                if (langMap[targetLang]) {
+                    const regex = new RegExp(`\\b${trTerm}\\b`, 'gi');
+                    translated = translated.replace(regex, langMap[targetLang]);
+                }
+            }
+            return translated;
+        }
 
-            Object.keys(productDatabase).forEach(familyKey => {
-                const prod = productDatabase[familyKey];
-                const defaultSize = prod.sizes[0];
+        let currentLang = 'EN';
+        let currentCurrency = 'USD';
+        let rawProducts = [];
+        let productFamilies = {};
+        let activeBrandFilter = 'ALL';
+        let activeCategoryFilter = null;
+        let activeFamilyFilter = null;
+        let cart = [];
 
-                const cardHtml = `
-                    <div class="product-card" onclick="openConfigurator('${familyKey}')">
-                        <div class="card-img-wrapper">
-                            <img src="${prod.image}" alt="${familyKey}">
-                            <span class="badge-sizes">${prod.sizes.length} Sizes</span>
-                        </div>
-                        <div class="card-body">
-                            <span class="card-category">${prod.brand} | ${prod.category}</span>
-                            <h3 class="card-title">${prod.family}</h3>
-                            <div class="card-status">${defaultSize.status}</div>
-                            <div class="card-footer">
-                                <span class="price-tag">from $${defaultSize.price}</span>
-                                <button class="btn-configure">Configure</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                grid.innerHTML += cardHtml;
+        let currentActiveFamily = null;
+        let currentSelectedVariant = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadExcelData();
+        });
+
+        async function loadExcelData() {
+            try {
+                const response = await fetch('tr.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                rawProducts = XLSX.utils.sheet_to_json(firstSheet);
+                
+                processRawData();
+                buildBrandChips();
+                buildNavigationTree();
+                renderProductGrid();
+            } catch (err) {
+                console.error("tr.xlsx okunamadı:", err);
+            }
+        }
+
+        function processRawData() {
+            productFamilies = {};
+            rawProducts.forEach(item => {
+                const familyName = item['Ürün Ailesi'] || item['Malzeme Tanım'] || 'Diğer';
+                if (!productFamilies[familyName]) {
+                    productFamilies[familyName] = {
+                        familyName: familyName,
+                        brand: item['Marka'] || 'Yataş Group',
+                        category: item['Kategori'] || 'Genel',
+                        productType: item['Ürün Tipi'] || 'Genel',
+                        photoUrl: item['Foto weblink'] || '',
+                        variants: []
+                    };
+                }
+                productFamilies[familyName].variants.push({
+                    code: item['Ürün Kodu'],
+                    size: item['Ölçü'],
+                    desc: item['Malzeme Tanım'],
+                    usdPrice: parseFloat(item['Birim USD Fiyat']) || 0,
+                    eurPrice: parseFloat(item['Birim EUR Fiyat']) || 0,
+                    height: item['Yükseklik CM'] || item['Yükseklik'] || 0,
+                    status: item['Status'] || item['MTO/MTS'] || 'MTO',
+                    barcode: item['Barkod'],
+                    gtip: item['GTIP'] || '-',
+                    volume: parseFloat(item['Birim Hacim M3']) || 0,
+                    weight: parseFloat(item['Birim Ağırlık KG']) || 0
+                });
             });
         }
 
-        // CONFIGURATOR MODAL
-        function openConfigurator(familyKey, targetSizeCode = null) {
-            currentActiveFamily = familyKey;
-            const prod = productDatabase[familyKey];
-            
-            document.getElementById('modalTitle').innerText = prod.family;
-            document.getElementById('modalImg').src = prod.image;
-            
-            const sizeSelect = document.getElementById('sizeSelect');
-            sizeSelect.innerHTML = '';
+        function buildBrandChips() {
+            const brands = ['ALL', ...new Set(rawProducts.map(i => i['Marka']).filter(Boolean))];
+            const chipContainer = document.getElementById('brandFilterChips');
+            chipContainer.innerHTML = brands.map(b => `
+                <div class="filter-chip ${b === activeBrandFilter ? 'active' : ''}" onclick="filterByBrand('${b}')">
+                    ${b === 'ALL' ? i18n[currentLang].all_brands : b}
+                </div>
+            `).join('');
+        }
 
-            prod.sizes.forEach(s => {
-                const opt = document.createElement('option');
-                opt.value = s.code;
-                opt.innerText = s.size; // Sadece ebat yazısı (Yaylı / ürün adı yok)
-                sizeSelect.appendChild(opt);
+        function buildNavigationTree() {
+            const tree = {};
+            rawProducts.forEach(i => {
+                const b = i['Marka'] || 'Yataş';
+                const c = i['Kategori'] || 'Genel';
+                const fam = i['Ürün Ailesi'] || i['Malzeme Tanım'] || 'Diğer';
+                
+                if (!tree[b]) tree[b] = {};
+                if (!tree[b][c]) tree[b][c] = new Set();
+                tree[b][c].add(fam);
             });
 
-            if (targetSizeCode) {
-                sizeSelect.value = targetSizeCode;
+            const navContainer = document.getElementById('navigationTree');
+            let html = '';
+            for (const [brand, categories] of Object.entries(tree)) {
+                html += `<div class="nav-tree-item">
+                    <div class="nav-tree-header" onclick="toggleNavAccordion(this)">
+                        <span><i class="fa-solid fa-layer-group"></i> ${brand}</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="nav-tree-children">`;
+                for (const [cat, families] of Object.entries(categories)) {
+                    const translatedCat = autoTranslateText(cat, currentLang);
+                    html += `<div style="margin: 4px 0;">
+                        <span class="sub-link" style="font-weight:700; color:var(--neon-blue);" onclick="filterByCategory('${brand}', '${cat}')">📂 ${translatedCat}</span>`;
+                    
+                    Array.from(families).slice(0, 20).forEach(fam => {
+                        html += `<span class="sub-link" style="padding-left:18px;" onclick="filterByFamily('${brand}', '${cat}', '${fam}')">• ${fam}</span>`;
+                    });
+                    html += `</div>`;
+                }
+                html += `</div></div>`;
+            }
+            navContainer.innerHTML = html;
+        }
+
+        function toggleNavAccordion(el) { el.nextElementSibling.classList.toggle('active'); }
+
+        async function renderProductGrid() {
+            const grid = document.getElementById('productGrid');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+
+            let families = Object.values(productFamilies);
+
+            families = families.filter(f => {
+                const matchBrand = (activeBrandFilter === 'ALL' || f.brand === activeBrandFilter);
+                const matchCat = (!activeCategoryFilter || f.category === activeCategoryFilter);
+                const matchFam = (!activeFamilyFilter || f.familyName === activeFamilyFilter);
+                const matchSearch = (f.familyName.toLowerCase().includes(searchVal) || f.variants.some(v => v.desc.toLowerCase().includes(searchVal)));
+                return matchBrand && matchCat && matchFam && matchSearch;
+            });
+
+            grid.innerHTML = families.map(f => {
+                const minPrice = Math.min(...f.variants.map(v => currentCurrency === 'USD' ? v.usdPrice : v.eurPrice));
+                const currencySymbol = currentCurrency === 'USD' ? '$' : '€';
+                const translatedCat = autoTranslateText(f.category, currentLang);
+                const defaultStatus = f.variants[0]?.status || 'MTO';
+                const fromLabel = i18n[currentLang].from || 'from';
+
+                return `
+                <div class="product-card" onclick="openProductModal('${f.familyName}')">
+                    <div class="card-img-wrap">
+                        <img src="${f.photoUrl}" alt="${f.familyName}" onerror="this.src='https://via.placeholder.com/300x200?text=Yatas+Bedding'">
+                        <div class="card-badge">${f.variants.length} Sizes</div>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <div class="card-brand">${f.brand} | ${translatedCat}</div>
+                            <h3 class="card-title">${f.familyName}</h3>
+                            <div class="card-meta">${defaultStatus}</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">${fromLabel} ${currencySymbol}${minPrice}</div>
+                            <button class="view-btn">Configure</button>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function openProductModal(familyName, targetCode = null) {
+            currentActiveFamily = productFamilies[familyName];
+            const translatedCat = autoTranslateText(currentActiveFamily.category, currentLang);
+            const translatedType = autoTranslateText(currentActiveFamily.productType, currentLang);
+
+            document.getElementById('modalFamilyTitle').innerText = currentActiveFamily.familyName;
+            document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${translatedCat} (${translatedType})`;
+            document.getElementById('modalImg').src = currentActiveFamily.photoUrl;
+
+            const sizeSelect = document.getElementById('sizeSelect');
+            sizeSelect.innerHTML = currentActiveFamily.variants.map((v, idx) => {
+                return `<option value="${idx}">${v.size}</option>`;
+            }).join('');
+
+            if (targetCode) {
+                const foundIdx = currentActiveFamily.variants.findIndex(v => v.code === targetCode);
+                if (foundIdx > -1) sizeSelect.value = foundIdx;
             }
 
-            currentModalQty = 1;
-            document.getElementById('modalQty').innerText = currentModalQty;
-
+            document.getElementById('modalQty').value = 1;
             onSizeChange();
             document.getElementById('productModal').classList.add('active');
         }
 
-        function closeModal() {
-            document.getElementById('productModal').classList.remove('active');
-        }
-
         function onSizeChange() {
-            const code = document.getElementById('sizeSelect').value;
-            const prod = productDatabase[currentActiveFamily];
-            selectedSizeObj = prod.sizes.find(s => s.code === code);
+            const idx = document.getElementById('sizeSelect').value;
+            currentSelectedVariant = currentActiveFamily.variants[idx];
 
-            document.getElementById('specHsCode').innerText = selectedSizeObj.hsCode;
-            document.getElementById('specVol').innerText = selectedSizeObj.vol + ' m³';
-            document.getElementById('specWt').innerText = selectedSizeObj.wt + ' kg';
-            document.getElementById('specHeight').innerText = selectedSizeObj.height + ' cm';
-            document.getElementById('modalPrice').innerText = '$' + (selectedSizeObj.price * currentModalQty).toFixed(2);
+            document.getElementById('specGtip').innerText = currentSelectedVariant.gtip;
+            document.getElementById('specVolume').innerText = `${currentSelectedVariant.volume} m³`;
+            document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
+            document.getElementById('specHeight').innerText = `${currentSelectedVariant.height} cm`;
+
+            updateModalPrice();
         }
 
         function updateModalQty(delta) {
-            if (currentModalQty + delta >= 1) {
-                currentModalQty += delta;
-                document.getElementById('modalQty').innerText = currentModalQty;
-                document.getElementById('modalPrice').innerText = '$' + (selectedSizeObj.price * currentModalQty).toFixed(2);
-            }
+            const qtyInput = document.getElementById('modalQty');
+            let val = parseInt(qtyInput.value) + delta;
+            if (val < 1) val = 1;
+            qtyInput.value = val;
+            updateModalPrice();
         }
 
-        // ADD TO PROFORMA
-        function addToProforma() {
-            const existingIdx = cart.findIndex(i => i.code === selectedSizeObj.code);
-            if (existingIdx > -1) {
-                cart[existingIdx].qty += currentModalQty;
+        function updateModalPrice() {
+            const qty = parseInt(document.getElementById('modalQty').value);
+            const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
+            const symbol = currentCurrency === 'USD' ? '$' : '€';
+            document.getElementById('modalTotalPrice').innerText = `${symbol}${(unitPrice * qty).toFixed(2)}`;
+        }
+
+        function closeModal() { document.getElementById('productModal').classList.remove('active'); }
+
+        function addCurrentToCart() {
+            const qty = parseInt(document.getElementById('modalQty').value);
+            const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
+
+            const existingIndex = cart.findIndex(i => i.code === currentSelectedVariant.code && i.currency === currentCurrency);
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += qty;
             } else {
                 cart.push({
-                    family: currentActiveFamily,
-                    brand: productDatabase[currentActiveFamily].brand,
-                    image: productDatabase[currentActiveFamily].image,
-                    code: selectedSizeObj.code,
-                    size: selectedSizeObj.size,
-                    price: selectedSizeObj.price,
-                    status: selectedSizeObj.status,
-                    height: selectedSizeObj.height,
-                    hsCode: selectedSizeObj.hsCode,
-                    vol: selectedSizeObj.vol,
-                    wt: selectedSizeObj.wt,
-                    barcode: selectedSizeObj.barcode,
-                    qty: currentModalQty
+                    family: currentActiveFamily.familyName,
+                    brand: currentActiveFamily.brand,
+                    photoUrl: currentActiveFamily.photoUrl,
+                    code: currentSelectedVariant.code,
+                    size: currentSelectedVariant.size,
+                    desc: currentSelectedVariant.desc,
+                    gtip: currentSelectedVariant.gtip,
+                    volume: currentSelectedVariant.volume,
+                    weight: currentSelectedVariant.weight,
+                    height: currentSelectedVariant.height,
+                    status: currentSelectedVariant.status,
+                    barcode: currentSelectedVariant.barcode,
+                    qty: qty,
+                    unitPrice: unitPrice,
+                    currency: currentCurrency
                 });
             }
 
             closeModal();
-            updateCartUI();
-            toggleCartDrawer(true);
+            updateCartDisplay();
+            toggleCart(true);
         }
 
-        // DRAWER CONTROLS
-        function toggleCartDrawer(open) {
-            const drawer = document.getElementById('cartDrawer');
-            const overlay = document.getElementById('drawerOverlay');
-            if (open) {
-                drawer.classList.add('active');
-                overlay.classList.add('active');
-            } else {
-                drawer.classList.remove('active');
-                overlay.classList.remove('active');
-            }
-        }
+        function updateCartDisplay() {
+            document.getElementById('cartBadge').innerText = cart.reduce((acc, i) => acc + i.qty, 0);
 
-        function updateCartUI() {
             const list = document.getElementById('cartItemsList');
-            list.innerHTML = '';
-            let total = 0;
-            let count = 0;
+            let totalVal = 0;
+            let totalM3 = 0;
+            let totalKg = 0;
 
-            cart.forEach((item, idx) => {
-                const itemTotal = item.price * item.qty;
-                total += itemTotal;
-                count += item.qty;
+            list.innerHTML = cart.map((item, idx) => {
+                const itemTotal = item.qty * item.unitPrice;
+                totalVal += itemTotal;
+                totalM3 += item.qty * item.volume;
+                totalKg += item.qty * item.weight;
+                const symbol = item.currency === 'USD' ? '$' : '€';
 
-                const itemHtml = `
-                    <div class="cart-item-card">
-                        <img src="${item.image}" class="cart-item-img" onclick="openConfigurator('${item.family}', '${item.code}')">
-                        <div class="cart-item-info" onclick="openConfigurator('${item.family}', '${item.code}')">
-                            <div class="cart-item-name">${item.family}</div>
-                            <div class="cart-item-size">${item.size} (${item.status})</div>
-                            <div class="cart-item-price">$${itemTotal.toFixed(2)}</div>
-                        </div>
-                        <div>
-                            <button class="btn-remove-item" onclick="removeCartItem(${idx})">🗑</button>
-                            <div class="cart-qty-ctrl">
-                                <button onclick="changeCartQty(${idx}, -1)">-</button>
-                                <span>${item.qty}</span>
-                                <button onclick="changeCartQty(${idx}, 1)">+</button>
-                            </div>
+                return `
+                <div class="cart-item-card">
+                    <img src="${item.photoUrl}" onerror="this.src='https://via.placeholder.com/50'" onclick="openProductModal('${item.family}', '${item.code}')">
+                    <div class="cart-item-info" onclick="openProductModal('${item.family}', '${item.code}')">
+                        <h4>${item.family}</h4>
+                        <p>${item.size} (${item.status})</p>
+                        <div class="cart-item-price">${symbol}${itemTotal.toFixed(2)}</div>
+                    </div>
+                    <div>
+                        <button style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px; margin-left:auto; display:block;" onclick="removeFromCart(${idx})"><i class="fa-solid fa-trash"></i></button>
+                        <div class="cart-qty-ctrl">
+                            <button onclick="changeCartQty(${idx}, -1)">-</button>
+                            <span>${item.qty}</span>
+                            <button onclick="changeCartQty(${idx}, 1)">+</button>
                         </div>
                     </div>
-                `;
-                list.innerHTML += itemHtml;
-            });
+                </div>
+            `}).join('');
 
-            document.getElementById('cartCount').innerText = count;
-            document.getElementById('grandTotal').innerText = '$' + total.toFixed(2);
+            const mainSymbol = currentCurrency === 'USD' ? '$' : '€';
+            document.getElementById('cartGrandTotal').innerText = `${mainSymbol}${totalVal.toFixed(2)}`;
+
+            calculateLogistics(totalM3, totalKg);
         }
 
         function changeCartQty(idx, delta) {
@@ -693,49 +878,191 @@
             } else {
                 cart.splice(idx, 1);
             }
-            updateCartUI();
+            updateCartDisplay();
         }
 
-        function removeCartItem(idx) {
-            cart.splice(idx, 1);
-            updateCartUI();
+        function removeFromCart(idx) { cart.splice(idx, 1); updateCartDisplay(); }
+
+        function calculateLogistics(totalM3, totalKg) {
+            const HQ_CAPACITY = 68.0;
+            const TRUCK_CAPACITY = 70.0;
+
+            const hqExact = totalM3 / HQ_CAPACITY;
+            const hqFull = Math.floor(hqExact);
+            const hqRemainderPercent = Math.round((hqExact - hqFull) * 100);
+            const totalHq = totalM3 > 0 ? Math.ceil(hqExact) : 0;
+
+            const truckExact = totalM3 / TRUCK_CAPACITY;
+            const truckFull = Math.floor(truckExact);
+            const truckRemainderPercent = Math.round((truckExact - truckFull) * 100);
+            const totalTrucks = totalM3 > 0 ? Math.ceil(truckExact) : 0;
+
+            if (totalHq === 0) {
+                document.getElementById('hqCountText').innerText = "0 Cont. (%0)";
+                document.getElementById('hqProgressFill').style.width = "0%";
+            } else if (hqFull === 0) {
+                document.getElementById('hqCountText').innerText = `1 Cont. (%${hqRemainderPercent} full)`;
+                document.getElementById('hqProgressFill').style.width = `${hqRemainderPercent}%`;
+            } else {
+                document.getElementById('hqCountText').innerText = `${hqFull} Full + 1 Cont. (%${hqRemainderPercent} full) [Total: ${totalHq}]`;
+                document.getElementById('hqProgressFill').style.width = `${hqRemainderPercent}%`;
+            }
+
+            if (totalTrucks === 0) {
+                document.getElementById('truckCountText').innerText = "0 Truck (%0)";
+                document.getElementById('truckProgressFill').style.width = "0%";
+            } else if (truckFull === 0) {
+                document.getElementById('truckCountText').innerText = `1 Truck (%${truckRemainderPercent} full)`;
+                document.getElementById('truckProgressFill').style.width = `${truckRemainderPercent}%`;
+            } else {
+                document.getElementById('truckCountText').innerText = `${truckFull} Full + 1 Truck (%${truckRemainderPercent} full) [Total: ${totalTrucks}]`;
+                document.getElementById('truckProgressFill').style.width = `${truckRemainderPercent}%`;
+            }
+
+            document.getElementById('logisticsMeta').innerText = `Total Vol: ${totalM3.toFixed(2)} m³ | Total Wt: ${totalKg.toFixed(1)} kg`;
         }
 
-        // EXPORT TO EXCEL
-        function exportToExcel() {
+        function toggleCart(forceOpen) {
+            const drawer = document.getElementById('cartDrawer');
+            if (forceOpen) drawer.classList.add('open');
+            else drawer.classList.toggle('open');
+        }
+
+        function toggleSidebar() {
+            const nav = document.getElementById('sidebarNav');
+            const overlay = document.getElementById('sidebarOverlay');
+            const icon = document.getElementById('hamburgerIcon');
+
+            nav.classList.toggle('open');
+            overlay.classList.toggle('active');
+
+            if (nav.classList.contains('open')) {
+                icon.className = "fa-solid fa-xmark";
+            } else {
+                icon.className = "fa-solid fa-bars";
+            }
+        }
+
+        function filterByBrand(b) {
+            activeBrandFilter = b;
+            buildBrandChips();
+            renderProductGrid();
+        }
+
+        function filterByCategory(brand, cat) {
+            activeBrandFilter = brand;
+            activeCategoryFilter = cat;
+            activeFamilyFilter = null;
+            renderProductGrid();
+            toggleSidebar();
+        }
+
+        function filterByFamily(brand, cat, fam) {
+            activeBrandFilter = brand;
+            activeCategoryFilter = cat;
+            activeFamilyFilter = fam;
+            renderProductGrid();
+            toggleSidebar();
+        }
+
+        function applyFilters() { renderProductGrid(); }
+
+        function changeCurrency(curr) {
+            currentCurrency = curr;
+            renderProductGrid();
+            updateCartDisplay();
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.innerText = i18n[lang][key];
+            });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if (i18n[lang][key]) el.placeholder = i18n[lang][key];
+            });
+            buildBrandChips();
+            buildNavigationTree();
+            renderProductGrid();
+        }
+
+        // FOTOĞRAFLI EXCEL EXPORT (EXCELJS)
+        async function exportProformaExcel() {
             if (cart.length === 0) {
-                alert("Proforma listeniz boş!");
+                alert("Sepetiniz boş / Cart is empty!");
                 return;
             }
 
-            const excelData = cart.map(item => ({
-                "Brand": item.brand,
-                "Product Family": item.family,
-                "Dimension / Size": item.size,
-                "Status": item.status,
-                "Height (cm)": item.height,
-                "Product Code": item.code,
-                "Barcode": item.barcode,
-                "HS CODE (GTİP)": item.hsCode,
-                "Qty": item.qty,
-                "Unit Price": item.price + " USD",
-                "Total Price": (item.price * item.qty) + " USD",
-                "Total Vol (m³)": (parseFloat(item.vol) * item.qty).toFixed(3),
-                "Total Wt (kg)": (parseFloat(item.wt) * item.qty).toFixed(2)
-            }));
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Proforma Order');
 
-            const worksheet = XLSX.utils.json_to_sheet(excelData);
-            
-            // Kolon genişlikleri
-            worksheet['!cols'] = [
-                { wch: 15 }, { wch: 15 }, { wch: 18 }, { wch: 10 },
-                { wch: 12 }, { wch: 18 }, { wch: 16 }, { wch: 16 },
-                { wch: 8 },  { wch: 12 }, { wch: 12 }, { wch: 14 }, { wch: 14 }
+            worksheet.columns = [
+                { header: 'Image', key: 'img', width: 15 },
+                { header: 'Brand', key: 'brand', width: 18 },
+                { header: 'Product Family', key: 'family', width: 22 },
+                { header: 'Dimension / Size', key: 'size', width: 16 },
+                { header: 'Status', key: 'status', width: 10 },
+                { header: 'Height (cm)', key: 'height', width: 12 },
+                { header: 'Product Code', key: 'code', width: 18 },
+                { header: 'Barcode', key: 'barcode', width: 16 },
+                { header: 'HS CODE (GTİP)', key: 'gtip', width: 16 },
+                { header: 'Qty', key: 'qty', width: 10 },
+                { header: 'Unit Price', key: 'unitPrice', width: 14 },
+                { header: 'Total Price', key: 'totalPrice', width: 16 },
+                { header: 'Total Vol (m³)', key: 'vol', width: 14 },
+                { header: 'Total Wt (kg)', key: 'wt', width: 14 }
             ];
 
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Proforma Order");
-            XLSX.writeFile(workbook, "Yatas_Proforma_Order_Summary.xlsx");
+            worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
+            worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '002870' } };
+
+            for (let i = 0; i < cart.length; i++) {
+                const item = cart[i];
+                const row = worksheet.addRow({
+                    brand: item.brand,
+                    family: item.family,
+                    size: item.size,
+                    status: item.status,
+                    height: item.height,
+                    code: item.code,
+                    barcode: item.barcode,
+                    gtip: item.gtip,
+                    qty: item.qty,
+                    unitPrice: `${item.unitPrice} ${item.currency}`,
+                    totalPrice: `${(item.qty * item.unitPrice).toFixed(2)} ${item.currency}`,
+                    vol: (item.qty * item.volume).toFixed(3),
+                    wt: (item.qty * item.weight).toFixed(2)
+                });
+
+                row.height = 50;
+
+                try {
+                    const imgResponse = await fetch(item.photoUrl);
+                    const imgBlob = await imgResponse.blob();
+                    const arrayBuffer = await imgBlob.arrayBuffer();
+                    
+                    const imageId = workbook.addImage({
+                        buffer: arrayBuffer,
+                        extension: 'png',
+                    });
+
+                    worksheet.addImage(imageId, {
+                        tl: { col: 0, row: row.number - 1 },
+                        ext: { width: 60, height: 45 }
+                    });
+                } catch (e) {
+                    console.warn("Resim Excel'e eklenemedi:", item.photoUrl);
+                }
+            }
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Yatas_Proforma_Order_${new Date().toISOString().slice(0,10)}.xlsx`;
+            link.click();
         }
     </script>
 </body>
