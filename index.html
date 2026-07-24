@@ -3,47 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Yataş Group - International Experience & B2B Order Portal</title>
+    <title>Yataş International Experience Portal</title>
     
-    <!-- PWA & Mobile Meta -->
+    <!-- PWA Infrastructure -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#020617">
 
-    <!-- Third-Party Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PDF.js Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
     <style>
         :root {
             --primary-blue: #002870;
             --neon-blue: #00d2ff;
-            --accent-gold: #c5a059;
-            --dark-bg: #020617;
-            --glass-bg: rgba(2, 6, 23, 0.92);
+            --book-shadow: 0 25px 55px rgba(0,0,0,0.6);
+            --glass-bg: rgba(2, 6, 23, 0.88);
             --glass-border: rgba(255, 255, 255, 0.08);
-            --card-bg: rgba(0, 40, 112, 0.25);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
         
         body {
-            background: var(--dark-bg);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
+            background: #020617;
             display: flex;
-            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
+            color: #fff;
+            touch-action: none;
         }
 
-        /* BACKGROUND MESH GRADIENT */
+        /* PREMIUM MESH GRADIENT BACKGROUND */
         .premium-bg {
-            position: fixed;
+            position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background: var(--dark-bg);
+            z-index: 1;
+            background: #020617;
             overflow: hidden;
         }
         .premium-bg::before {
@@ -51,300 +52,729 @@
             position: absolute;
             top: -20%; left: -20%; width: 140%; height: 140%;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 40, 112, 0.55) 0%, transparent 45%),
-                radial-gradient(circle at 90% 10%, rgba(0, 210, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 50% 80%, rgba(0, 40, 112, 0.4) 0%, transparent 50%);
+                radial-gradient(circle at 10% 20%, rgba(0, 40, 112, 0.45) 0%, transparent 45%),
+                radial-gradient(circle at 90% 10%, rgba(0, 210, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(0, 40, 112, 0.35) 0%, transparent 50%);
             filter: blur(60px);
-            animation: bgMotion 25s ease-in-out infinite alternate;
+            animation: elegantBgMotion 25s ease-in-out infinite alternate;
         }
-        @keyframes bgMotion {
+        @keyframes elegantBgMotion {
             0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(2%, -3%) scale(1.03); }
-            100% { transform: translate(-2%, 3%) scale(0.98); }
+            50% { transform: translate(2%, -4%) scale(1.05); }
+            100% { transform: translate(-2%, 4%) scale(0.98); }
+        }
+        
+        /* PULSE LOADING SCREEN */
+        #globalLoading { 
+            position: fixed; 
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #002870; 
+            z-index: 10000; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            gap: 20px;
+            transition: opacity 0.5s ease;
         }
 
-        /* HEADER NAVBAR */
-        header {
-            position: sticky; top: 0; z-index: 1000;
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 12px 24px;
-            display: flex; align-items: center; justify-content: space-between;
+        .loading-pulse-logo {
+            width: 180px;
+            height: auto;
+            background: #ffffff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            animation: yatasHeartbeat 1.4s ease-in-out infinite;
         }
 
-        .header-left { display: flex; align-items: center; gap: 16px; }
+        @keyframes yatasHeartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.08); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.13); }
+            70% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
 
-        .hamburger-btn {
-            width: 42px; height: 42px;
-            background: rgba(0, 40, 112, 0.85);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 18px; transition: all 0.3s;
-            z-index: 1002;
+        /* PORTAL WRAPPER */
+        .portal-wrapper {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
             position: relative;
+            z-index: 2;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .hamburger-btn:hover { background: var(--neon-blue); color: var(--primary-blue); }
+
+        /* UPPER LEFT CONTROL PANEL */
+        .header-column {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            z-index: 1001;
+            transition: all 0.4s ease;
+        }
 
         .brand-logo-btn {
-            background: #fff; padding: 6px 14px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            height: 42px; border: none; cursor: pointer;
+            background: #ffffff;
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
         }
-        .brand-logo-btn img { height: 26px; width: auto; object-fit: contain; }
+        .brand-logo-btn:hover {
+            transform: translateY(-2px);
+        }
+        .brand-logo-btn img {
+            height: 24px;
+            width: auto;
+        }
 
-        .header-right { display: flex; align-items: center; gap: 16px; }
-
-        .currency-selector, .lang-selector {
-            background: rgba(0, 40, 112, 0.6);
+        .hamburger-btn {
+            width: 46px;
+            height: 46px;
+            background: rgba(0, 40, 112, 0.85);
             border: 1px solid var(--glass-border);
-            color: #fff; padding: 8px 12px; border-radius: 8px;
-            font-size: 13px; font-weight: 600; cursor: pointer; outline: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 5px;
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .currency-selector option, .lang-selector option { background: var(--dark-bg); color: #fff; }
-
-        .cart-trigger-btn {
-            position: relative;
-            background: linear-gradient(135deg, var(--primary-blue), #0040b0);
-            border: 1px solid rgba(0, 210, 255, 0.3);
-            color: #fff; padding: 8px 18px; border-radius: 30px;
-            font-size: 13px; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.3s;
+        .hamburger-btn:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.05);
         }
-        .cart-trigger-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,210,255,0.3); }
-
-        .cart-badge {
-            background: var(--neon-blue); color: var(--primary-blue);
-            font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 20px;
+        .hamburger-btn span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: #ffffff;
+            transition: 0.3s;
         }
 
-        /* SIDEBAR OVERLAY & NAVIGATION */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.6); backdrop-filter: blur(4px);
-            z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
-        }
-        .sidebar-overlay.active { opacity: 1; visibility: visible; }
-
+        /* SIDEBAR NAVIGATION Drawer */
         .sidebar-nav {
-            position: fixed; left: -340px; top: 0; height: 100vh; width: 320px;
-            background: var(--glass-bg); border-right: 1px solid var(--glass-border);
-            z-index: 1001; padding: 80px 20px 30px 20px;
-            display: flex; flex-direction: column; gap: 15px;
-            backdrop-filter: blur(25px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: fixed;
+            left: -340px;
+            top: 0;
+            height: 100vh;
+            height: 100dvh;
+            width: 320px;
+            background: var(--glass-bg); 
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 150px 24px 24px 24px;
+            box-shadow: 25px 0 50px rgba(0,0,0,0.6);
+            z-index: 1000;
             overflow-y: auto;
+            backdrop-filter: blur(30px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .sidebar-nav.open { left: 0; }
-
-        .sidebar-title {
-            font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
-            color: var(--neon-blue); font-weight: 700; border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 8px; margin-bottom: 10px;
+        .sidebar-nav.menu-open {
+            left: 0;
         }
 
-        .nav-tree-item { margin-bottom: 8px; }
-        .nav-tree-header {
-            padding: 10px 12px; background: rgba(255, 255, 255, 0.04);
-            border-radius: 6px; font-size: 13px; font-weight: 600;
-            display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .nav-tree-header:hover { background: rgba(255, 255, 255, 0.1); }
-        .nav-tree-children { padding-left: 15px; display: none; margin-top: 5px; }
-        .nav-tree-children.active { display: block; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
 
-        .sub-link {
-            padding: 8px 10px; font-size: 12px; color: #cbd5e1;
-            display: block; cursor: pointer; border-radius: 4px; transition: all 0.2s;
-        }
-        .sub-link:hover, .sub-link.active { color: var(--neon-blue); background: rgba(0, 210, 255, 0.1); }
-
-        /* MAIN CONTENT AREA */
-        main { flex: 1; padding: 24px; max-width: 1600px; margin: 0 auto; width: 100%; }
-
-        /* FILTER & SEARCH BAR */
-        .filter-bar {
-            background: rgba(0, 40, 112, 0.3); border: 1px solid var(--glass-border);
-            backdrop-filter: blur(15px); border-radius: 12px; padding: 16px 20px;
-            margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 16px;
-            align-items: center; justify-content: space-between;
+        .brand-subtitle {
+            font-size: 11px;
+            color: #a4c2f4;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            padding-bottom: 12px;
+            font-weight: 700;
         }
 
-        .search-input-box { position: relative; flex: 1; min-width: 280px; }
-        .search-input-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-        .search-input-box input {
-            width: 100%; background: rgba(2, 6, 23, 0.6); border: 1px solid var(--glass-border);
-            padding: 10px 14px 10px 40px; border-radius: 8px; color: #fff; font-size: 13px; outline: none;
-        }
-        .search-input-box input:focus { border-color: var(--neon-blue); }
-
-        .quick-filters { display: flex; gap: 10px; flex-wrap: wrap; }
-        .filter-chip {
-            padding: 6px 14px; background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border); border-radius: 20px;
-            font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
-        }
-        .filter-chip:hover, .filter-chip.active { background: var(--neon-blue); color: var(--primary-blue); }
-
-        /* PRODUCT GRID */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+        .menu-section-title {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            padding-left: 5px;
+            border-left: 3px solid var(--neon-blue);
         }
 
-        .product-card {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 14px; overflow: hidden;
-            display: flex; flex-direction: column;
+        .deck-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .deck-btn {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            color: #ffffff;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .product-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 10px 25px rgba(0, 210, 255, 0.15);
+        .deck-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
         }
-
-        .card-img-wrap {
-            position: relative; width: 100%; height: 210px;
-            background: #000; overflow: hidden; display: flex;
-            align-items: center; justify-content: center;
+        .deck-btn.active-deck {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: #002870; 
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
         }
-        .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
-        .product-card:hover .card-img-wrap img { transform: scale(1.05); }
-
-        .card-badge {
-            position: absolute; top: 10px; right: 10px;
-            background: rgba(0, 40, 112, 0.85); color: var(--neon-blue);
-            font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 4px;
-            backdrop-filter: blur(5px); border: 1px solid var(--glass-border);
+        .deck-btn::before {
+            content: "•";
+            color: var(--neon-blue);
+            font-size: 14px;
         }
-
-        .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .card-brand { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; }
-        .card-title { font-size: 16px; font-weight: 700; margin: 4px 0 8px 0; color: #fff; }
-        .card-meta { font-size: 12px; color: #cbd5e1; margin-bottom: 12px; }
-
-        .card-footer {
-            display: flex; align-items: center; justify-content: space-between;
-            border-top: 1px solid var(--glass-border); padding-top: 12px; margin-top: 8px;
-        }
-        .card-price { font-size: 15px; font-weight: 800; color: var(--neon-blue); }
-        .view-btn {
-            background: #fff; color: var(--primary-blue); border: none;
-            padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .view-btn:hover { background: var(--neon-blue); }
-
-        /* PRODUCT DETAIL MODAL */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(20px);
-            z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-
-        .modal-card {
-            background: #020617; border: 1px solid var(--glass-border);
-            border-radius: 16px; width: 100%; max-width: 900px;
-            max-height: 90vh; overflow-y: auto; display: flex; flex-wrap: wrap;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8); position: relative;
+        .deck-btn.active-deck::before {
+            color: #002870;
         }
 
-        .modal-close {
-            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
-            background: rgba(255,255,255,0.1); border-radius: 50%; border: none;
-            color: #fff; font-size: 16px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;
-        }
-        .modal-close:hover { background: #ef4444; }
-
-        .modal-left { flex: 1; min-width: 320px; background: #000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-left img { max-width: 100%; max-height: 380px; object-fit: contain; }
-
-        .modal-right { flex: 1.2; min-width: 340px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; }
-        .modal-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-        .modal-subtitle { font-size: 12px; color: var(--neon-blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
-
-        .variant-box {
-            background: rgba(0, 40, 112, 0.3); border: 1px solid var(--glass-border);
-            border-radius: 10px; padding: 16px; margin-bottom: 20px;
-        }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 6px; font-weight: 700; }
-        .form-group select {
-            width: 100%; background: #020617; border: 1px solid var(--glass-border);
-            color: #fff; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 600; outline: none;
+        /* WORKSPACE AREA */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            z-index: 5;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .specs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
-        .spec-item { background: rgba(255,255,255,0.03); padding: 8px; border-radius: 6px; text-align: center; }
-        .spec-item span { display: block; font-size: 10px; color: #94a3b8; text-transform: uppercase; }
-        .spec-item strong { font-size: 12px; color: #fff; }
-
-        .qty-row { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .qty-picker { display: flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 6px; }
-        .qty-btn { width: 36px; height: 36px; background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; }
-        .qty-input { width: 50px; text-align: center; background: none; border: none; color: #fff; font-weight: 700; font-size: 14px; }
-
-        .total-price-tag { font-size: 22px; font-weight: 800; color: var(--neon-blue); }
-
-        .add-cart-btn {
-            width: 100%; background: linear-gradient(135deg, var(--neon-blue), #0099ff);
-            color: var(--primary-blue); border: none; padding: 14px; border-radius: 8px;
-            font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+        /* CONTAINER GRID RESTRICTING OVERFLOWS */
+        .main-container {
+            display: flex;
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            gap: 20px;
+            padding: 20px;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .add-cart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 210, 255, 0.3); }
-
-        /* CART DRAWER */
-        .cart-drawer {
-            position: fixed; right: -420px; top: 0; height: 100vh; width: 400px;
-            background: #020617; border-left: 1px solid var(--glass-border);
-            z-index: 2001; padding: 24px; display: flex; flex-direction: column;
-            backdrop-filter: blur(25px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        
+        /* SCENE ZONE */
+        .scene {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            min-height: 0;
+            perspective: 1200px;
+            background: transparent;
+            touch-action: none;
         }
-        .cart-drawer.open { right: 0; }
 
-        .cart-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; }
-        .cart-items-list { flex: 1; overflow-y: auto; padding: 15px 0; display: flex; flex-direction: column; gap: 12px; }
-
-        .cart-item-card {
-            background: rgba(0, 40, 112, 0.25); border: 1px solid var(--glass-border);
-            border-radius: 8px; padding: 10px; display: flex; gap: 12px; align-items: center;
+        /* DYNAMIC SCALING WRAPPER */
+        .pan-zoom-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            transform-origin: center center;
+            will-change: transform;
+            z-index: 10;
+            touch-action: none;
         }
-        .cart-item-card img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
-        .cart-item-info { flex: 1; }
-        .cart-item-info h4 { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-        .cart-item-info p { font-size: 11px; color: #94a3b8; }
-
-        /* LOGISTICS METER STYLES */
-        .logistics-bar-container {
-            background: rgba(0, 40, 112, 0.35); border-radius: 12px; padding: 14px; margin: 12px 0;
-            border: 1px solid var(--glass-border);
+        .pan-zoom-container:active { cursor: grabbing; }
+        
+        /* 3D COVERFLOW ENGINE CONTAINER */
+        .book {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
         }
-        .logistics-title { font-size: 11px; font-weight: 700; color: var(--neon-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-        .logistics-row { margin-bottom: 10px; }
-        .logistics-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: #cbd5e1; }
-        .progress-track { width: 100%; height: 7px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; }
-        .progress-fill-hq { height: 100%; background: linear-gradient(90deg, var(--neon-blue), #0099ff); width: 0%; transition: width 0.3s; }
-        .progress-fill-truck { height: 100%; background: linear-gradient(90deg, var(--accent-gold), #f59e0b); width: 0%; transition: width 0.3s; }
-
-        .cart-footer { border-top: 1px solid var(--glass-border); padding-top: 15px; }
-        .export-excel-btn {
-            width: 100%; background: #10b981; color: #fff; border: none;
-            padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 700;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;
+        
+        /* STANDARD (ANDROID & DESKTOP) 3D PAGE SETUP */
+        .page {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            margin: auto;
+            width: 100%; height: 100%;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s, z-index 0.5s;
+            opacity: 0;
+            pointer-events: none;
         }
-        .export-excel-btn:hover { background: #059669; }
+        
+        .page.active-page {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+            transform: translate3d(0, 0, 10px) scale(1);
+        }
+        
+        .page.turn-next {
+            opacity: 0.35;
+            z-index: 5;
+            transform: translate3d(-40%, 0, 0) rotateY(45deg) scale(0.82);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        
+        .page.turn-prev {
+            opacity: 0.35;
+            z-index: 5;
+            transform: translate3d(40%, 0, 0) rotateY(-45deg) scale(0.82);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
 
-        @media (max-width: 768px) {
-            .cart-drawer { width: 100%; right: -100%; }
-            .modal-card { flex-direction: column; }
-            .modal-left { height: 200px; }
+        .page.hidden-page {
+            display: none;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* iOS SAFARI LITE SYSTEM */
+        body.is-ios-lite .page {
+            transition: none !important;
+            transform: none !important;
+            backface-visibility: visible !important;
+            -webkit-backface-visibility: visible !important;
+        }
+
+        body.is-ios-lite .page.active-page {
+            opacity: 1 !important;
+            display: block !important;
+            pointer-events: auto !important;
+            z-index: 100 !important;
+            transform: translate3d(0,0,0) scale(1) !important;
+        }
+
+        body.is-ios-lite .page.turn-next,
+        body.is-ios-lite .page.turn-prev,
+        body.is-ios-lite .page.hidden-page {
+            display: none !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: 1 !important;
+        }
+
+        /* CONTAINER FOR RENDER PIECE */
+        .canvas-container-layer {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            box-shadow: var(--book-shadow);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #020617; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .base-lowres-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 1;
+            display: block;
+            will-change: transform, opacity;
+            transition: opacity 0.15s ease-in-out;
+        }
+
+        /* FLOATING ARROW OVERLAYS */
+        .nav-overlay-zone {
+            position: absolute;
+            top: 0; height: 100%; width: 100px;
+            z-index: 99;
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none;
+        }
+        .nav-overlay-zone.left-zone { left: 0; }
+        .nav-overlay-zone.right-zone { right: 0; }
+
+        .arrow-btn {
+            width: 54px; height: 54px;
+            background: rgba(0, 40, 112, 0.5);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 20px; cursor: pointer;
+            opacity: 0.65;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(8px);
+            user-select: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            pointer-events: auto;
+        }
+        .arrow-btn:hover {
+            opacity: 1; 
+            transform: scale(1.15);
+            background: #ffffff; 
+            color: #002870;
+            border-color: #ffffff;
+            box-shadow: 0 10px 25px rgba(255,255,255,0.25);
+        }
+        
+        /* DESKTOP SIDEBAR THUMBNAILS */
+        .sidebar-thumbnails {
+            width: 180px;
+            background: rgba(0, 40, 112, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 8px;
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            transition: all 0.5s ease;
+            flex-shrink: 0;
+        }
+        .sidebar-thumbnails::-webkit-scrollbar { width: 4px; }
+        .sidebar-thumbnails::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
+
+        .thumb-box {
+            position: relative; width: 94%; cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 6px;
+            overflow: hidden; transition: all 0.3s ease; opacity: 0.5;
+            background: rgba(255, 255, 255, 0.02); flex-shrink: 0;
+        }
+        .thumb-box:hover { opacity: 0.85; border-color: rgba(255,255,255,0.3); }
+        .thumb-box.active-thumb { border-color: var(--neon-blue); opacity: 1; box-shadow: 0 0 12px rgba(0, 210, 255, 0.3); }
+        .thumb-box canvas { width: 100% !important; height: auto !important; display: block; }
+
+        .thumb-label {
+            position: absolute; bottom: 4px; right: 6px;
+            background: rgba(0,0,0,0.8); color: var(--neon-blue); font-size: 9px;
+            font-weight: bold; padding: 1px 5px; border-radius: 3px;
+        }
+        
+        /* BOTTOM DOCK SYSTEM */
+        .bottom-bar-area {
+            width: 100%; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px;
+            padding: 15px 0; 
+            flex-shrink: 0; 
+            z-index: 101;
+            position: relative;
+            background: rgba(2, 6, 23, 0.85);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .controls-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .controls {
+            display: flex; align-items: center; gap: 12px; 
+            background: rgba(0, 40, 112, 0.85); padding: 10px 24px; border-radius: 50px;
+            backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        
+        .bottom-bar-area button {
+            padding: 6px 14px; font-size: 11px; font-weight: bold; cursor: pointer;
+            background: #fff; color: #002870; border: none; border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .bottom-bar-area button:hover { background: #e5e5e5; transform: scale(1.05); }
+        .bottom-bar-area button:disabled { opacity: 0.2; cursor: not-allowed; transform: none; }
+        
+        .goto-container { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+        .goto-input {
+            width: 40px; padding: 3px 5px; border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.4);
+            color: #fff; text-align: center; font-weight: bold;
+        }
+        #pageIndicator { color: #ffffff; }
+
+        /* SOUND CONTROLLER WRAPPER */
+        .sound-corner {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 105;
+        }
+
+        /* HEADER INTEGRATED SOUND TOGGLE */
+        .header-sound-container {
+            display: none;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .ios-switch-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 40, 112, 0.85);
+            padding: 8px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        }
+
+        .switch-label {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+            user-select: none;
+        }
+
+        .ios-switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 24px;
+        }
+
+        .ios-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .ios-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s cubic-bezier(0.19, 1, 0.22, 1);
+            border-radius: 34px;
+        }
+
+        .ios-slider:before {
+            position: absolute;
+            content: "🔊";
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s cubic-bezier(0.19, 1, 0.22, 1);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        input:checked + .ios-slider {
+            background-color: var(--neon-blue);
+        }
+
+        input:checked + .ios-slider:before {
+            transform: translateX(18px);
+            content: "🔊";
+        }
+
+        input:not(:checked) + .ios-slider:before {
+            content: "🔇";
+            background-color: #f3f4f6;
+        }
+        
+        .hint { 
+            font-size: 11px; 
+            color: rgba(255,255,255,0.4) !important; 
+            font-weight: 500;
+        }
+
+        /* AUTO RESUME SESSION TOAST */
+        #resumeToast {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 40, 112, 0.95);
+            border-left: 4px solid var(--neon-blue);
+            padding: 15px 25px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10005;
+            display: none;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #resumeToast.show {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* RESPONSIVE MOBILE BREAKPOINTS */
+        @media (max-width: 1024px) and (orientation: portrait) {
+            .workspace {
+                height: 100%;
+                padding-top: 90px;
+            }
+            .main-container {
+                flex-direction: column;
+                padding: 10px;
+                gap: 10px;
+                height: calc(100% - 130px);
+            }
+            .scene {
+                flex: 1;
+                width: 100%;
+                height: 0;
+                min-height: 0;
+            }
+            .sidebar-thumbnails {
+                width: 100% !important;
+                height: 65px !important;
+                flex-direction: row !important;
+                padding: 4px 8px !important;
+                gap: 6px !important;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                background: rgba(0, 40, 112, 0.3) !important;
+                border-radius: 8px;
+                flex-shrink: 0;
+            }
+            .thumb-box {
+                width: 70px !important; 
+                height: 48px !important;
+            }
+            .arrow-btn {
+                width: 44px; height: 44px;
+                opacity: 0.7;
+            }
+            .nav-overlay-zone {
+                width: 50px;
+            }
+            .sound-corner {
+                display: none !important;
+            }
+            .header-sound-container {
+                display: flex;
+            }
+            .bottom-bar-area {
+                padding: 10px 0;
+            }
+            .controls {
+                padding: 8px 18px;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 1024px) and (orientation: landscape) {
+            .workspace {
+                height: 100%;
+                padding-top: 0;
+            }
+            .main-container {
+                flex-direction: row;
+                padding: 10px;
+                gap: 10px;
+                height: calc(100% - 70px);
+            }
+            .scene {
+                flex: 1;
+                height: 100%;
+                width: 0;
+                min-width: 0;
+            }
+            .sidebar-thumbnails {
+                width: 90px !important;
+                height: 100% !important;
+                flex-direction: column !important;
+                padding: 6px 4px !important;
+                gap: 8px !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                background: rgba(0, 40, 112, 0.3) !important;
+                border-radius: 8px;
+                flex-shrink: 0;
+            }
+            .thumb-box {
+                width: 100% !important; 
+                height: 50px !important;
+            }
+            .arrow-btn {
+                width: 38px; height: 38px;
+                font-size: 14px;
+            }
+            .nav-overlay-zone {
+                width: 40px;
+            }
+            .bottom-bar-area {
+                padding: 8px 0;
+                height: 60px;
+            }
+            .controls {
+                padding: 6px 15px;
+                gap: 10px;
+            }
+            .hint {
+                display: none;
+            }
+            .sound-corner {
+                display: flex !important;
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            .header-sound-container {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -352,680 +782,663 @@
 
     <div class="premium-bg"></div>
 
-    <!-- HEADER NAVIGATION -->
-    <header>
-        <div class="header-left">
-            <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars" id="hamburgerIcon"></i></button>
-            <button class="brand-logo-btn">
-                <img src="yatas_grup_logo.jpg" alt="Yataş Group" onerror="this.src='https://yatasinternational.github.io/Products-Photos/yatas_logo.png'">
-            </button>
-        </div>
-
-        <div class="header-right">
-            <select class="currency-selector" id="currencySelect" onchange="changeCurrency(this.value)">
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-            </select>
-
-            <select class="lang-selector" id="langSelect" onchange="changeLanguage(this.value)">
-                <option value="TR">TR</option>
-                <option value="EN" selected>EN</option>
-                <option value="DE">DE</option>
-                <option value="RU">RU</option>
-            </select>
-
-            <button class="cart-trigger-btn" onclick="toggleCart()">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span data-i18n="cart">Cart</span>
-                <span class="cart-badge" id="cartBadge">0</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- SIDEBAR OVERLAY & DRAWER -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-    <div class="sidebar-nav" id="sidebarNav">
-        <div class="sidebar-title" data-i18n="categories">Categories</div>
-        <div id="navigationTree"></div>
+    <!-- GLOBAL LOADING PULSE SCREEN -->
+    <div id="globalLoading">
+        <img src="yatas_grup_logo.png" alt="Yataş Group" class="loading-pulse-logo">
     </div>
 
-    <!-- MAIN CONTENT AREA -->
-    <main>
-        <!-- SEARCH & FILTER BAR -->
-        <div class="filter-bar">
-            <div class="search-input-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Search product family or description..." oninput="applyFilters()" data-i18n-ph="search_placeholder">
-            </div>
+    <!-- UPPER LEFT CONTROL BUTTONS -->
+    <div class="header-column">
+        <button class="brand-logo-btn" onclick="toggleMenu()">
+            <img src="yatas_grup_logo.png" alt="Yataş Group Logo">
+        </button>
+        <button class="hamburger-btn" id="menuHamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
 
-            <div class="quick-filters" id="brandFilterChips">
-                <div class="filter-chip active" onclick="filterByBrand('ALL')" data-i18n="all_brands">All Brands</div>
-            </div>
-        </div>
-
-        <!-- PRODUCT GRID -->
-        <div class="product-grid" id="productGrid"></div>
-    </main>
-
-    <!-- PRODUCT DETAIL MODAL -->
-    <div class="modal-overlay" id="productModal">
-        <div class="modal-card">
-            <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-            <div class="modal-left">
-                <img id="modalImg" src="" alt="Product Image">
-            </div>
-            <div class="modal-right">
-                <div class="modal-header">
-                    <div class="modal-subtitle" id="modalBrandCategory">Yataş Bedding | Yatak</div>
-                    <h2 id="modalFamilyTitle">Activio</h2>
-                </div>
-
-                <div class="variant-box">
-                    <div class="form-group">
-                        <label data-i18n="select_size">SELECT DIMENSION / SIZE</label>
-                        <select id="sizeSelect" onchange="onSizeChange()"></select>
-                    </div>
-
-                    <div class="specs-grid">
-                        <div class="spec-item">
-                            <span data-i18n="gtip">HS CODE</span>
-                            <strong id="specGtip">-</strong>
-                        </div>
-                        <div class="spec-item">
-                            <span data-i18n="volume">VOLUME</span>
-                            <strong id="specVolume">0 m³</strong>
-                        </div>
-                        <div class="spec-item">
-                            <span data-i18n="weight">WEIGHT</span>
-                            <strong id="specWeight">0 kg</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="qty-row">
-                        <div class="qty-picker">
-                            <button class="qty-btn" onclick="updateModalQty(-1)">-</button>
-                            <input type="text" class="qty-input" id="modalQty" value="1" readonly>
-                            <button class="qty-btn" onclick="updateModalQty(1)">+</button>
-                        </div>
-                        <div class="total-price-tag" id="modalTotalPrice">$0</div>
-                    </div>
-
-                    <button class="add-cart-btn" onclick="addCurrentToCart()">
-                        <i class="fa-solid fa-cart-plus"></i> <span data-i18n="add_to_cart">Add to Proforma Order</span>
-                    </button>
-                </div>
+        <!-- Dynamic Header Switch for Portrait Mobile -->
+        <div class="header-sound-container" id="headerSoundContainer">
+            <div class="ios-switch-container">
+                <span class="switch-label">Sound</span>
+                <label class="ios-switch">
+                    <input type="checkbox" class="audioToggleBtnClass" checked>
+                    <span class="ios-slider"></span>
+                </label>
             </div>
         </div>
     </div>
 
-    <!-- CART & PROFORMA DRAWER -->
-    <div class="cart-drawer" id="cartDrawer">
-        <div class="cart-header">
-            <h3 data-i18n="cart_title"><i class="fa-solid fa-file-invoice-dollar"></i> Proforma Order Summary</h3>
-            <button class="modal-close" onclick="toggleCart()" style="position:static;"><i class="fa-solid fa-xmark"></i></button>
+    <!-- RESUME LAST SESSION TOAST -->
+    <div id="resumeToast">Welcome back! You're being redirected to your last viewed page.</div>
+    
+    <div class="portal-wrapper" id="portalWrapper">
+        
+        <!-- MAIN DRAWER NAVIGATION SIDEBAR -->
+        <div class="sidebar-nav" id="sidebarNav">
+            <div class="brand-subtitle">yataş ınternatıonal</div>
+            
+            <div class="menu-section-title">Catalogues</div>
+            <ul class="deck-list" id="cataloguesList"></ul>
+
+            <div class="menu-section-title">Download Lınks</div>
+            <ul class="deck-list" id="downloadList"></ul>
         </div>
 
-        <div class="cart-items-list" id="cartItemsList"></div>
+        <div class="workspace" id="workspace">
+            <div class="main-container" id="mainContainer">
+                <div class="scene" id="scene">
+                    
+                    <div id="zoomContainer" class="pan-zoom-container">
+                        <div id="book" class="book"></div>
+                    </div>
 
-        <!-- DUAL LOGISTICS CALCULATOR (40' HQ & 70m3 TRUCK) -->
-        <div class="logistics-bar-container">
-            <div class="logistics-title">
-                <i class="fa-solid fa-truck-ramp-box"></i> <span data-i18n="logistics_calc">LOGISTICS & VEHICLE CAPACITY</span>
+                    <!-- FLOATING ARROW OVERLAYS -->
+                    <div class="nav-overlay-zone left-zone" id="zoneLeft">
+                        <div class="arrow-btn" id="overlayPrevBtn">&#10094;</div>
+                    </div>
+
+                    <div class="nav-overlay-zone right-zone" id="zoneRight">
+                        <div class="arrow-btn" id="overlayNextBtn">&#10095;</div>
+                    </div>
+
+                </div>
+
+                <!-- SLIDABLE PREVIEW THUMBNAILS PANEL -->
+                <div class="sidebar-thumbnails" id="sidebarThumbnails"></div>
             </div>
 
-            <!-- 40' HQ CONTAINER -->
-            <div class="logistics-row">
-                <div class="logistics-label">
-                    <span><i class="fa-solid fa-ship"></i> 40' HQ Container (68 m³)</span>
-                    <strong id="hqCountText">0 Cont. (%0)</strong>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill-hq" id="hqProgressFill"></div>
-                </div>
-            </div>
+            <!-- LOWER DOCK CONTROL SYSTEM -->
+            <div class="bottom-bar-area" id="bottomBarArea">
+                <div class="controls-wrapper">
+                    <div class="controls">
+                        <button id="prevBtn" disabled>◀ Prev</button>
+                        <div class="goto-container">
+                            <input type="text" id="gotoInput" class="goto-input" value="1">
+                            <span id="pageIndicator">/ 0</span>
+                        </div>
+                        <button id="nextBtn">Next ▶</button>
+                        <button id="zoomInBtn">🔍 +</button>
+                        <button id="zoomOutBtn">🔍 -</button>
+                    </div>
 
-            <!-- 70 m³ TRUCK -->
-            <div class="logistics-row">
-                <div class="logistics-label">
-                    <span><i class="fa-solid fa-truck-front"></i> Standard Truck (70 m³)</span>
-                    <strong id="truckCountText">0 Truck (%0)</strong>
+                    <!-- ACCESSIBLE SYSTEM AUDIO TOGGLE (Desktop & Landscape) -->
+                    <div class="sound-corner" id="footerSoundContainer">
+                        <div class="ios-switch-container">
+                            <span class="switch-label">Sound FX</span>
+                            <label class="ios-switch">
+                                <input type="checkbox" class="audioToggleBtnClass" checked>
+                                <span class="ios-slider"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                <div class="progress-track">
-                    <div class="progress-fill-truck" id="truckProgressFill"></div>
-                </div>
-            </div>
-
-            <div style="font-size:10px; color:#94a3b8; border-top: 1px dashed var(--glass-border); padding-top: 6px;" id="logisticsMeta">
-                Total Vol: 0.00 m³ | Total Wt: 0.0 kg
+                <div class="hint">Scroll mouse or pinch screens to zoom. Swipe to change slides.</div>
             </div>
         </div>
 
-        <div class="cart-footer">
-            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:16px; margin-bottom:15px;">
-                <span data-i18n="grand_total">Grand Total:</span>
-                <span id="cartGrandTotal" style="color:var(--neon-blue);">$0</span>
-            </div>
-
-            <button class="export-excel-btn" onclick="exportProformaExcel()">
-                <i class="fa-solid fa-file-excel"></i> <span data-i18n="export_excel">Export Excel Order with Photos</span>
-            </button>
-        </div>
     </div>
 
     <script>
-        // UI DICTIONARY
-        const i18n = {
-            TR: {
-                cart: "Sepet", categories: "Kategoriler", all_brands: "Tüm Markalar",
-                search_placeholder: "Ürün ailesi veya malzeme tanımı arayın...",
-                select_size: "ÖLÇÜ / EBAT SEÇİNİZ", gtip: "GTİP KODU", volume: "BİRİM HACİM", weight: "BİRİM AĞIRLIK",
-                add_to_cart: "Siparişe Ekle", cart_title: "Proforma Sipariş Özeti",
-                logistics_calc: "LOJİSTİK KAPASİTE VE ARAÇ HESABI", grand_total: "Genel Toplam:",
-                export_excel: "Fotoğraflı Excel Sipariş Listesi İndir", from: "başlayan fiyatlar"
-            },
-            EN: {
-                cart: "Cart", categories: "Categories", all_brands: "All Brands",
-                search_placeholder: "Search product family or description...",
-                select_size: "SELECT DIMENSION / SIZE", gtip: "HS CODE", volume: "UNIT VOL", weight: "UNIT WT",
-                add_to_cart: "Add to Proforma Order", cart_title: "Proforma Order Summary",
-                logistics_calc: "LOGISTICS & VEHICLE CAPACITY", grand_total: "Grand Total:",
-                export_excel: "Export Excel Order with Photos", from: "from"
-            },
-            DE: {
-                cart: "Warenkorb", categories: "Kategorien", all_brands: "Alle Marken",
-                search_placeholder: "Produktfamilie oder Beschreibung suchen...",
-                select_size: "GRÖSSE WÄHLEN", gtip: "HS CODE", volume: "VOLUMEN", weight: "GEWICHT",
-                add_to_cart: "In die Proforma-Bestellung", cart_title: "Proforma-Bestellübersicht",
-                logistics_calc: "LOGISTIK- UND FAHRZEUGKAPAZITÄT", grand_total: "Gesamtsumme:",
-                export_excel: "Excel-Bestellung mit Fotos exportieren", from: "ab"
-            },
-            RU: {
-                cart: "Корзина", categories: "Категории", all_brands: "Все бренды",
-                search_placeholder: "Поиск семейства продуктов...",
-                select_size: "ВЫБЕРИТЕ РАЗМЕР", gtip: "ТН ВЭД", volume: "ОБЪЕМ", weight: "ВЕС",
-                add_to_cart: "Добавить в заказ", cart_title: "Сводка Проформа-Заказа",
-                logistics_calc: "ЛОГИСТИКА И ЕМКОСТЬ ТRANSPORTA", grand_total: "Итого:",
-                export_excel: "Скачать Excel с фото", from: "от"
-            }
-        };
-
-        // AUTOMATIC WORD & CATEGORY TRANSLATION DICTIONARY
-        const termTranslations = {
-            "Yatak": { EN: "Mattress", DE: "Matratze", RU: "Матрас" },
-            "Baza": { EN: "Base / Boxspring", DE: "Bettkasten", RU: "Основание" },
-            "Başlık": { EN: "Headboard", DE: "Kopfteil", RU: "Изголовье" },
-            "Yastık": { EN: "Pillow", DE: "Kissen", RU: "Подушка" },
-            "Yorgan": { EN: "Duvet", DE: "Bettdecke", RU: "Одеяло" },
-            "Alez": { EN: "Mattress Protector", DE: "Matratzenschoner", RU: "Наматрасник" },
-            "Set": { EN: "Bed Set", DE: "Bett-Set", RU: "Комплект" },
-            "Sünger Yatak": { EN: "Foam Mattress", DE: "Schaumstoffmatratze", RU: "Поролоновый матрас" },
-            "Yaylı Yatak": { EN: "Spring Mattress", DE: "Federkernmatratze", RU: "Пружинный матрас" },
-            "Bebek Yatağı": { EN: "Baby Mattress", DE: "Babymatratze", RU: "Детский матрас" },
-            "Visco Yatak": { EN: "Visco Mattress", DE: "Visco-Matratze", RU: "Матрас Visco" },
-            "Mobilya": { EN: "Furniture", DE: "Möbel", RU: "Мебель" },
-            "Tekstil": { EN: "Textile", DE: "Textilien", RU: "Текстиль" },
-            "Ev Tekstili": { EN: "Home Textile", DE: "Heimtextilien", RU: "Домашний текстиль" },
-            "Genel": { EN: "General", DE: "Allgemein", RU: "Общие" }
-        };
-
-        function autoTranslateText(text, targetLang) {
-            if (!text || targetLang === 'TR') return text;
-
-            let translated = text;
-            for (const [trTerm, langMap] of Object.entries(termTranslations)) {
-                if (langMap[targetLang]) {
-                    const regex = new RegExp(`\\b${trTerm}\\b`, 'gi');
-                    translated = translated.replace(regex, langMap[targetLang]);
-                }
-            }
-            return translated;
+        // Tarayıcının iOS olup olmadığını kontrol et
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        
+        if (isIOS) {
+            document.body.classList.add('is-ios-lite');
+            console.log("iOS LITE Engine Activated - High Quality Rendering Enabled without 3D Transformations");
         }
 
-        let currentLang = 'EN';
-        let currentCurrency = 'USD';
-        let rawProducts = [];
-        let productFamilies = {};
-        let activeBrandFilter = 'ALL';
-        let activeCategoryFilter = null;
-        let activeFamilyFilter = null;
-        let cart = [];
+        // Özelleştirilmiş veriler (Catalogues & Download Links)
+        const presentationData = {
+            catalogues: [
+                { title: "Yataş Bedding July 2026 USD", url: "BEDDING_JULY2026_DOLAR_HIGH.pdf" },
+                { title: "Yataş Bedding July 2026 EUR", url: "BEDDING_JULY2026_EURO_HIGH.pdf" }
+            ],
+            downloadLinks: [
+                { title: "YB July 2026 USD High Resolution", url: "https://we.tl/t-hHbsYtkAQv63LRYm", isLink: true },
+                { title: "YB July 2026 EUR High Resolution", url: "https://we.tl/t-xABOnqmf2pMj3dhK", isLink: true }
+            ]
+        };
 
-        let currentActiveFamily = null;
-        let currentSelectedVariant = null;
+        const presentations = [...presentationData.catalogues, ...presentationData.downloadLinks];
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            await loadExcelData();
+        let currentActivePresentationIndex = 0;
+        let currentId = 0; 
+        let pages = [];
+        let thumbElements = [];
+        let pdfDoc = null;
+        
+        // ZOOM / PAN STATE CONTROL
+        let scale = 1; 
+        let posX = 0; 
+        let posY = 0;
+        let isDragging = false; 
+        let startX; 
+        let startY;
+        
+        // TOUCH ENGINE MULTI-TOUCH TRACKING
+        let initialPinchDist = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isPinching = false;
+
+        let isSoundOn = true;
+        let renderTimeout = null;
+
+        const transitionSound = new Audio('glossy_magazine.mp3');
+
+        // CACHED ELEMENTS
+        const zoomContainer = document.getElementById('zoomContainer');
+        const book = document.getElementById('book');
+        const scene = document.getElementById('scene');
+        const sidebarThumbnails = document.getElementById('sidebarThumbnails');
+        const gotoInput = document.getElementById('gotoInput');
+        const cataloguesList = document.getElementById('cataloguesList');
+        const downloadList = document.getElementById('downloadList');
+        const globalLoading = document.getElementById('globalLoading');
+        const sidebarNav = document.getElementById('sidebarNav');
+        const menuHamburger = document.getElementById('menuHamburger');
+
+        function unlockAudioEngine() {
+            transitionSound.play().then(() => {
+                transitionSound.pause();
+                transitionSound.currentTime = 0;
+            }).catch(e => {});
+            window.removeEventListener('click', unlockAudioEngine);
+            window.removeEventListener('touchstart', unlockAudioEngine);
+        }
+        window.addEventListener('click', unlockAudioEngine);
+        window.addEventListener('touchstart', unlockAudioEngine);
+
+        function playPaperSound() {
+            if (!isSoundOn) return;
+            try {
+                transitionSound.currentTime = 0;
+                transitionSound.play();
+            } catch (e) {}
+        }
+
+        function injectWatermark(context, width, height) {
+            context.save();
+            context.font = "bold " + Math.floor(width / 24) + "px 'Segoe UI', Arial, sans-serif";
+            context.fillStyle = "rgba(255, 255, 255, 0.05)";
+            context.textBaseline = "middle";
+            context.translate(width / 2, height / 2);
+            context.rotate(-Math.PI / 6);
+            context.fillText("© YATAŞ GROUP - ALL RIGHTS RESERVED", 0, 0);
+            context.restore();
+        }
+
+        function toggleMenu() { sidebarNav.classList.toggle('menu-open'); }
+        menuHamburger.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
+        document.addEventListener('click', (e) => {
+            if (!sidebarNav.contains(e.target) && !e.target.closest('.header-column')) {
+                sidebarNav.classList.remove('menu-open');
+            }
         });
 
-        async function loadExcelData() {
-            try {
-                // Hem tr.xlsx hem de tr_yeni.xlsx için geriye dönük uyumluluk kontrolü
-                let response = await fetch('tr.xlsx');
-                if (!response.ok) {
-                    response = await fetch('tr_yeni.xlsx');
-                }
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                rawProducts = XLSX.utils.sheet_to_json(firstSheet);
-                
-                processRawData();
-                buildBrandChips();
-                buildNavigationTree();
-                renderProductGrid();
-            } catch (err) {
-                console.error("Excel dosyası okunamadı:", err);
-            }
-        }
+        document.querySelectorAll('.audioToggleBtnClass').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                isSoundOn = this.checked;
+                document.querySelectorAll('.audioToggleBtnClass').forEach(other => { other.checked = isSoundOn; });
+            });
+        });
 
-        function processRawData() {
-            productFamilies = {};
-            rawProducts.forEach(item => {
-                const familyName = item['Ürün Ailesi'] || item['Malzeme Tanım'] || 'Diğer';
-                const descText = item['Malzeme Tanım'] || item['Ürün Ailesi'] + ' ' + (item['Ölçü'] || '');
-                
-                if (!productFamilies[familyName]) {
-                    productFamilies[familyName] = {
-                        familyName: familyName,
-                        brand: item['Marka'] || 'Yataş Group',
-                        category: item['Kategori'] || 'Genel',
-                        productType: item['Ürün Tipi'] || 'Genel',
-                        photoUrl: item['Foto weblink'] || '',
-                        variants: []
-                    };
-                }
-                productFamilies[familyName].variants.push({
-                    code: item['Ürün Kodu'],
-                    size: item['Ölçü'] || '-',
-                    desc: descText,
-                    usdPrice: parseFloat(item['Birim USD Fiyat']) || 0,
-                    eurPrice: parseFloat(item['Birim EUR Fiyat']) || 0,
-                    height: item['Yükseklik CM'] || 0,
-                    barcode: item['Barkod'],
-                    gtip: item['GTIP'] || '-',
-                    volume: parseFloat(item['Birim Hacim M3']) || 0,
-                    weight: parseFloat(item['Birim Ağırlık KG']) || 0
-                });
+        function buildSidebarMenu() {
+            cataloguesList.innerHTML = ""; downloadList.innerHTML = "";
+            let globalIdx = 0;
+
+            presentationData.catalogues.forEach((deck) => {
+                const currentIdx = globalIdx;
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.className = `deck-btn ${currentIdx === 0 ? 'active-deck' : ''}`;
+                btn.innerText = deck.title;
+                btn.setAttribute('data-index', currentIdx);
+                btn.addEventListener('click', () => { switchPresentation(currentIdx); sidebarNav.classList.remove('menu-open'); });
+                li.appendChild(btn); cataloguesList.appendChild(li); globalIdx++;
+            });
+
+            presentationData.downloadLinks.forEach((deck) => {
+                const currentIdx = globalIdx;
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.className = `deck-btn`;
+                btn.innerText = deck.title;
+                btn.setAttribute('data-index', currentIdx);
+                btn.addEventListener('click', () => { switchPresentation(currentIdx); sidebarNav.classList.remove('menu-open'); });
+                li.appendChild(btn); downloadList.appendChild(li); globalIdx++;
             });
         }
 
-        function buildBrandChips() {
-            const brands = ['ALL', ...new Set(rawProducts.map(i => i['Marka']).filter(Boolean))];
-            const chipContainer = document.getElementById('brandFilterChips');
-            chipContainer.innerHTML = brands.map(b => `
-                <div class="filter-chip ${b === activeBrandFilter ? 'active' : ''}" onclick="filterByBrand('${b}')">
-                    ${b === 'ALL' ? i18n[currentLang].all_brands : b}
-                </div>
-            `).join('');
-        }
-
-        function buildNavigationTree() {
-            const tree = {};
-            rawProducts.forEach(i => {
-                const b = i['Marka'] || 'Yataş';
-                const c = i['Kategori'] || 'Genel';
-                const fam = i['Ürün Ailesi'] || i['Malzeme Tanım'] || 'Diğer';
-                
-                if (!tree[b]) tree[b] = {};
-                if (!tree[b][c]) tree[b][c] = new Set();
-                tree[b][c].add(fam);
-            });
-
-            const navContainer = document.getElementById('navigationTree');
-            let html = '';
-            for (const [brand, categories] of Object.entries(tree)) {
-                html += `<div class="nav-tree-item">
-                    <div class="nav-tree-header" onclick="toggleNavAccordion(this)">
-                        <span><i class="fa-solid fa-layer-group"></i> ${brand}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="nav-tree-children">`;
-                for (const [cat, families] of Object.entries(categories)) {
-                    const translatedCat = autoTranslateText(cat, currentLang);
-                    html += `<div style="margin: 4px 0;">
-                        <span class="sub-link" style="font-weight:700; color:var(--neon-blue);" onclick="filterByCategory('${brand}', '${cat}')">📂 ${translatedCat}</span>`;
-                    
-                    Array.from(families).slice(0, 20).forEach(fam => {
-                        html += `<span class="sub-link" style="padding-left:18px;" onclick="filterByFamily('${brand}', '${cat}', '${fam}')">• ${fam}</span>`;
-                    });
-                    html += `</div>`;
-                }
-                html += `</div></div>`;
-            }
-            navContainer.innerHTML = html;
-        }
-
-        function toggleNavAccordion(el) { el.nextElementSibling.classList.toggle('active'); }
-
-        async function renderProductGrid() {
-            const grid = document.getElementById('productGrid');
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-
-            let families = Object.values(productFamilies);
-
-            families = families.filter(f => {
-                const matchBrand = (activeBrandFilter === 'ALL' || f.brand === activeBrandFilter);
-                const matchCat = (!activeCategoryFilter || f.category === activeCategoryFilter);
-                const matchFam = (!activeFamilyFilter || f.familyName === activeFamilyFilter);
-                const matchSearch = (f.familyName.toLowerCase().includes(searchVal) || f.variants.some(v => v.desc.toLowerCase().includes(searchVal)));
-                return matchBrand && matchCat && matchFam && matchSearch;
-            });
-
-            grid.innerHTML = families.map(f => {
-                const minPrice = Math.min(...f.variants.map(v => currentCurrency === 'USD' ? v.usdPrice : v.eurPrice));
-                const currencySymbol = currentCurrency === 'USD' ? '$' : '€';
-                const translatedCat = autoTranslateText(f.category, currentLang);
-                const translatedType = autoTranslateText(f.productType, currentLang);
-                const fromLabel = i18n[currentLang].from || 'from';
-
-                return `
-                <div class="product-card">
-                    <div class="card-img-wrap">
-                        <img src="${f.photoUrl}" alt="${f.familyName}" onerror="this.src='https://via.placeholder.com/300x200?text=Yatas+Bedding'">
-                        <div class="card-badge">${f.variants.length} Sizes</div>
-                    </div>
-                    <div class="card-body">
-                        <div>
-                            <div class="card-brand">${f.brand} | ${translatedCat}</div>
-                            <h3 class="card-title">${f.familyName}</h3>
-                            <div class="card-meta">${translatedType}</div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="card-price">${fromLabel} ${currencySymbol}${minPrice}</div>
-                            <button class="view-btn" onclick="openProductModal('${f.familyName}')">Configure</button>
-                        </div>
-                    </div>
-                </div>
-            `}).join('');
-        }
-
-        function openProductModal(familyName) {
-            currentActiveFamily = productFamilies[familyName];
-            const translatedCat = autoTranslateText(currentActiveFamily.category, currentLang);
-            const translatedType = autoTranslateText(currentActiveFamily.productType, currentLang);
-
-            document.getElementById('modalFamilyTitle').innerText = currentActiveFamily.familyName;
-            document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${translatedCat} (${translatedType})`;
-            document.getElementById('modalImg').src = currentActiveFamily.photoUrl;
-
-            const sizeSelect = document.getElementById('sizeSelect');
-            sizeSelect.innerHTML = currentActiveFamily.variants.map((v, idx) => {
-                const translatedDesc = autoTranslateText(v.desc, currentLang);
-                return `<option value="${idx}">${v.size} - ${translatedDesc}</option>`;
-            }).join('');
-
-            document.getElementById('modalQty').value = 1;
-            onSizeChange();
-            document.getElementById('productModal').classList.add('active');
-        }
-
-        function onSizeChange() {
-            const idx = document.getElementById('sizeSelect').value;
-            currentSelectedVariant = currentActiveFamily.variants[idx];
-
-            document.getElementById('specGtip').innerText = currentSelectedVariant.gtip;
-            document.getElementById('specVolume').innerText = `${currentSelectedVariant.volume} m³`;
-            document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
-
-            updateModalPrice();
-        }
-
-        function updateModalQty(delta) {
-            const qtyInput = document.getElementById('modalQty');
-            let val = parseInt(qtyInput.value) + delta;
-            if (val < 1) val = 1;
-            qtyInput.value = val;
-            updateModalPrice();
-        }
-
-        function updateModalPrice() {
-            const qty = parseInt(document.getElementById('modalQty').value);
-            const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
-            const symbol = currentCurrency === 'USD' ? '$' : '€';
-            document.getElementById('modalTotalPrice').innerText = `${symbol}${(unitPrice * qty).toFixed(2)}`;
-        }
-
-        function closeModal() { document.getElementById('productModal').classList.remove('active'); }
-
-        function addCurrentToCart() {
-            const qty = parseInt(document.getElementById('modalQty').value);
-            const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
-
-            const existingIndex = cart.findIndex(i => i.code === currentSelectedVariant.code && i.currency === currentCurrency);
-            if (existingIndex > -1) {
-                cart[existingIndex].qty += qty;
-            } else {
-                cart.push({
-                    family: currentActiveFamily.familyName,
-                    brand: currentActiveFamily.brand,
-                    photoUrl: currentActiveFamily.photoUrl,
-                    code: currentSelectedVariant.code,
-                    size: currentSelectedVariant.size,
-                    desc: currentSelectedVariant.desc,
-                    gtip: currentSelectedVariant.gtip,
-                    volume: currentSelectedVariant.volume,
-                    weight: currentSelectedVariant.weight,
-                    qty: qty,
-                    unitPrice: unitPrice,
-                    currency: currentCurrency
-                });
-            }
-
-            closeModal();
-            updateCartDisplay();
-            toggleCart(true);
-        }
-
-        function updateCartDisplay() {
-            document.getElementById('cartBadge').innerText = cart.reduce((acc, i) => acc + i.qty, 0);
-
-            const list = document.getElementById('cartItemsList');
-            let totalVal = 0;
-            let totalM3 = 0;
-            let totalKg = 0;
-
-            list.innerHTML = cart.map((item, idx) => {
-                const itemTotal = item.qty * item.unitPrice;
-                totalVal += itemTotal;
-                totalM3 += item.qty * item.volume;
-                totalKg += item.qty * item.weight;
-                const symbol = item.currency === 'USD' ? '$' : '€';
-
-                return `
-                <div class="cart-item-card">
-                    <img src="${item.photoUrl}" onerror="this.src='https://via.placeholder.com/50'">
-                    <div class="cart-item-info">
-                        <h4>${item.family} (${item.size})</h4>
-                        <p>${item.qty} x ${symbol}${item.unitPrice} = <strong>${symbol}${itemTotal.toFixed(2)}</strong></p>
-                    </div>
-                    <button style="background:none; border:none; color:#ef4444; cursor:pointer;" onclick="removeFromCart(${idx})"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `}).join('');
-
-            const mainSymbol = currentCurrency === 'USD' ? '$' : '€';
-            document.getElementById('cartGrandTotal').innerText = `${mainSymbol}${totalVal.toFixed(2)}`;
-
-            calculateLogistics(totalM3, totalKg);
-        }
-
-        function calculateLogistics(totalM3, totalKg) {
-            const HQ_CAPACITY = 68.0;
-            const TRUCK_CAPACITY = 70.0;
-
-            const hqExact = totalM3 / HQ_CAPACITY;
-            const hqFull = Math.floor(hqExact);
-            const hqRemainderPercent = Math.round((hqExact - hqFull) * 100);
-            const totalHq = totalM3 > 0 ? Math.ceil(hqExact) : 0;
-
-            const truckExact = totalM3 / TRUCK_CAPACITY;
-            const truckFull = Math.floor(truckExact);
-            const truckRemainderPercent = Math.round((truckExact - truckFull) * 100);
-            const totalTrucks = totalM3 > 0 ? Math.ceil(truckExact) : 0;
-
-            if (totalHq === 0) {
-                document.getElementById('hqCountText').innerText = "0 Cont. (%0)";
-                document.getElementById('hqProgressFill').style.width = "0%";
-            } else if (hqFull === 0) {
-                document.getElementById('hqCountText').innerText = `1 Cont. (%${hqRemainderPercent} full)`;
-                document.getElementById('hqProgressFill').style.width = `${hqRemainderPercent}%`;
-            } else {
-                document.getElementById('hqCountText').innerText = `${hqFull} Full + 1 Cont. (%${hqRemainderPercent} full) [Total: ${totalHq}]`;
-                document.getElementById('hqProgressFill').style.width = `${hqRemainderPercent}%`;
-            }
-
-            if (totalTrucks === 0) {
-                document.getElementById('truckCountText').innerText = "0 Truck (%0)";
-                document.getElementById('truckProgressFill').style.width = "0%";
-            } else if (truckFull === 0) {
-                document.getElementById('truckCountText').innerText = `1 Truck (%${truckRemainderPercent} full)`;
-                document.getElementById('truckProgressFill').style.width = `${truckRemainderPercent}%`;
-            } else {
-                document.getElementById('truckCountText').innerText = `${truckFull} Full + 1 Truck (%${truckRemainderPercent} full) [Total: ${totalTrucks}]`;
-                document.getElementById('truckProgressFill').style.width = `${truckRemainderPercent}%`;
-            }
-
-            document.getElementById('logisticsMeta').innerText = `Total Vol: ${totalM3.toFixed(2)} m³ | Total Wt: ${totalKg.toFixed(1)} kg`;
-        }
-
-        function removeFromCart(idx) { cart.splice(idx, 1); updateCartDisplay(); }
-        function toggleCart(forceOpen) {
-            const drawer = document.getElementById('cartDrawer');
-            if (forceOpen) drawer.classList.add('open');
-            else drawer.classList.toggle('open');
-        }
-
-        function toggleSidebar() {
-            const nav = document.getElementById('sidebarNav');
-            const overlay = document.getElementById('sidebarOverlay');
-            const icon = document.getElementById('hamburgerIcon');
-
-            nav.classList.toggle('open');
-            overlay.classList.toggle('active');
-
-            if (nav.classList.contains('open')) {
-                icon.className = "fa-solid fa-xmark";
-            } else {
-                icon.className = "fa-solid fa-bars";
-            }
-        }
-
-        function filterByBrand(b) {
-            activeBrandFilter = b;
-            buildBrandChips();
-            renderProductGrid();
-        }
-
-        function filterByCategory(brand, cat) {
-            activeBrandFilter = brand;
-            activeCategoryFilter = cat;
-            activeFamilyFilter = null;
-            renderProductGrid();
-            toggleSidebar();
-        }
-
-        function filterByFamily(brand, cat, fam) {
-            activeBrandFilter = brand;
-            activeCategoryFilter = cat;
-            activeFamilyFilter = fam;
-            renderProductGrid();
-            toggleSidebar();
-        }
-
-        function applyFilters() { renderProductGrid(); }
-
-        function changeCurrency(curr) {
-            currentCurrency = curr;
-            renderProductGrid();
-            updateCartDisplay();
-        }
-
-        function changeLanguage(lang) {
-            currentLang = lang;
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18n[lang][key]) el.innerText = i18n[lang][key];
-            });
-            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-                const key = el.getAttribute('data-i18n-ph');
-                if (i18n[lang][key]) el.placeholder = i18n[lang][key];
-            });
-            buildBrandChips();
-            buildNavigationTree();
-            renderProductGrid();
-        }
-
-        async function exportProformaExcel() {
-            if (cart.length === 0) {
-                alert("Sepetiniz boş / Cart is empty!");
+        async function switchPresentation(index, targetSavedPage = 0) {
+            const item = presentations[index];
+            if (item.isLink) {
+                window.open(item.url, '_blank');
                 return;
             }
 
-            const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet('Proforma Order');
+            currentActivePresentationIndex = index;
+            localStorage.setItem('yatas_last_presentation', index);
 
-            worksheet.columns = [
-                { header: 'Image', key: 'img', width: 15 },
-                { header: 'Brand', key: 'brand', width: 18 },
-                { header: 'Product Family', key: 'family', width: 22 },
-                { header: 'Dimension / Size', key: 'size', width: 16 },
-                { header: 'Product Code', key: 'code', width: 18 },
-                { header: 'HS CODE (GTİP)', key: 'gtip', width: 16 },
-                { header: 'Qty', key: 'qty', width: 10 },
-                { header: 'Unit Price', key: 'unitPrice', width: 14 },
-                { header: 'Total Price', key: 'totalPrice', width: 16 },
-                { header: 'Total Vol (m³)', key: 'vol', width: 14 },
-                { header: 'Total Wt (kg)', key: 'wt', width: 14 }
-            ];
+            document.querySelectorAll('.deck-btn').forEach(b => {
+                b.classList.toggle('active-deck', parseInt(b.getAttribute('data-index')) === index);
+            });
 
-            worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
-            worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '002870' } };
+            globalLoading.style.display = 'flex'; globalLoading.style.opacity = '1';
+            book.innerHTML = ''; sidebarThumbnails.innerHTML = '';
+            pages = []; thumbElements = [];
+            currentId = targetSavedPage;
+            resetZoom();
+            await loadPDF(item.url);
+        }
 
-            for (let i = 0; i < cart.length; i++) {
-                const item = cart[i];
-                const row = worksheet.addRow({
-                    brand: item.brand,
-                    family: item.family,
-                    size: item.size,
-                    code: item.code,
-                    gtip: item.gtip,
-                    qty: item.qty,
-                    unitPrice: `${item.unitPrice} ${item.currency}`,
-                    totalPrice: `${(item.qty * item.unitPrice).toFixed(2)} ${item.currency}`,
-                    vol: (item.qty * item.volume).toFixed(3),
-                    wt: (item.qty * item.weight).toFixed(2)
-                });
+        function resizeBookToFit(viewport) {
+            if (!viewport) return;
+            const sceneW = scene.clientWidth; const sceneH = scene.clientHeight;
+            if (!sceneW || !sceneH) return;
 
-                row.height = 50;
+            const pdfRatio = viewport.width / viewport.height;
+            const margin = isIOS ? 0.95 : 0.90;
+            const maxAllowedW = sceneW * margin; const maxAllowedH = sceneH * margin;
+            let finalW, finalH;
 
-                try {
-                    const imgResponse = await fetch(item.photoUrl);
-                    const imgBlob = await imgResponse.blob();
-                    const arrayBuffer = await imgBlob.arrayBuffer();
+            if (maxAllowedW / maxAllowedH > pdfRatio) {
+                finalH = maxAllowedH; finalW = finalH * pdfRatio;
+            } else {
+                finalW = maxAllowedW; finalH = finalW / pdfRatio;
+            }
+            book.style.width = Math.floor(finalW) + 'px';
+            book.style.height = Math.floor(finalH) + 'px';
+
+            updateTransform();
+        }
+
+        async function renderHighQualityPage(pageNum, customScale = 1) {
+            if (pageNum < 1 || pageNum > pdfDoc.numPages) return;
+
+            try {
+                const page = await pdfDoc.getPage(pageNum);
+                let pageDiv = pages[pageNum - 1];
+                
+                if (!pageDiv) {
+                    pageDiv = document.createElement('div'); 
+                    pageDiv.className = 'page';
                     
-                    const imageId = workbook.addImage({
-                        buffer: arrayBuffer,
-                        extension: 'png',
-                    });
-
-                    worksheet.addImage(imageId, {
-                        tl: { col: 0, row: row.number - 1 },
-                        ext: { width: 60, height: 45 }
-                    });
-                } catch (e) {
-                    console.warn("Resim Excel'e eklenemedi:", item.photoUrl);
+                    const container = document.createElement('div');
+                    container.className = 'canvas-container-layer';
+                    
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'base-lowres-canvas';
+                    
+                    container.appendChild(canvas);
+                    pageDiv.appendChild(container);
+                    book.appendChild(pageDiv); 
+                    pages[pageNum - 1] = pageDiv;
                 }
+
+                const canvas = pageDiv.querySelector('.base-lowres-canvas');
+                const context = canvas.getContext('2d');
+                pageDiv.pdfViewport = page.getViewport({ scale: 1.0 });
+
+                const dpr = window.devicePixelRatio || 1;
+                let targetScale = customScale * dpr;
+
+                const sampleViewport = page.getViewport({ scale: targetScale });
+                if (sampleViewport.width > 2048) {
+                    targetScale = 2048 / page.getViewport({ scale: 1.0 }).width;
+                }
+
+                const viewport = page.getViewport({ scale: targetScale });
+
+                const newWidth = Math.floor(viewport.width);
+                const newHeight = Math.floor(viewport.height);
+
+                const offscreenCanvas = document.createElement('canvas');
+                offscreenCanvas.width = newWidth;
+                offscreenCanvas.height = newHeight;
+                const offscreenContext = offscreenCanvas.getContext('2d');
+
+                await page.render({ 
+                    canvasContext: offscreenContext, 
+                    viewport: viewport 
+                }).promise;
+
+                injectWatermark(offscreenContext, newWidth, newHeight);
+
+                if (canvas.width !== newWidth || canvas.height !== newHeight) {
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                }
+                context.drawImage(offscreenCanvas, 0, 0);
+
+                if (pageNum - 1 === currentId) {
+                    resizeBookToFit(pageDiv.pdfViewport);
+                }
+            } catch (err) {
+                console.error("Render hatası:", err);
+            }
+        }
+
+        function triggerDynamicZoomRender() {
+            if (renderTimeout) clearTimeout(renderTimeout);
+            renderTimeout = setTimeout(() => {
+                renderHighQualityPage(currentId + 1, scale);
+            }, 300); 
+        }
+
+        function runPredictiveCachePipeline() {
+            const activeIdx = currentId + 1;
+            renderHighQualityPage(activeIdx, scale);
+            
+            if (!isIOS) {
+                const nextIdx = activeIdx + 1;
+                const prevIdx = activeIdx - 1;
+                if (nextIdx <= pdfDoc.numPages) renderHighQualityPage(nextIdx, 1);
+                if (prevIdx >= 1) renderHighQualityPage(prevIdx, 1);
+            }
+        }
+
+        function createSequentialThumbContainers(total) {
+            sidebarThumbnails.innerHTML = '';
+            for (let i = 1; i <= total; i++) {
+                const thumbBox = document.createElement('div');
+                thumbBox.className = 'thumb-box'; thumbBox.id = `thumb-box-${i}`;
+                const canvas = document.createElement('canvas'); thumbBox.appendChild(canvas);
+                const label = document.createElement('div'); label.className = 'thumb-label'; label.innerText = i;
+                thumbBox.appendChild(label); sidebarThumbnails.appendChild(thumbBox);
+                thumbElements[i - 1] = thumbBox;
+
+                thumbBox.addEventListener('click', () => {
+                    if (currentId === i - 1) return;
+                    playPaperSound(); currentId = i - 1;
+                    localStorage.setItem('yatas_last_page', currentId);
+                    resetZoom(); renderHighQualityPage(i, 1); updateBookDisplay(); runPredictiveCachePipeline();
+                });
+            }
+        }
+
+        async function renderThumbnail(pageNum) {
+            try {
+                const page = await pdfDoc.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 0.2 }); 
+                const thumbBox = document.getElementById(`thumb-box-${pageNum}`);
+                if (!thumbBox) return;
+                const canvas = thumbBox.querySelector('canvas'); const context = canvas.getContext('2d');
+                canvas.height = viewport.height; canvas.width = viewport.width;
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+            } catch (err) {}
+        }
+
+        async function loadPDF(url) {
+            try {
+                pdfDoc = await pdfjsLib.getDocument(url).promise;
+                const totalPages = pdfDoc.numPages;
+                pages = new Array(totalPages); thumbElements = new Array(totalPages);
+                createSequentialThumbContainers(totalPages);
+
+                const thumbPromises = [];
+                for (let pageNum = 1; pageNum <= totalPages; pageNum++) { thumbPromises.push(renderThumbnail(pageNum)); }
+                await Promise.all(thumbPromises);
+
+                await renderHighQualityPage(currentId + 1, 1);
+                globalLoading.style.opacity = '0'; setTimeout(() => { globalLoading.style.display = 'none'; }, 500);
+                zoomContainer.style.display = 'flex';
+                updateBookDisplay(); runPredictiveCachePipeline();
+            } catch (error) { console.error(error); }
+        }
+
+        function updateBookDisplay() {
+            if (pages.length === 0) return;
+            
+            pages.forEach((page, index) => {
+                if (!page) return;
+                
+                if (index === currentId) {
+                    page.style.display = 'block';
+                    page.offsetHeight; 
+                    page.className = 'page active-page'; 
+                    resizeBookToFit(page.pdfViewport);
+                } else if (!isIOS && index === currentId - 1) {
+                    page.style.display = 'block';
+                    page.className = 'page turn-next'; 
+                } else if (!isIOS && index === currentId + 1) {
+                    page.style.display = 'block';
+                    page.className = 'page turn-prev'; 
+                } else {
+                    page.className = 'page hidden-page';
+                    if (isIOS) {
+                        page.style.display = 'none'; 
+                    } else {
+                        setTimeout(() => {
+                            if (page.classList.contains('hidden-page')) {
+                                page.style.display = 'none';
+                            }
+                        }, 500);
+                    }
+                }
+            });
+
+            thumbElements.forEach((thumb, index) => {
+                if (!thumb) return;
+                if (index === currentId) {
+                    thumb.classList.add('active-thumb'); thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                } else { thumb.classList.remove('active-thumb'); }
+            });
+
+            document.getElementById('prevBtn').disabled = (currentId === 0);
+            document.getElementById('nextBtn').disabled = (currentId >= pages.length - 1);
+            gotoInput.value = currentId + 1;
+            document.getElementById('pageIndicator').innerText = `/ ${pages.length}`;
+        }
+
+        function flipNext() { 
+            if (currentId < pages.length - 1) { 
+                playPaperSound(); currentId++; localStorage.setItem('yatas_last_page', currentId);
+                resetZoom(); renderHighQualityPage(currentId + 1, 1); updateBookDisplay(); runPredictiveCachePipeline();
+            } 
+        }
+        function flipPrev() { 
+            if (currentId > 0) { 
+                playPaperSound(); currentId--; localStorage.setItem('yatas_last_page', currentId);
+                resetZoom(); renderHighQualityPage(currentId + 1, 1); updateBookDisplay(); runPredictiveCachePipeline();
+            } 
+        }
+        
+        // PAN & ZOOM MOTOR
+        function resetZoom() { 
+            scale = 1; 
+            posX = 0; 
+            posY = 0; 
+            updateTransform(); 
+        }
+
+        function updateTransform() { 
+            if (scale <= 1) {
+                scale = 1; posX = 0; posY = 0;
+                zoomContainer.style.transform = `translate3d(0px, 0px, 0px) scale(1)`;
+            } else {
+                const boundW = (scale - 1) * scene.clientWidth / 2;
+                const boundH = (scale - 1) * scene.clientHeight / 2;
+                
+                posX = Math.max(-boundW * 1.5, Math.min(posX, boundW * 1.5));
+                posY = Math.max(-boundH * 1.5, Math.min(posY, boundH * 1.5));
+
+                zoomContainer.style.transform = `translate3d(${posX}px, ${posY}px, 0px) scale(${scale})`;
+            }
+        }
+
+        function zoomToPoint(clientX, clientY, zoomStep) {
+            const rect = scene.getBoundingClientRect();
+            
+            const targetX = clientX - rect.left - rect.width / 2;
+            const targetY = clientY - rect.top - rect.height / 2;
+
+            const oldScale = scale;
+            scale = Math.max(1, Math.min(scale + zoomStep, 5));
+
+            if (scale > 1) {
+                posX = targetX - (targetX - posX) * (scale / oldScale);
+                posY = targetY - (targetY - posY) * (scale / oldScale);
+            } else {
+                posX = 0;
+                posY = 0;
             }
 
-            const buffer = await workbook.xlsx.writeBuffer();
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `Yatas_Proforma_Order_${new Date().toISOString().slice(0,10)}.xlsx`;
-            link.click();
+            updateTransform();
+            triggerDynamicZoomRender();
         }
+
+        // MOUSE WHEEL ZOOM
+        scene.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const step = e.deltaY < 0 ? 0.4 : -0.4;
+            zoomToPoint(e.clientX, e.clientY, step);
+        }, { passive: false });
+
+        // MOUSE DRAG (PANNING)
+        scene.addEventListener('mousedown', (e) => {
+            if (scale === 1 || e.target.closest('.arrow-btn')) return;
+            isDragging = true; 
+            startX = e.clientX - posX; 
+            startY = e.clientY - posY;
+        });
+
+        window.addEventListener('mousemove', (e) => { 
+            if (!isDragging) return; 
+            posX = e.clientX - startX; 
+            posY = e.clientY - startY; 
+            updateTransform(); 
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        // PINCH TO ZOOM ENGINE & TOUCH NAVIGATION
+        scene.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                isPinching = true;
+                initialPinchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                
+                touchStartX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                touchStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+            } else if (e.touches.length === 1) {
+                isPinching = false;
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                if (scale > 1) {
+                    isDragging = true;
+                    startX = e.touches[0].clientX - posX;
+                    startY = e.touches[0].clientY - posY;
+                }
+            }
+        }, { passive: true });
+
+        scene.addEventListener('touchmove', (e) => {
+            if (isPinching && e.touches.length === 2) {
+                e.preventDefault(); 
+                const currentDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const currentMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const currentMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+                const factor = currentDist / initialPinchDist;
+                const step = (factor - 1) * 1.8;
+
+                if (Math.abs(step) > 0.02) {
+                    zoomToPoint(currentMidX, currentMidY, step);
+                    initialPinchDist = currentDist; 
+                }
+            } else if (isDragging && e.touches.length === 1 && scale > 1) {
+                e.preventDefault();
+                posX = e.touches[0].clientX - startX;
+                posY = e.touches[0].clientY - startY;
+                updateTransform();
+            }
+        }, { passive: false });
+
+        scene.addEventListener('touchend', (e) => {
+            if (isPinching) {
+                if (e.touches.length < 2) {
+                    isPinching = false;
+                    isDragging = false;
+                }
+                return;
+            }
+            if (isDragging) { isDragging = false; return; }
+
+            if (scale === 1 && e.changedTouches.length > 0) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                const diffX = touchStartX - touchEndX;
+                const diffY = touchStartY - touchEndY;
+
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+                    if (diffX > 0) flipNext(); else flipPrev();
+                }
+            }
+        }, { passive: true });
+
+        // SWIPE & KEYBOARD NAVIGATION ENTEGRASYONU
+        document.addEventListener('keydown', (e) => {
+            // Eğer bir input alanında yazılıyorsa sayfa çevirme
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                flipNext();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                flipPrev();
+            }
+        });
+
+        // BUTTON EVENTS
+        document.getElementById('overlayPrevBtn').addEventListener('click', flipPrev);
+        document.getElementById('overlayNextBtn').addEventListener('click', flipNext);
+        
+        document.getElementById('zoomInBtn').addEventListener('click', () => { 
+            zoomToPoint(scene.clientWidth / 2, scene.clientHeight / 2, 0.6);
+        });
+        
+        document.getElementById('zoomOutBtn').addEventListener('click', () => { 
+            zoomToPoint(scene.clientWidth / 2, scene.clientHeight / 2, -0.6);
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', flipNext);
+        document.getElementById('prevBtn').addEventListener('click', flipPrev);
+
+        gotoInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                let targetPage = parseInt(gotoInput.value);
+                if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= pages.length) {
+                    playPaperSound(); currentId = targetPage - 1; localStorage.setItem('yatas_last_page', currentId);
+                    resetZoom(); renderHighQualityPage(targetPage, 1); updateBookDisplay(); runPredictiveCachePipeline();
+                    gotoInput.blur();
+                } else { gotoInput.value = currentId + 1; }
+            }
+        });
+
+        window.addEventListener('resize', () => { if (pages[currentId]) updateBookDisplay(); });
+
+        window.onload = () => {
+            buildSidebarMenu();
+            const savedPresentation = localStorage.getItem('yatas_last_presentation');
+            const savedPage = localStorage.getItem('yatas_last_page');
+
+            if (savedPresentation !== null && presentations[savedPresentation]) {
+                const targetPageIdx = savedPage !== null ? parseInt(savedPage) : 0;
+                const toast = document.getElementById('resumeToast');
+                toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 4000);
+                switchPresentation(parseInt(savedPresentation), targetPageIdx);
+            } else { switchPresentation(0, 0); }
+        };
     </script>
 </body>
 </html>
