@@ -21,7 +21,7 @@
             --neon-blue: #00d2ff;
             --accent-gold: #c5a059;
             --dark-bg: #020617;
-            --glass-bg: rgba(2, 6, 23, 0.88);
+            --glass-bg: rgba(2, 6, 23, 0.92);
             --glass-border: rgba(255, 255, 255, 0.08);
             --card-bg: rgba(0, 40, 112, 0.25);
         }
@@ -82,6 +82,8 @@
             border-radius: 8px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             color: #fff; font-size: 18px; transition: all 0.3s;
+            z-index: 1002; /* Hamburgere her zaman erişilebilir */
+            position: relative;
         }
         .hamburger-btn:hover { background: var(--neon-blue); color: var(--primary-blue); }
 
@@ -118,7 +120,14 @@
             font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 20px;
         }
 
-        /* SIDEBAR NAVIGATION */
+        /* SIDEBAR OVERLAY & NAVIGATION */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.6); backdrop-filter: blur(4px);
+            z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
         .sidebar-nav {
             position: fixed; left: -340px; top: 0; height: 100vh; width: 320px;
             background: var(--glass-bg); border-right: 1px solid var(--glass-border);
@@ -346,7 +355,7 @@
     <!-- HEADER NAVIGATION -->
     <header>
         <div class="header-left">
-            <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars" id="hamburgerIcon"></i></button>
             <button class="brand-logo-btn">
                 <img src="yatas_grup_logo.jpg" alt="Yataş Group" onerror="this.src='https://yatasinternational.github.io/Products-Photos/yatas_logo.png'">
             </button>
@@ -373,7 +382,9 @@
         </div>
     </header>
 
-    <!-- SIDEBAR DRAWER -->
+    <!-- SIDEBAR OVERLAY & DRAWER -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
     <div class="sidebar-nav" id="sidebarNav">
         <div class="sidebar-title" data-i18n="categories">Categories</div>
         <div id="navigationTree"></div>
@@ -505,7 +516,7 @@
     </div>
 
     <script>
-        // DICTIONARY FOR UI
+        // UI DICTIONARY
         const i18n = {
             TR: {
                 cart: "Sepet", categories: "Kategoriler", all_brands: "Tüm Markalar",
@@ -513,7 +524,7 @@
                 select_size: "ÖLÇÜ / EBAT SEÇİNİZ", gtip: "GTİP KODU", volume: "BİRİM HACİM", weight: "BİRİM AĞIRLIK",
                 add_to_cart: "Siparişe Ekle", cart_title: "Proforma Sipariş Özeti",
                 logistics_calc: "LOJİSTİK KAPASİTE VE ARAÇ HESABI", grand_total: "Genel Toplam:",
-                export_excel: "Fotoğraflı Excel Sipariş Listesi İndir"
+                export_excel: "Fotoğraflı Excel Sipariş Listesi İndir", from: "başlayan fiyatlar"
             },
             EN: {
                 cart: "Cart", categories: "Categories", all_brands: "All Brands",
@@ -521,7 +532,7 @@
                 select_size: "SELECT DIMENSION / SIZE", gtip: "HS CODE", volume: "UNIT VOL", weight: "UNIT WT",
                 add_to_cart: "Add to Proforma Order", cart_title: "Proforma Order Summary",
                 logistics_calc: "LOGISTICS & VEHICLE CAPACITY", grand_total: "Grand Total:",
-                export_excel: "Export Excel Order with Photos"
+                export_excel: "Export Excel Order with Photos", from: "from"
             },
             DE: {
                 cart: "Warenkorb", categories: "Kategorien", all_brands: "Alle Marken",
@@ -529,7 +540,7 @@
                 select_size: "GRÖSSE WÄHLEN", gtip: "HS CODE", volume: "VOLUMEN", weight: "GEWICHT",
                 add_to_cart: "In die Proforma-Bestellung", cart_title: "Proforma-Bestellübersicht",
                 logistics_calc: "LOGISTIK- UND FAHRZEUGKAPAZITÄT", grand_total: "Gesamtsumme:",
-                export_excel: "Excel-Bestellung mit Fotos exportieren"
+                export_excel: "Excel-Bestellung mit Fotos exportieren", from: "ab"
             },
             RU: {
                 cart: "Корзина", categories: "Категории", all_brands: "Все бренды",
@@ -537,18 +548,49 @@
                 select_size: "ВЫБЕРИТЕ РАЗМЕР", gtip: "ТН ВЭД", volume: "ОБЪЕМ", weight: "ВЕС",
                 add_to_cart: "Добавить в заказ", cart_title: "Сводка Проформа-Заказа",
                 logistics_calc: "ЛОГИСТИКА И ЕМКОСТЬ ТRANSPORTA", grand_total: "Итого:",
-                export_excel: "Скачать Excel с фото"
+                export_excel: "Скачать Excel с фото", from: "от"
             }
         };
+
+        // AUTOMATIC WORD & CATEGORY TRANSLATION DICTIONARY
+        const termTranslations = {
+            "Yatak": { EN: "Mattress", DE: "Matratze", RU: "Матрас" },
+            "Baza": { EN: "Base / Boxspring", DE: "Bettkasten", RU: "Основание" },
+            "Başlık": { EN: "Headboard", DE: "Kopfteil", RU: "Изголовье" },
+            "Yastık": { EN: "Pillow", DE: "Kissen", RU: "Подушка" },
+            "Yorgan": { EN: "Duvet", DE: "Bettdecke", RU: "Одеяло" },
+            "Alez": { EN: "Mattress Protector", DE: "Matratzenschoner", RU: "Наматрасник" },
+            "Set": { EN: "Bed Set", DE: "Bett-Set", RU: "Комплект" },
+            "Sünger Yatak": { EN: "Foam Mattress", DE: "Schaumstoffmatratze", RU: "Поролоновый матрас" },
+            "Yaylı Yatak": { EN: "Spring Mattress", DE: "Federkernmatratze", RU: "Пружинный матрас" },
+            "Bebek Yatağı": { EN: "Baby Mattress", DE: "Babymatratze", RU: "Детский матрас" },
+            "Visco Yatak": { EN: "Visco Mattress", DE: "Visco-Matratze", RU: "Матрас Visco" },
+            "Mobilya": { EN: "Furniture", DE: "Möbel", RU: "Мебель" },
+            "Tekstil": { EN: "Textile", DE: "Textilien", RU: "Текстиль" },
+            "Ev Tekstili": { EN: "Home Textile", DE: "Heimtextilien", RU: "Домашний текстиль" },
+            "Genel": { EN: "General", DE: "Allgemein", RU: "Общие" }
+        };
+
+        function autoTranslateText(text, targetLang) {
+            if (!text || targetLang === 'TR') return text;
+
+            let translated = text;
+            for (const [trTerm, langMap] of Object.entries(termTranslations)) {
+                if (langMap[targetLang]) {
+                    const regex = new RegExp(`\\b${trTerm}\\b`, 'gi');
+                    translated = translated.replace(regex, langMap[targetLang]);
+                }
+            }
+            return translated;
+        }
 
         let currentLang = 'EN';
         let currentCurrency = 'USD';
         let rawProducts = [];
         let productFamilies = {};
-        let translationCache = {};
         let activeBrandFilter = 'ALL';
         let activeCategoryFilter = null;
-        let activeTypeFilter = null;
+        let activeFamilyFilter = null;
         let cart = [];
 
         let currentActiveFamily = null;
@@ -614,15 +656,17 @@
             `).join('');
         }
 
+        // NAVIGATION TREE: MARKA -> KATEGORİ -> ÜRÜN AİLESİ (TIKANMAYI ÖNLER)
         function buildNavigationTree() {
             const tree = {};
             rawProducts.forEach(i => {
                 const b = i['Marka'] || 'Yataş';
                 const c = i['Kategori'] || 'Genel';
-                const t = i['Ürün Tipi'] || 'Genel';
+                const fam = i['Ürün Ailesi'] || i['Malzeme Tanım'] || 'Diğer';
+                
                 if (!tree[b]) tree[b] = {};
                 if (!tree[b][c]) tree[b][c] = new Set();
-                tree[b][c].add(t);
+                tree[b][c].add(fam);
             });
 
             const navContainer = document.getElementById('navigationTree');
@@ -634,11 +678,13 @@
                         <i class="fa-solid fa-chevron-down"></i>
                     </div>
                     <div class="nav-tree-children">`;
-                for (const [cat, types] of Object.entries(categories)) {
+                for (const [cat, families] of Object.entries(categories)) {
+                    const translatedCat = autoTranslateText(cat, currentLang);
                     html += `<div style="margin: 4px 0;">
-                        <span class="sub-link" style="font-weight:700;" onclick="filterByCategory('${brand}', '${cat}')">${cat}</span>`;
-                    types.forEach(t => {
-                        html += `<span class="sub-link" style="padding-left:15px;" onclick="filterByType('${brand}', '${cat}', '${t}')">• ${t}</span>`;
+                        <span class="sub-link" style="font-weight:700; color:var(--neon-blue);" onclick="filterByCategory('${brand}', '${cat}')">📂 ${translatedCat}</span>`;
+                    
+                    Array.from(families).slice(0, 20).forEach(fam => {
+                        html += `<span class="sub-link" style="padding-left:18px;" onclick="filterByFamily('${brand}', '${cat}', '${fam}')">• ${fam}</span>`;
                     });
                     html += `</div>`;
                 }
@@ -658,14 +704,18 @@
             families = families.filter(f => {
                 const matchBrand = (activeBrandFilter === 'ALL' || f.brand === activeBrandFilter);
                 const matchCat = (!activeCategoryFilter || f.category === activeCategoryFilter);
-                const matchType = (!activeTypeFilter || f.productType === activeTypeFilter);
+                const matchFam = (!activeFamilyFilter || f.familyName === activeFamilyFilter);
                 const matchSearch = (f.familyName.toLowerCase().includes(searchVal) || f.variants.some(v => v.desc.toLowerCase().includes(searchVal)));
-                return matchBrand && matchCat && matchType && matchSearch;
+                return matchBrand && matchCat && matchFam && matchSearch;
             });
 
             grid.innerHTML = families.map(f => {
                 const minPrice = Math.min(...f.variants.map(v => currentCurrency === 'USD' ? v.usdPrice : v.eurPrice));
                 const currencySymbol = currentCurrency === 'USD' ? '$' : '€';
+                const translatedCat = autoTranslateText(f.category, currentLang);
+                const translatedType = autoTranslateText(f.productType, currentLang);
+                const fromLabel = i18n[currentLang].from || 'from';
+
                 return `
                 <div class="product-card">
                     <div class="card-img-wrap">
@@ -674,12 +724,12 @@
                     </div>
                     <div class="card-body">
                         <div>
-                            <div class="card-brand">${f.brand} | ${f.category}</div>
+                            <div class="card-brand">${f.brand} | ${translatedCat}</div>
                             <h3 class="card-title">${f.familyName}</h3>
-                            <div class="card-meta">${f.productType}</div>
+                            <div class="card-meta">${translatedType}</div>
                         </div>
                         <div class="card-footer">
-                            <div class="card-price">from ${currencySymbol}${minPrice}</div>
+                            <div class="card-price">${fromLabel} ${currencySymbol}${minPrice}</div>
                             <button class="view-btn" onclick="openProductModal('${f.familyName}')">Configure</button>
                         </div>
                     </div>
@@ -689,14 +739,18 @@
 
         function openProductModal(familyName) {
             currentActiveFamily = productFamilies[familyName];
+            const translatedCat = autoTranslateText(currentActiveFamily.category, currentLang);
+            const translatedType = autoTranslateText(currentActiveFamily.productType, currentLang);
+
             document.getElementById('modalFamilyTitle').innerText = currentActiveFamily.familyName;
-            document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${currentActiveFamily.category} (${currentActiveFamily.productType})`;
+            document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${translatedCat} (${translatedType})`;
             document.getElementById('modalImg').src = currentActiveFamily.photoUrl;
 
             const sizeSelect = document.getElementById('sizeSelect');
-            sizeSelect.innerHTML = currentActiveFamily.variants.map((v, idx) => `
-                <option value="${idx}">${v.size} - ${v.desc}</option>
-            `).join('');
+            sizeSelect.innerHTML = currentActiveFamily.variants.map((v, idx) => {
+                const translatedDesc = autoTranslateText(v.desc, currentLang);
+                return `<option value="${idx}">${v.size} - ${translatedDesc}</option>`;
+            }).join('');
 
             document.getElementById('modalQty').value = 1;
             onSizeChange();
@@ -789,7 +843,6 @@
             const mainSymbol = currentCurrency === 'USD' ? '$' : '€';
             document.getElementById('cartGrandTotal').innerText = `${mainSymbol}${totalVal.toFixed(2)}`;
 
-            // CALCULATE LOGISTICS (40' HQ Container & 70m3 Truck)
             calculateLogistics(totalM3, totalKg);
         }
 
@@ -797,19 +850,16 @@
             const HQ_CAPACITY = 68.0;
             const TRUCK_CAPACITY = 70.0;
 
-            // 40' HQ Calculation
             const hqExact = totalM3 / HQ_CAPACITY;
             const hqFull = Math.floor(hqExact);
             const hqRemainderPercent = Math.round((hqExact - hqFull) * 100);
             const totalHq = totalM3 > 0 ? Math.ceil(hqExact) : 0;
 
-            // 70m3 Truck Calculation
             const truckExact = totalM3 / TRUCK_CAPACITY;
             const truckFull = Math.floor(truckExact);
             const truckRemainderPercent = Math.round((truckExact - truckFull) * 100);
             const totalTrucks = totalM3 > 0 ? Math.ceil(truckExact) : 0;
 
-            // HQ UI
             if (totalHq === 0) {
                 document.getElementById('hqCountText').innerText = "0 Cont. (%0)";
                 document.getElementById('hqProgressFill').style.width = "0%";
@@ -821,7 +871,6 @@
                 document.getElementById('hqProgressFill').style.width = `${hqRemainderPercent}%`;
             }
 
-            // Truck UI
             if (totalTrucks === 0) {
                 document.getElementById('truckCountText').innerText = "0 Truck (%0)";
                 document.getElementById('truckProgressFill').style.width = "0%";
@@ -843,7 +892,21 @@
             else drawer.classList.toggle('open');
         }
 
-        function toggleSidebar() { document.getElementById('sidebarNav').classList.toggle('open'); }
+        // HAMBURGER AÇMA / KAPAMA
+        function toggleSidebar() {
+            const nav = document.getElementById('sidebarNav');
+            const overlay = document.getElementById('sidebarOverlay');
+            const icon = document.getElementById('hamburgerIcon');
+
+            nav.classList.toggle('open');
+            overlay.classList.toggle('active');
+
+            if (nav.classList.contains('open')) {
+                icon.className = "fa-solid fa-xmark";
+            } else {
+                icon.className = "fa-solid fa-bars";
+            }
+        }
 
         function filterByBrand(b) {
             activeBrandFilter = b;
@@ -854,15 +917,15 @@
         function filterByCategory(brand, cat) {
             activeBrandFilter = brand;
             activeCategoryFilter = cat;
-            activeTypeFilter = null;
+            activeFamilyFilter = null;
             renderProductGrid();
             toggleSidebar();
         }
 
-        function filterByType(brand, cat, type) {
+        function filterByFamily(brand, cat, fam) {
             activeBrandFilter = brand;
             activeCategoryFilter = cat;
-            activeTypeFilter = type;
+            activeFamilyFilter = fam;
             renderProductGrid();
             toggleSidebar();
         }
@@ -875,7 +938,7 @@
             updateCartDisplay();
         }
 
-        async function changeLanguage(lang) {
+        function changeLanguage(lang) {
             currentLang = lang;
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -886,6 +949,8 @@
                 if (i18n[lang][key]) el.placeholder = i18n[lang][key];
             });
             buildBrandChips();
+            buildNavigationTree();
+            renderProductGrid();
         }
 
         // FOTOĞRAFLI EXCEL EXPORT (EXCELJS)
