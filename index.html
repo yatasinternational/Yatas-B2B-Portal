@@ -227,19 +227,13 @@
 
         .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .card-brand { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; }
-        .card-title { font-size: 18px; font-weight: 800; margin: 4px 0; color: #fff; }
-        .card-meta { font-size: 12px; color: var(--neon-blue); font-weight: 700; margin-bottom: 12px; }
+        .card-title { font-size: 18px; font-weight: 800; margin: 4px 0 12px 0; color: #fff; }
 
         .card-footer {
             display: flex; align-items: center; justify-content: space-between;
             border-top: 1px solid var(--glass-border); padding-top: 12px; margin-top: 8px;
         }
         .card-price { font-size: 15px; font-weight: 800; color: var(--neon-blue); }
-        .view-btn {
-            background: #fff; color: var(--primary-blue); border: none;
-            padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700;
-            cursor: pointer; transition: all 0.2s; pointer-events: none;
-        }
 
         /* PRODUCT DETAIL MODAL */
         .modal-overlay {
@@ -251,7 +245,7 @@
 
         .modal-card {
             background: #020617; border: 1px solid var(--glass-border);
-            border-radius: 16px; width: 100%; max-width: 900px;
+            border-radius: 16px; width: 100%; max-width: 920px;
             max-height: 90vh; overflow-y: auto; display: flex; flex-wrap: wrap;
             box-shadow: 0 25px 50px rgba(0,0,0,0.8); position: relative;
         }
@@ -281,11 +275,12 @@
             color: #fff; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 600; outline: none;
         }
 
-        /* 4-COLUMN SPECS GRID */
-        .specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
-        .spec-item { background: rgba(255,255,255,0.03); padding: 8px 4px; border-radius: 6px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .spec-item span { display: block; font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: 700; }
+        /* 5-COLUMN SPECS GRID (MTO/MTS DAHİL) */
+        .specs-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 12px; }
+        .spec-item { background: rgba(255,255,255,0.03); padding: 8px 3px; border-radius: 6px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .spec-item span { display: block; font-size: 8.5px; color: #94a3b8; text-transform: uppercase; font-weight: 700; }
         .spec-item strong { font-size: 11px; color: #fff; font-weight: 800; margin-top: 2px; display: block; }
+        .spec-item strong.highlight-status { color: var(--neon-blue); }
 
         .qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .qty-picker { display: flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 6px; }
@@ -325,7 +320,6 @@
         .cart-item-info p { font-size: 11px; color: #94a3b8; }
         .cart-item-price { font-size: 13px; font-weight: 800; color: var(--neon-blue); margin-top: 4px; }
 
-        /* CART QUANTITY CONTROL BAR */
         .cart-qty-ctrl {
             display: flex; align-items: center; gap: 6px;
             background: rgba(0, 0, 0, 0.4); border-radius: 6px;
@@ -359,6 +353,7 @@
             .cart-drawer { width: 100%; right: -100%; }
             .modal-card { flex-direction: column; }
             .modal-left { height: 200px; }
+            .specs-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
@@ -422,8 +417,8 @@
         <div class="product-grid" id="productGrid"></div>
     </main>
 
-    <!-- PRODUCT DETAIL MODAL -->
-    <div class="modal-overlay" id="productModal">
+    <!-- PRODUCT DETAIL MODAL (BOŞLUĞA TIKLAYINCA KAPANMA EKLENDİ) -->
+    <div class="modal-overlay" id="productModal" onclick="handleBackdropClick(event)">
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             <div class="modal-left">
@@ -441,7 +436,7 @@
                         <select id="sizeSelect" onchange="onSizeChange()"></select>
                     </div>
 
-                    <!-- 4 SPECS GRID (HS CODE, VOL, WT, HEIGHT) -->
+                    <!-- 5-COLUMN SPECS GRID (GTIP, VOL, WT, HEIGHT, STATUS) -->
                     <div class="specs-grid">
                         <div class="spec-item">
                             <span data-i18n="gtip">HS CODE</span>
@@ -458,6 +453,10 @@
                         <div class="spec-item">
                             <span data-i18n="height">HEIGHT</span>
                             <strong id="specHeight">0 cm</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="status">STATUS</span>
+                            <strong id="specStatus" class="highlight-status">MTO</strong>
                         </div>
                     </div>
                 </div>
@@ -489,7 +488,7 @@
 
         <div class="cart-items-list" id="cartItemsList"></div>
 
-        <!-- DUAL LOGISTICS CALCULATOR (40' HQ & 70m3 TRUCK) -->
+        <!-- DUAL LOGISTICS CALCULATOR -->
         <div class="logistics-bar-container">
             <div class="logistics-title">
                 <i class="fa-solid fa-truck-ramp-box"></i> <span data-i18n="logistics_calc">LOGISTICS & VEHICLE CAPACITY</span>
@@ -540,7 +539,7 @@
             TR: {
                 cart: "Sepet", categories: "Kategoriler", all_brands: "Tüm Markalar",
                 search_placeholder: "Ürün ailesi veya malzeme tanımı arayın...",
-                select_size: "ÖLÇÜ / EBAT SEÇİNİZ", gtip: "GTİP KODU", volume: "BİRİM HACİM", weight: "BİRİM AĞIRLIK", height: "YÜKSEKLİK",
+                select_size: "ÖLÇÜ / EBAT SEÇİNİZ", gtip: "GTİP KODU", volume: "BİRİM HACİM", weight: "BİRİM AĞIRLIK", height: "YÜKSEKLİK", status: "DURUM",
                 add_to_cart: "Siparişe Ekle", cart_title: "Proforma Sipariş Özeti",
                 logistics_calc: "LOJİSTİK KAPASİTE VE ARAÇ HESABI", grand_total: "Genel Toplam:",
                 export_excel: "Fotoğraflı Excel Sipariş Listesi İndir", from: "başlayan fiyatlar"
@@ -548,7 +547,7 @@
             EN: {
                 cart: "Cart", categories: "Categories", all_brands: "All Brands",
                 search_placeholder: "Search product family or description...",
-                select_size: "SELECT DIMENSION / SIZE", gtip: "HS CODE", volume: "UNIT VOL", weight: "UNIT WT", height: "HEIGHT",
+                select_size: "SELECT DIMENSION / SIZE", gtip: "HS CODE", volume: "UNIT VOL", weight: "UNIT WT", height: "HEIGHT", status: "STATUS",
                 add_to_cart: "Add to Proforma Order", cart_title: "Proforma Order Summary",
                 logistics_calc: "LOGISTICS & VEHICLE CAPACITY", grand_total: "Grand Total:",
                 export_excel: "Export Excel Order with Photos", from: "from"
@@ -556,7 +555,7 @@
             DE: {
                 cart: "Warenkorb", categories: "Kategorien", all_brands: "Alle Marken",
                 search_placeholder: "Produktfamilie oder Beschreibung suchen...",
-                select_size: "GRÖSSE WÄHLEN", gtip: "HS CODE", volume: "VOLUMEN", weight: "GEWICHT", height: "HÖHE",
+                select_size: "GRÖSSE WÄHLEN", gtip: "HS CODE", volume: "VOLUMEN", weight: "GEWICHT", height: "HÖHE", status: "STATUS",
                 add_to_cart: "In die Proforma-Bestellung", cart_title: "Proforma-Bestellübersicht",
                 logistics_calc: "LOGISTIK- UND FAHRZEUGKAPAZITÄT", grand_total: "Gesamtsumme:",
                 export_excel: "Excel-Bestellung mit Fotos exportieren", from: "ab"
@@ -564,7 +563,7 @@
             RU: {
                 cart: "Корзина", categories: "Категории", all_brands: "Все бренды",
                 search_placeholder: "Поиск семейства продуктов...",
-                select_size: "ВЫБЕРИТЕ РАЗМЕР", gtip: "ТН ВЭД", volume: "ОБЪЕМ", weight: "ВЕС", height: "ВЫСОТА",
+                select_size: "ВЫБЕРИТЕ РАЗМЕР", gtip: "ТН ВЭД", volume: "ОБЪЕМ", weight: "ВЕС", height: "ВЫСОТА", status: "СТАТУС",
                 add_to_cart: "Добавить в заказ", cart_title: "Сводка Проформа-Заказа",
                 logistics_calc: "ЛОГИСТИКА И ЕМКОСТЬ ТRANSPORTA", grand_total: "Итого:",
                 export_excel: "Скачать Excel с фото", from: "от"
@@ -612,6 +611,7 @@
 
         async function loadExcelData() {
             try {
+                // DOSYA ADI tr_yeni.xlsx OLARAK GÜNCELLENDİ
                 const response = await fetch('tr_yeni.xlsx');
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -623,7 +623,7 @@
                 buildNavigationTree();
                 renderProductGrid();
             } catch (err) {
-                console.error("tr.xlsx okunamadı:", err);
+                console.error("tr_yeni.xlsx okunamadı:", err);
             }
         }
 
@@ -723,7 +723,6 @@
                 const minPrice = Math.min(...f.variants.map(v => currentCurrency === 'USD' ? v.usdPrice : v.eurPrice));
                 const currencySymbol = currentCurrency === 'USD' ? '$' : '€';
                 const translatedCat = autoTranslateText(f.category, currentLang);
-                const defaultStatus = f.variants[0]?.status || 'MTO';
                 const fromLabel = i18n[currentLang].from || 'from';
 
                 return `
@@ -736,11 +735,9 @@
                         <div>
                             <div class="card-brand">${f.brand} | ${translatedCat}</div>
                             <h3 class="card-title">${f.familyName}</h3>
-                            <div class="card-meta">${defaultStatus}</div>
                         </div>
                         <div class="card-footer">
                             <div class="card-price">${fromLabel} ${currencySymbol}${minPrice}</div>
-                            <button class="view-btn">Configure</button>
                         </div>
                     </div>
                 </div>
@@ -779,6 +776,7 @@
             document.getElementById('specVolume').innerText = `${currentSelectedVariant.volume} m³`;
             document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
             document.getElementById('specHeight').innerText = `${currentSelectedVariant.height} cm`;
+            document.getElementById('specStatus').innerText = currentSelectedVariant.status || 'MTO';
 
             updateModalPrice();
         }
@@ -799,6 +797,13 @@
         }
 
         function closeModal() { document.getElementById('productModal').classList.remove('active'); }
+
+        // BOŞLUĞA TIKLAYINCA MODAL KAPATMA HESABI
+        function handleBackdropClick(e) {
+            if (e.target === e.currentTarget) {
+                closeModal();
+            }
+        }
 
         function addCurrentToCart() {
             const qty = parseInt(document.getElementById('modalQty').value);
@@ -988,7 +993,7 @@
             renderProductGrid();
         }
 
-        // FOTOĞRAFLI EXCEL EXPORT (EXCELJS)
+        // BÜYÜTÜLMÜŞ FOTOĞRAFLI & TAM DETAYLI EXCEL EXPORT (EXCELJS)
         async function exportProformaExcel() {
             if (cart.length === 0) {
                 alert("Sepetiniz boş / Cart is empty!");
@@ -998,16 +1003,17 @@
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Proforma Order');
 
+            // Sütun genişlikleri optimize edildi (Özellikle Image sütunu büyütüldü)
             worksheet.columns = [
-                { header: 'Image', key: 'img', width: 15 },
+                { header: 'Image', key: 'img', width: 20 },
                 { header: 'Brand', key: 'brand', width: 18 },
                 { header: 'Product Family', key: 'family', width: 22 },
                 { header: 'Dimension / Size', key: 'size', width: 16 },
-                { header: 'Status', key: 'status', width: 10 },
-                { header: 'Height (cm)', key: 'height', width: 12 },
+                { header: 'Status', key: 'status', width: 12 },
+                { header: 'Height (cm)', key: 'height', width: 14 },
                 { header: 'Product Code', key: 'code', width: 18 },
-                { header: 'Barcode', key: 'barcode', width: 16 },
-                { header: 'HS CODE (GTİP)', key: 'gtip', width: 16 },
+                { header: 'Barcode', key: 'barcode', width: 18 },
+                { header: 'HS CODE (GTİP)', key: 'gtip', width: 18 },
                 { header: 'Qty', key: 'qty', width: 10 },
                 { header: 'Unit Price', key: 'unitPrice', width: 14 },
                 { header: 'Total Price', key: 'totalPrice', width: 16 },
@@ -1015,8 +1021,10 @@
                 { header: 'Total Wt (kg)', key: 'wt', width: 14 }
             ];
 
+            // Başlık satırı stili
             worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
             worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '002870' } };
+            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
 
             for (let i = 0; i < cart.length; i++) {
                 const item = cart[i];
@@ -1024,7 +1032,7 @@
                     brand: item.brand,
                     family: item.family,
                     size: item.size,
-                    status: item.status,
+                    status: item.status || 'MTO',
                     height: item.height,
                     code: item.code,
                     barcode: item.barcode,
@@ -1036,7 +1044,9 @@
                     wt: (item.qty * item.weight).toFixed(2)
                 });
 
-                row.height = 50;
+                // Görselin net seçilmesi için satır yüksekliği 60px yapıldı
+                row.height = 60;
+                row.alignment = { vertical: 'middle', horizontal: 'center' };
 
                 try {
                     const imgResponse = await fetch(item.photoUrl);
@@ -1048,9 +1058,10 @@
                         extension: 'png',
                     });
 
+                    // Görsel boyutları 110x75 px boyutunda belirginleştirildi
                     worksheet.addImage(imageId, {
                         tl: { col: 0, row: row.number - 1 },
-                        ext: { width: 60, height: 45 }
+                        ext: { width: 110, height: 75 }
                     });
                 } catch (e) {
                     console.warn("Resim Excel'e eklenemedi:", item.photoUrl);
