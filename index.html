@@ -9,7 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- ExcelJS & FileSaver CDN (Görselli Excel Export İçin) -->
+  <!-- SheetJS, ExcelJS & FileSaver CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -43,7 +44,6 @@
       overflow-x: hidden;
     }
 
-    /* Ana Düzen */
     .app-container {
       display: flex;
       width: 100%;
@@ -54,24 +54,47 @@
       padding: 30px;
     }
 
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
     .header-title {
       font-size: 24px;
       font-weight: 700;
-      margin-bottom: 24px;
-      color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    /* Ürün Grid */
+    .file-upload-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-upload-btn:hover {
+      border-color: var(--primary-blue);
+    }
+
+    /* Ürün Grid Layout */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 24px;
     }
 
-    /* 1. GÖRSEL REVIZYONLARI: Ürün Kartı */
+    /* 1. REVİZYON: Ürün Kartı */
     .product-card {
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -138,7 +161,7 @@
       margin-bottom: 6px;
     }
 
-    /* Yaylı Mattress Yerine Sipariş Statüsü (MTO / MTS) */
+    /* Sipariş Statüsü Rozeti (MTO / MTS) */
     .order-status-badge {
       display: inline-block;
       font-size: 11px;
@@ -175,14 +198,9 @@
       font-weight: 700;
       font-size: 13px;
       cursor: pointer;
-      transition: background-color 0.2s;
     }
 
-    .btn-configure:hover {
-      background-color: #e2e8f0;
-    }
-
-    /* Modal (2. GÖRSEL REVIZYONLARI) */
+    /* Modal (2. REVİZYONLAR) */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -291,7 +309,7 @@
       outline: none;
     }
 
-    /* 4 İkonlu Bilgi Grid'i (HS Code, Vol, Wt, Height) */
+    /* 4 İkonlu Bilgi Grid'i */
     .info-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -376,14 +394,9 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: background 0.2s;
     }
 
-    .btn-add-proforma:hover {
-      background: #0088ee;
-    }
-
-    /* Proforma Sidebar (4. GÖRSEL REVIZYONLARI) */
+    /* Proforma Sidebar (4. REVİZYONLAR) */
     .proforma-sidebar {
       width: 380px;
       background: var(--panel-bg);
@@ -398,9 +411,6 @@
     .sidebar-header {
       padding: 24px 20px;
       border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
 
     .sidebar-header h2 {
@@ -417,7 +427,6 @@
       gap: 12px;
     }
 
-    /* Proforma Sipariş Kartı ve Anlık Adet Değiştirme */
     .cart-item {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -441,7 +450,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      cursor: pointer; /* Tıklanınca detaya döner */
+      cursor: pointer;
     }
 
     .cart-item-title {
@@ -499,13 +508,11 @@
       border: none;
       cursor: pointer;
       font-size: 13px;
-      padding: 4px;
       position: absolute;
       top: 8px;
       right: 8px;
     }
 
-    /* Logistics & Export Bottom Section */
     .sidebar-footer {
       padding: 20px;
       border-top: 1px solid var(--border-color);
@@ -577,26 +584,26 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: opacity 0.2s;
-    }
-
-    .btn-export-excel:hover {
-      opacity: 0.9;
     }
   </style>
 </head>
 <body>
 
   <div class="app-container">
-    <!-- Ana İçerik Alanı -->
     <main class="main-content">
-      <div class="header-title">
-        <i class="fa-solid fa-bed"></i> Yataş Bedding Catalog
+      <div class="header-bar">
+        <div class="header-title">
+          <i class="fa-solid fa-bed"></i> Yataş Bedding Catalog
+        </div>
+        <label class="file-upload-btn">
+          <i class="fa-solid fa-file-excel"></i> Excel Yükle / Güncelle
+          <input type="file" id="excelFileInput" accept=".xlsx, .xls" style="display: none;" onchange="handleFileUpload(event)">
+        </label>
       </div>
       <div class="product-grid" id="productGrid"></div>
     </main>
 
-    <!-- Proforma Yan Paneli -->
+    <!-- Proforma Sidebar -->
     <aside class="proforma-sidebar">
       <div class="sidebar-header">
         <h2>Proforma Order Summary</h2>
@@ -634,7 +641,7 @@
     </aside>
   </div>
 
-  <!-- Ürün Konfigürasyon Modalı -->
+  <!-- Ürün Detay Modalı -->
   <div class="modal-overlay" id="productModal">
     <div class="modal-container">
       <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -642,16 +649,16 @@
         <img id="modalImg" src="" alt="Product Detail">
       </div>
       <div class="modal-right">
-        <!-- 2. GÖRSEL REVIZYONLARI: Parantez içindeki detay silindi -->
-        <div class="modal-header-category" id="modalCategory">YATAŞ BEDDING | MATTRESS</div>
+        <!-- 2. REVİZYON: Parantez içindeki detay silindi -->
+        <div class="modal-header-category" id="modalCategory">YATAŞ BEDDING | YATAK</div>
         <div class="modal-title" id="modalTitle">Activio</div>
 
         <div class="select-group">
-          <!-- 2. GÖRSEL REVIZYONLARI: Sadece Ölçü Yazan Dropdown -->
+          <!-- 2. REVİZYON: Sadece Ölçü Yazan Dropdown -->
           <label class="select-label">SELECT DIMENSION / SIZE</label>
           <select class="custom-select" id="sizeSelect" onchange="onSizeChange()"></select>
 
-          <!-- 2. GÖRSEL REVIZYONLARI: 4. Bilgi Kartı (Yükseklik / Height) Eklendi -->
+          <!-- 2. REVİZYON: 4. Bilgi Kartı (HEIGHT) Eklendi -->
           <div class="info-grid">
             <div class="info-box">
               <div class="title">HS CODE</div>
@@ -689,111 +696,81 @@
   </div>
 
   <script>
-    // tr_yeni.xlsx Veri Seti Tabanlı Ürün Verileri
-    const rawProductsData = [
-      {
-        code: "50501003380001",
-        brand: "Yataş Bedding",
-        category: "Yatak",
-        family: "Activio",
-        status: "MTO",
-        size: "090X190",
-        height: "31.0 cm",
-        priceUsd: 179,
-        priceEur: 154,
-        barcode: "8684177543298",
-        gtip: "940429100000",
-        vol: 0.513,
-        wt: 22.05,
-        img: "https://yatasinternational.github.io/Products-Photos/50501003380001.png"
-      },
-      {
-        code: "50501003380002",
-        brand: "Yataş Bedding",
-        category: "Yatak",
-        family: "Activio",
-        status: "MTO",
-        size: "090X200",
-        height: "31.0 cm",
-        priceUsd: 179,
-        priceEur: 154,
-        barcode: "8684177543304",
-        gtip: "940429100000",
-        vol: 0.540,
-        wt: 23.21,
-        img: "https://yatasinternational.github.io/Products-Photos/50501003380001.png"
-      },
-      {
-        code: "50501003380003",
-        brand: "Yataş Bedding",
-        category: "Yatak",
-        family: "Activio",
-        status: "MTS",
-        size: "100X200",
-        height: "31.0 cm",
-        priceUsd: 189,
-        priceEur: 163,
-        barcode: "8684177543311",
-        gtip: "940429100000",
-        vol: 0.600,
-        wt: 26.26,
-        img: "https://yatasinternational.github.io/Products-Photos/50501003380001.png"
-      },
-      {
-        code: "50501003380004",
-        brand: "Yataş Bedding",
-        category: "Yatak",
-        family: "Activio",
-        status: "MTS",
-        size: "120X200",
-        height: "31.0 cm",
-        priceUsd: 198,
-        priceEur: 171,
-        barcode: "8684177543328",
-        gtip: "940429100000",
-        vol: 0.720,
-        wt: 31.01,
-        img: "https://yatasinternational.github.io/Products-Photos/50501003380001.png"
-      },
-      {
-        code: "50501003380005",
-        brand: "Yataş Bedding",
-        category: "Yatak",
-        family: "Activio",
-        status: "MTS",
-        size: "140X190",
-        height: "31.0 cm",
-        priceUsd: 217,
-        priceEur: 187,
-        barcode: "8684177543335",
-        gtip: "940429100000",
-        vol: 0.798,
-        wt: 34.73,
-        img: "https://yatasinternational.github.io/Products-Photos/50501003380001.png"
-      }
-    ];
-
-    // Ürünleri Ailelerine Göre Gruplama Mantığı
-    const groupedProducts = {};
-    rawProductsData.forEach(p => {
-      if (!groupedProducts[p.family]) {
-        groupedProducts[p.family] = {
-          family: p.family,
-          brand: p.brand,
-          category: p.category,
-          status: p.status,
-          img: p.img,
-          variants: []
-        };
-      }
-      groupedProducts[p.family].variants.push(p);
-    });
-
+    let rawProductsData = [];
+    let groupedProducts = {};
     let proformaCart = [];
     let currentSelectedFamily = null;
     let currentSelectedVariant = null;
 
-    // 1. GÖRSEL REVIZYONLARI: Ana Sayfadaki Kartları Render Etme
+    // Excel Verisini İşleme ve Model Yapısına Dönüştürme
+    function parseExcelRows(rows) {
+      rawProductsData = rows.map(r => ({
+        code: String(r['Ürün Kodu'] || ''),
+        brand: String(r['Marka'] || 'Yataş Bedding'),
+        category: String(r['Kategori'] || 'Yatak'),
+        family: String(r['Ürün Ailesi'] || 'General'),
+        status: String(r['Sipariş Statü'] || 'MTO'),
+        size: String(r['Ölçü'] || ''),
+        height: r['Yükseklik CM'] ? `${r['Yükseklik CM']} cm` : '-',
+        priceUsd: parseFloat(r['Birim USD Fiyat']) || 0,
+        priceEur: parseFloat(r['Birim EUR Fiyat']) || 0,
+        barcode: String(r['Barkod'] || ''),
+        gtip: String(r['GTIP'] || ''),
+        vol: parseFloat(r['Birim Hacim M3']) || 0,
+        wt: parseFloat(r['Birim Ağırlık KG']) || 0,
+        img: String(r['Foto weblink'] || '')
+      })).filter(item => item.code && item.family);
+
+      // Ürünleri Ailelerine Göre Gruplama
+      groupedProducts = {};
+      rawProductsData.forEach(p => {
+        if (!groupedProducts[p.family]) {
+          groupedProducts[p.family] = {
+            family: p.family,
+            brand: p.brand,
+            category: p.category,
+            status: p.status,
+            img: p.img,
+            variants: []
+          };
+        }
+        groupedProducts[p.family].variants.push(p);
+      });
+
+      renderProductGrid();
+    }
+
+    // tr_yeni.xlsx Dosyasını Otomatik Çekme (GitHub Pages & Sunucu İçin)
+    async function loadDefaultExcel() {
+      try {
+        const response = await fetch('tr_yeni.xlsx');
+        if (!response.ok) throw new Error("Excel okunamadı");
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        parseExcelRows(rows);
+      } catch (err) {
+        console.warn("Otomatik tr_yeni.xlsx okunamadı, manuel yükleme beklenebilir:", err);
+      }
+    }
+
+    // Manuel Dosya Yükleme (Dosya Seçici)
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        parseExcelRows(rows);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // 1. REVİZYON: Kart Render (MTO / MTS & Karta Tıklama)
     function renderProductGrid() {
       const grid = document.getElementById('productGrid');
       grid.innerHTML = '';
@@ -804,21 +781,20 @@
 
         const card = document.createElement('div');
         card.className = 'product-card';
-        // 1. GÖRSEL REVIZYONLARI: Kartın tamamına tıklayınca modal açılması
+        // Tüm karta tıklanınca detay modalı açılır
         card.onclick = () => openProductModal(prod.family);
 
         card.innerHTML = `
           <div class="card-image-wrap">
             <span class="badge-sizes">${sizeCount} Sizes</span>
-            <img src="${prod.img}" alt="${prod.family}">
+            <img src="${prod.img}" alt="${prod.family}" onerror="this.src='https://via.placeholder.com/300x200?text=Yatas+Bedding'">
           </div>
           <div class="card-body">
             <div class="brand-category">${prod.brand.toUpperCase()} | ${prod.category.toUpperCase()}</div>
             <div class="product-name">${prod.family}</div>
             
-            <!-- 1. GÖRSEL REVIZYONLARI: "Yaylı Mattress" yerine MTO / MTS Statüsü -->
             <div class="order-status-badge ${prod.status === 'MTO' ? 'status-mto' : 'status-mts'}">
-              ${prod.status === 'MTO' ? 'Order Status: MTO' : 'Order Status: MTS'}
+              Status: ${prod.status}
             </div>
 
             <div class="card-footer">
@@ -831,24 +807,24 @@
       });
     }
 
-    // 2. GÖRSEL REVIZYONLARI: Detay Modalı Açma ve Doldurma
+    // 2. REVİZYON: Modal Açma & Sadelleştirilmiş Dropdown
     function openProductModal(familyKey, targetCode = null) {
       const prod = groupedProducts[familyKey];
+      if (!prod) return;
       currentSelectedFamily = prod;
 
       document.getElementById('modalImg').src = prod.img;
-      // Parantez içindeki yaylı yazısı tamamen temizlendi
       document.getElementById('modalCategory').innerText = `${prod.brand.toUpperCase()} | ${prod.category.toUpperCase()}`;
       document.getElementById('modalTitle').innerText = prod.family;
 
       const select = document.getElementById('sizeSelect');
       select.innerHTML = '';
 
-      // Dropdown içinden ürün adını kaldırıp sadece ölçüyü yazdırma
+      // Dropdown içinde sadece ÖLÇÜ gösterilir
       prod.variants.forEach(v => {
         const opt = document.createElement('option');
         opt.value = v.code;
-        opt.innerText = v.size; // Sadece "090X190" formatı
+        opt.innerText = v.size;
         select.appendChild(opt);
       });
 
@@ -870,10 +846,10 @@
       const selectedCode = document.getElementById('sizeSelect').value;
       currentSelectedVariant = currentSelectedFamily.variants.find(v => v.code === selectedCode);
 
-      document.getElementById('infoHsCode').innerText = currentSelectedVariant.gtip;
+      document.getElementById('infoHsCode').innerText = currentSelectedVariant.gtip || '-';
       document.getElementById('infoVol').innerText = `${currentSelectedVariant.vol} m³`;
       document.getElementById('infoWt').innerText = `${currentSelectedVariant.wt} kg`;
-      document.getElementById('infoHeight').innerText = currentSelectedVariant.height; // 4. Eklenen Bilgi
+      document.getElementById('infoHeight').innerText = currentSelectedVariant.height;
       document.getElementById('modalPrice').innerText = `$${currentSelectedVariant.priceUsd.toFixed(2)}`;
     }
 
@@ -884,7 +860,7 @@
       input.value = val;
     }
 
-    // Sepete Ekleme
+    // Proforma Sepet İşlemleri
     function addToProforma() {
       const qty = parseInt(document.getElementById('modalQty').value);
       const existingIndex = proformaCart.findIndex(item => item.code === currentSelectedVariant.code);
@@ -902,7 +878,7 @@
       renderProformaSummary();
     }
 
-    // 4. GÖRSEL REVIZYONLARI: Sepette Anlık Adet Değiştirme & Ürüne Tıklayınca Modala Dönüş
+    // 4. REVİZYON: Anlık Adet Değiştirme ve Ürüne Tıklayınca Modala Dönüş
     function renderProformaSummary() {
       const cartList = document.getElementById('cartList');
       cartList.innerHTML = '';
@@ -922,15 +898,13 @@
         div.innerHTML = `
           <button class="btn-delete-item" onclick="deleteCartItem(${index})"><i class="fa-solid fa-trash"></i></button>
           
-          <!-- Görsel ve İsme Tıklanınca Modala Dönüş -->
-          <img src="${item.img}" class="cart-item-img" onclick="openProductModal('${item.family}', '${item.code}')">
+          <img src="${item.img}" class="cart-item-img" onclick="openProductModal('${item.family}', '${item.code}')" onerror="this.src='https://via.placeholder.com/60'">
           
           <div class="cart-item-details" onclick="openProductModal('${item.family}', '${item.code}')">
             <div class="cart-item-title">${item.family} (${item.size})</div>
             <div class="cart-item-sub">$${item.priceUsd} / unit</div>
             
             <div class="cart-item-controls" onclick="event.stopPropagation()">
-              <!-- Inline Adet Artırma / Azaltma (+ / -) -->
               <div class="inline-qty-picker">
                 <button class="inline-qty-btn" onclick="updateCartQty(${index}, -1)">-</button>
                 <span class="inline-qty-val">${item.qty}</span>
@@ -943,7 +917,6 @@
         cartList.appendChild(div);
       });
 
-      // Lojistik Metrikleri
       document.getElementById('grandTotal').innerText = `$${grandTotal.toFixed(2)}`;
       document.getElementById('logisticsMetrics').innerText = `Total Vol: ${totalVol.toFixed(3)} m³ | Total Wt: ${totalWt.toFixed(2)} kg`;
 
@@ -967,7 +940,7 @@
       renderProformaSummary();
     }
 
-    // 3. GÖRSEL REVIZYONLARI: Optimum Görsel Boyutlu & Tam TR Verili Excel Export
+    // 3. REVİZYON: Fotoğraflı ve Optimum Boyutlandırılmış Excel Export
     async function exportToExcelWithPhotos() {
       if (proformaCart.length === 0) {
         alert("Proforma sipariş listeniz boş!");
@@ -977,7 +950,6 @@
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('TR Order Summary');
 
-      // Excel Sütun Yapısı (TR Data ile Tam Birebir)
       worksheet.columns = [
         { header: 'Image', key: 'img', width: 18 },
         { header: 'Brand', key: 'brand', width: 16 },
@@ -996,7 +968,6 @@
         { header: 'Total Wt (kg)', key: 'totalWt', width: 16 }
       ];
 
-      // Header Stil Düzenlemesi (Koyu Mavi Kurumsal Stil)
       const headerRow = worksheet.getRow(1);
       headerRow.height = 28;
       headerRow.eachCell(cell => {
@@ -1005,7 +976,6 @@
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
       });
 
-      // Satırların Eklemesi ve Görsel Ölçeklendirme
       for (let i = 0; i < proformaCart.length; i++) {
         const item = proformaCart[i];
         const rowIndex = i + 2;
@@ -1027,13 +997,11 @@
           totalWt: (item.wt * item.qty).toFixed(2)
         });
 
-        // Optimum Fotoğraf Boyutu İçin Yükseklik
         row.height = 70;
         row.eachCell(cell => {
           cell.alignment = { vertical: 'middle', horizontal: 'center' };
         });
 
-        // Görseli Base64/Buffer Olarak Çekip Excel'e Ekleme
         try {
           const response = await fetch(item.img);
           const blob = await response.blob();
@@ -1046,7 +1014,7 @@
 
           worksheet.addImage(imageId, {
             tl: { col: 0, row: rowIndex - 1 },
-            ext: { width: 85, height: 85 }, // Optimum görsel boyutu
+            ext: { width: 85, height: 85 },
             editAs: 'oneCell'
           });
         } catch (e) {
@@ -1054,14 +1022,13 @@
         }
       }
 
-      // Dosyayı İndirme
       const buffer = await workbook.xlsx.writeBuffer();
       saveAs(new Blob([buffer]), `Proforma_Order_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
 
-    // Uygulama Başlatma
+    // Uygulama İlk Çalışma
     window.onload = () => {
-      renderProductGrid();
+      loadDefaultExcel();
       renderProformaSummary();
     };
   </script>
