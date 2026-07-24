@@ -612,7 +612,7 @@
 
         async function loadExcelData() {
             try {
-                const response = await fetch('tr.xlsx');
+                const response = await fetch('tr_yeni.xlsx');
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
