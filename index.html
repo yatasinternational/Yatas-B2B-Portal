@@ -42,7 +42,7 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            padding-bottom: 60px; /* Footer yüksekliği kadar boşluk */
+            padding-bottom: 60px;
         }
 
         /* HEADER NAVBAR */
@@ -251,6 +251,20 @@
         }
         .modal-close:hover { background: var(--yatas-red); color: #fff; border-color: var(--yatas-red); }
 
+        /* LIGHTBOX IMAGE POPUP */
+        .lightbox-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px);
+            z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .lightbox-overlay.active { display: flex; }
+        .lightbox-content {
+            position: relative; background: #ffffff; padding: 12px; border-radius: 12px;
+            max-width: 90vw; max-height: 90vh; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .lightbox-content img { max-width: 100%; max-height: 82vh; object-fit: contain; border-radius: 6px; }
+
         /* MODAL GALERİ VE SOL ALAN */
         .modal-left { 
             flex: 1; min-width: 320px; background: #f8fafc; 
@@ -258,9 +272,10 @@
             padding: 24px; border-right: 1px solid var(--border-color);
         }
         .gallery-main-container {
-            width: 100%; height: 340px; display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 340px; display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
-        .gallery-main-container img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+        .gallery-main-container img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; transition: transform 0.2s; }
+        .gallery-main-container img:hover { transform: scale(1.02); }
 
         /* THUMBNAIL ÖNİZLEME LİSTESİ */
         .modal-thumbnails-bar {
@@ -279,7 +294,7 @@
         .modal-header h2 { font-size: 28px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 4px; }
         .modal-subtitle { font-size: 12px; color: var(--yatas-red); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; font-weight: 700; }
 
-        /* FAMILY CATEGORY TABS (ÇAPRAZ SATIŞ SEKMELERİ) */
+        /* FAMILY CATEGORY TABS */
         .family-tabs-bar {
             display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; overflow-x: auto;
         }
@@ -343,11 +358,12 @@
         }
         .spec-item strong.highlight-status { color: var(--yatas-red); }
         
-        /* 8. KUTUCUK SERTLİK DÜZENLEMESİ */
+        /* SERTLİK BUTONU VE İKON DÜZENİ */
         .hardness-content {
-            display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 3px; flex-wrap: wrap;
+            display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 3px; flex-wrap: wrap; cursor: pointer;
         }
-        .hardness-img { height: 18px; width: auto; max-width: 32px; object-fit: contain; }
+        .hardness-img { height: 20px; width: auto; max-width: 36px; object-fit: contain; transition: transform 0.2s; }
+        .hardness-img:hover { transform: scale(1.15); }
 
         .qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .qty-picker { display: flex; align-items: center; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 2px; }
@@ -425,32 +441,15 @@
         }
         .export-excel-btn:hover { background: #059669; }
 
-        /* DİNAMİK SCROLL FOOTER BANNER */
+        /* FOOTER BANNER */
         footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 900;
-            background: var(--yatas-navy);
-            color: #ffffff;
-            padding: 14px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            font-size: 12px;
-            box-shadow: 0 -4px 15px rgba(0, 32, 91, 0.2);
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 900;
+            background: var(--yatas-navy); color: #ffffff; padding: 14px 28px;
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+            font-size: 12px; box-shadow: 0 -4px 15px rgba(0, 32, 91, 0.2);
             transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
         }
-
-        footer.hidden-on-scroll {
-            transform: translateY(100%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
+        footer.hidden-on-scroll { transform: translateY(100%); opacity: 0; pointer-events: none; }
         footer .footer-left { color: rgba(255,255,255,0.8); }
         footer .footer-right { font-weight: 600; color: var(--accent-gold); letter-spacing: 0.5px; }
 
@@ -529,13 +528,13 @@
         <div class="product-grid" id="productGrid"></div>
     </main>
 
-    <!-- PRODUCT DETAIL MODAL (FAMILY CROSS-SELL + GALLERY) -->
+    <!-- PRODUCT DETAIL MODAL -->
     <div class="modal-overlay" id="productModal" onclick="handleBackdropClick(event)">
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             
             <div class="modal-left">
-                <div class="gallery-main-container">
+                <div class="gallery-main-container" onclick="openLightbox(document.getElementById('modalImg').src)">
                     <img id="modalImg" src="" alt="Product Main Image">
                 </div>
                 <!-- THUMBNAIL FOTO GALERİSİ -->
@@ -548,7 +547,7 @@
                     <h2 id="modalFamilyTitle">Activio Collection</h2>
                 </div>
 
-                <!-- FAMILY CATEGORY TABS (ÇAPRAZ SATIŞ SEKMELERİ) -->
+                <!-- FAMILY CATEGORY TABS -->
                 <div class="family-tabs-bar" id="familyTabsBar"></div>
 
                 <div class="variant-box">
@@ -589,7 +588,7 @@
                         </div>
                         <div class="spec-item">
                             <span data-i18n="hardness">HARDNESS</span>
-                            <div class="hardness-content">
+                            <div class="hardness-content" id="hardnessContentArea">
                                 <strong id="specHardness">-</strong>
                                 <img id="specHardnessImg" class="hardness-img" src="" alt="" style="display:none;" onerror="this.style.display='none'">
                             </div>
@@ -612,6 +611,14 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX / POPUP GÖRSEL MODALI -->
+    <div class="lightbox-overlay" id="lightboxModal" onclick="closeLightbox(event)">
+        <div class="lightbox-content">
+            <button class="modal-close" onclick="closeLightbox(event, true)" style="top:-14px; right:-14px;"><i class="fa-solid fa-xmark"></i></button>
+            <img id="lightboxImg" src="" alt="Zoomed View">
         </div>
     </div>
 
@@ -676,7 +683,7 @@
         </div>
     </div>
 
-    <!-- AKILLI DİNAMİK FOOTER BANNER -->
+    <!-- FOOTER BANNER -->
     <footer id="appFooter">
         <div class="footer-left">
             Copyright © 2026 Yataş International. All rights reserved.
@@ -696,7 +703,8 @@
                 feature: "ÖZELLİK", color: "RENK", hardness: "SERTLİK",
                 add_to_cart: "Seçileni Siparişe Ekle", cart_title: "Proforma Sipariş Özeti",
                 logistics_calc: "LOJİSTİK KAPASİTE VE ARAÇ HESABI", grand_total: "Genel Toplam:",
-                export_excel: "Fotoğraflı Excel Sipariş Listesi İndir", from: "başlayan fiyatlar"
+                export_excel: "Fotoğraflı Excel Sipariş Listesi İndir", from: "başlayan fiyatlar",
+                hardness_detail: "Sertlik Detayı"
             },
             EN: {
                 cart: "Cart", categories: "Categories", all_brands: "All Brands",
@@ -705,7 +713,8 @@
                 feature: "FEATURE", color: "COLOR", hardness: "HARDNESS",
                 add_to_cart: "Add Selected Item to Order", cart_title: "Proforma Order Summary",
                 logistics_calc: "LOGISTICS & VEHICLE CAPACITY", grand_total: "Grand Total:",
-                export_excel: "Export Excel Order with Photos", from: "from"
+                export_excel: "Export Excel Order with Photos", from: "from",
+                hardness_detail: "Hardness Detail"
             },
             DE: {
                 cart: "Warenkorb", categories: "Kategorien", all_brands: "Alle Marken",
@@ -714,7 +723,8 @@
                 feature: "EIGENSCHAFT", color: "FARBE", hardness: "HÄRTE",
                 add_to_cart: "Ausgewähltes Element hinzufügen", cart_title: "Proforma-Bestellübersicht",
                 logistics_calc: "LOGISTIK- UND FAHRZEUGKAPAZITÄT", grand_total: "Gesamtsumme:",
-                export_excel: "Excel-Bestellung mit Fotos exportieren", from: "ab"
+                export_excel: "Excel-Bestellung mit Fotos exportieren", from: "ab",
+                hardness_detail: "Härte-Details"
             },
             RU: {
                 cart: "Корзина", categories: "Категории", all_brands: "Все бренды",
@@ -723,7 +733,8 @@
                 feature: "СВОЙСТВО", color: "ЦВЕТ", hardness: "ЖЕСТКОСТЬ",
                 add_to_cart: "Добавить выбранный товар", cart_title: "Сводка Проформа-Заказа",
                 logistics_calc: "ЛОГИСТИКА И ЕМКОСТЬ ТRANSPORTA", grand_total: "Итого:",
-                export_excel: "Скачать Excel с фото", from: "от"
+                export_excel: "Скачать Excel с фото", from: "от",
+                hardness_detail: "Детали жесткости"
             }
         };
 
@@ -735,7 +746,11 @@
             "Yorgan": { EN: "Duvet", DE: "Bettdecke", RU: "Одеяло" },
             "Alez": { EN: "Mattress Protector", DE: "Matratzenschoner", RU: "Наматрасник" },
             "Set": { EN: "Bed Set", DE: "Bett-Set", RU: "Комплект" },
-            "Genel": { EN: "General", DE: "Allgemein", RU: "Общие" }
+            "Genel": { EN: "General", DE: "Allgemein", RU: "Общие" },
+            "Yaylı": { EN: "Spring", DE: "Federkern", RU: "Пружинный" },
+            "Sert": { EN: "Firm / Hard", DE: "Hart", RU: "Жесткий" },
+            "Orta Sert": { EN: "Medium Firm", DE: "Mittelhart", RU: "Средне-жесткий" },
+            "Yumuşak": { EN: "Soft", DE: "Weich", RU: "Мягкий" }
         };
 
         function autoTranslateText(text, targetLang) {
@@ -768,7 +783,7 @@
             initScrollFooterBehavior();
         });
 
-        // AKILLI SCROLL BANNER MANTIĞI
+        // SCROLL BANNER MANTIĞI
         function initScrollFooterBehavior() {
             const footer = document.getElementById('appFooter');
             window.addEventListener('scroll', () => {
@@ -778,6 +793,19 @@
                     footer.classList.remove('hidden-on-scroll');
                 }
             });
+        }
+
+        // LIGHTBOX / POPUP İŞLEMLERİ
+        function openLightbox(imgSrc) {
+            if (!imgSrc || imgSrc.includes('placeholder')) return;
+            document.getElementById('lightboxImg').src = imgSrc;
+            document.getElementById('lightboxModal').classList.add('active');
+        }
+
+        function closeLightbox(e, force = false) {
+            if (force || e.target.classList.contains('lightbox-overlay')) {
+                document.getElementById('lightboxModal').classList.remove('active');
+            }
         }
 
         async function loadExcelData() {
@@ -826,10 +854,7 @@
                     photoList.forEach(p => productFamilies[familyName].categories[category].allPhotos.add(p));
                 }
 
-                // ESNEK STATÜ / MTO-MTS TESPİTİ
                 const variantStatus = item['Sipariş Statü'] || item['Status'] || item['MTO/MTS'] || item['STATÜ'] || item['Statü'] || item['Siparis Statu'] || 'MTO';
-                
-                // ESNEK SERTLİK DERECE & SERTLİK İKON LINK TESPİTİ
                 const hardnessText = item['Sertlik Detayı'] || item['Sertlik'] || item['Sertlik Derecesi'] || '-';
                 const hardnessImg = item['Sertlik Detay Görsel'] || item['Sertlik Görsel'] || item['Sertlik Link'] || item['Sertlik Görseli'] || item['Sertlik Web Link'] || '';
 
@@ -1024,7 +1049,6 @@
 
             document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${translatedCat}`;
 
-            // GALERİ VE THUMBNAIL YÜKLEME
             const allPhotosArray = Array.from(catData.allPhotos);
             const mainPhoto = allPhotosArray.length > 0 ? allPhotosArray[0] : catData.photoUrl;
             
@@ -1041,10 +1065,10 @@
                 thumbsContainer.style.display = 'none';
             }
 
-            // DİNAMİK MTO / MTS STATÜ SEÇİMİ İLE ÖLÇÜ BİLGİSİ
+            // TEMİZ VE YALIN ÖLÇÜ LİSTESİ
             const sizeSelect = document.getElementById('sizeSelect');
             sizeSelect.innerHTML = catData.variants.map((v, idx) => {
-                return `<option value="${idx}">${v.size} (${v.status})</option>`;
+                return `<option value="${idx}">${v.size}</option>`;
             }).join('');
 
             onSizeChange();
@@ -1066,22 +1090,28 @@
             document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
             document.getElementById('specHeight').innerText = `${currentSelectedVariant.height} cm`;
             
-            // DİNAMİK STATÜ (MTO / MTS)
             const specStatusEl = document.getElementById('specStatus');
             specStatusEl.innerText = currentSelectedVariant.status || 'MTO';
 
-            document.getElementById('specFeature').innerText = currentSelectedVariant.feature || '-';
+            document.getElementById('specFeature').innerText = autoTranslateText(currentSelectedVariant.feature, currentLang) || '-';
             document.getElementById('specColor').innerText = currentSelectedVariant.color || '-';
             
-            // 8. KUTUCUK SERTLİK DERECE + WEBLINK GÖRSELİ
-            document.getElementById('specHardness').innerText = currentSelectedVariant.hardness || '-';
+            // SERTLİK DETAYI VE İKONU
+            const translatedHardness = autoTranslateText(currentSelectedVariant.hardness, currentLang);
+            document.getElementById('specHardness').innerText = translatedHardness || '-';
 
             const hardnessImgEl = document.getElementById('specHardnessImg');
+            const hardnessArea = document.getElementById('hardnessContentArea');
+
             if (currentSelectedVariant.hardnessImg && currentSelectedVariant.hardnessImg.startsWith('http')) {
                 hardnessImgEl.src = currentSelectedVariant.hardnessImg;
                 hardnessImgEl.style.display = 'inline-block';
+                hardnessArea.onclick = () => openLightbox(currentSelectedVariant.hardnessImg);
+                hardnessArea.title = i18n[currentLang].hardness_detail || "Hardness Detail";
             } else {
                 hardnessImgEl.style.display = 'none';
+                hardnessArea.onclick = null;
+                hardnessArea.title = "";
             }
 
             updateModalPrice();
@@ -1174,7 +1204,7 @@
 
                 return `
                 <div class="cart-item-card">
-                    <img src="${item.photoUrl}" onerror="this.src='https://via.placeholder.com/50'" onclick="openProductModal('${item.family}')">
+                    <img src="${item.photoUrl}" onerror="this.src='https://via.placeholder.com/50'" onclick="openLightbox('${item.photoUrl}')">
                     <div class="cart-item-info" onclick="openProductModal('${item.family}')">
                         <h4>${item.family} - ${transCat}</h4>
                         <p>${item.size} (${item.status})</p>
@@ -1340,7 +1370,7 @@
             renderProductGrid();
         }
 
-        // FOTOĞRAFLI VE DİP TOPLAM SATIRLI EXCEL EXPORT (EXCELJS)
+        // FOTOĞRAFLI EXCEL EXPORT (EXCELJS)
         async function exportProformaExcel() {
             if (cart.length === 0) {
                 alert("Sepetiniz boş / Cart is empty!");
