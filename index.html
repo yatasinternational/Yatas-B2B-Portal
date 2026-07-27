@@ -85,18 +85,18 @@
 
         .cart-trigger-btn {
             position: relative;
-            background: var(--yatas-red);
+            background: var(--yatas-navy);
             border: none;
             color: #fff; padding: 9px 20px; border-radius: 6px;
             font-size: 13px; font-weight: 700; cursor: pointer;
             display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 12px rgba(215, 25, 33, 0.25); transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 32, 91, 0.25); transition: all 0.2s;
             font-family: 'Open Sans', sans-serif;
         }
-        .cart-trigger-btn:hover { background: var(--yatas-red-hover); transform: translateY(-1px); }
+        .cart-trigger-btn:hover { background: var(--yatas-navy-hover); transform: translateY(-1px); }
 
         .cart-badge {
-            background: #fff; color: var(--yatas-red);
+            background: var(--yatas-red); color: #fff;
             font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 20px;
         }
 
@@ -111,32 +111,45 @@
         .sidebar-nav {
             position: fixed; left: -340px; top: 0; height: 100vh; width: 320px;
             background: #ffffff; border-right: 1px solid var(--border-color);
-            z-index: 1001; padding: 80px 20px 30px 20px;
+            z-index: 1001; padding: 30px 20px;
             display: flex; flex-direction: column; gap: 15px;
             transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             overflow-y: auto; box-shadow: 5px 0 25px rgba(0,0,0,0.08);
         }
         .sidebar-nav.open { left: 0; }
 
-        .sidebar-title {
-            font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
-            color: var(--yatas-navy); font-weight: 800; border-bottom: 2px solid var(--yatas-navy);
-            padding-bottom: 8px; margin-bottom: 10px;
+        .sidebar-header-logo {
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--yatas-navy);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+        .sidebar-header-logo img { height: 28px; width: auto; }
 
-        .nav-tree-item { margin-bottom: 8px; }
+        .nav-tree-item { margin-bottom: 6px; }
         .nav-tree-header {
             padding: 10px 12px; background: var(--bg-light);
             border-radius: 6px; font-size: 13px; font-weight: 700; color: var(--yatas-navy);
             display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; transition: all 0.2s;
+            cursor: pointer; transition: all 0.2s; border: 1px solid var(--border-color);
         }
         .nav-tree-header:hover { background: #e2e8f0; }
-        .nav-tree-children { padding-left: 15px; display: none; margin-top: 5px; }
+        .nav-tree-children { padding-left: 10px; display: none; margin-top: 4px; }
         .nav-tree-children.active { display: block; }
 
+        .cat-tree-header {
+            padding: 8px 10px; font-size: 12px; font-weight: 700; color: var(--yatas-navy);
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; border-radius: 4px; margin-top: 2px;
+        }
+        .cat-tree-header:hover { background: #f1f5f9; }
+        .cat-tree-children { padding-left: 12px; display: none; }
+        .cat-tree-children.active { display: block; }
+
         .sub-link {
-            padding: 8px 10px; font-size: 12px; color: var(--text-dark);
+            padding: 6px 10px; font-size: 11.5px; color: var(--text-dark);
             display: block; cursor: pointer; border-radius: 4px; transition: all 0.2s;
         }
         .sub-link:hover, .sub-link.active { color: var(--yatas-red); background: #f1f5f9; font-weight: 600; }
@@ -185,6 +198,7 @@
             cursor: pointer;
             transition: all 0.25s ease;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            position: relative;
         }
         .product-card:hover {
             transform: translateY(-4px);
@@ -193,7 +207,7 @@
         }
 
         .card-img-wrap {
-            position: relative; width: 100%; height: 210px;
+            position: relative; width: 100%; height: 220px;
             background: #f1f5f9; overflow: hidden; display: flex;
             align-items: center; justify-content: center;
         }
@@ -203,8 +217,17 @@
         .card-badge {
             position: absolute; top: 12px; right: 12px;
             background: var(--yatas-navy); color: #fff;
-            font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 4px;
+            font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px;
         }
+
+        .card-info-icon {
+            position: absolute; top: 12px; left: 12px;
+            background: rgba(255,255,255,0.9); color: var(--yatas-navy);
+            width: 28px; height: 28px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 13px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: all 0.2s;
+        }
+        .card-info-icon:hover { background: var(--yatas-navy); color: #fff; }
 
         .card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .card-brand { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; }
@@ -214,9 +237,10 @@
             display: flex; align-items: center; justify-content: space-between;
             border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 8px;
         }
-        .card-price { font-size: 16px; font-weight: 800; color: var(--yatas-red); }
+        /* KOYU KURUMSAL RENK TONU */
+        .card-price { font-size: 17px; font-weight: 800; color: var(--yatas-navy); }
 
-        /* PRODUCT DETAIL MODAL */
+        /* PRODUCT DETAIL MODAL (BÜYÜTÜLMÜŞ TASARIM) */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 20, 60, 0.6); backdrop-filter: blur(4px);
@@ -225,8 +249,8 @@
         .modal-overlay.active { display: flex; }
 
         .modal-card {
-            background: #ffffff; border-radius: 12px; width: 100%; max-width: 920px;
-            max-height: 90vh; overflow-y: auto; display: flex; flex-wrap: wrap;
+            background: #ffffff; border-radius: 12px; width: 100%; max-width: 1080px;
+            max-height: 92vh; overflow-y: auto; display: flex; flex-wrap: wrap;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; border: 1px solid var(--border-color);
         }
 
@@ -238,51 +262,58 @@
         }
         .modal-close:hover { background: var(--yatas-red); color: #fff; border-color: var(--yatas-red); }
 
-        .modal-left { flex: 1; min-width: 320px; background: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 24px; }
-        .modal-left img { max-width: 100%; max-height: 380px; object-fit: contain; }
+        .modal-left { flex: 1.1; min-width: 360px; background: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 30px; }
+        .modal-left img { max-width: 100%; max-height: 440px; object-fit: contain; }
 
-        .modal-right { flex: 1.2; min-width: 340px; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; }
-        .modal-header h2 { font-size: 26px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 4px; }
-        .modal-subtitle { font-size: 12px; color: var(--yatas-red); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; font-weight: 700; }
+        .modal-right { flex: 1.3; min-width: 360px; padding: 36px; display: flex; flex-direction: column; justify-content: space-between; }
+        .modal-header h2 { font-size: 30px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 6px; }
+        .modal-subtitle { font-size: 13px; color: var(--yatas-red); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 22px; font-weight: 700; }
 
         .variant-box {
             background: var(--bg-light); border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 18px; margin-bottom: 24px;
+            border-radius: 10px; padding: 22px; margin-bottom: 24px;
         }
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; font-weight: 800; }
         .form-group select {
             width: 100%; background: #ffffff; border: 1px solid var(--border-color);
-            color: var(--text-dark); padding: 10px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; outline: none;
+            color: var(--text-dark); padding: 12px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; outline: none;
             font-family: 'Open Sans', sans-serif;
         }
 
-        /* 5-COLUMN SPECS GRID */
-        .specs-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 14px; }
-        .spec-item { background: #ffffff; padding: 10px 4px; border-radius: 6px; text-align: center; border: 1px solid var(--border-color); }
-        .spec-item span { display: block; font-size: 8.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-        .spec-item strong { font-size: 11px; color: var(--yatas-navy); font-weight: 800; margin-top: 3px; display: block; }
+        /* 5-COLUMN SPECS GRID (BÜYÜTÜLMÜŞ DETAYLAR) */
+        .specs-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 16px; }
+        .spec-item { background: #ffffff; padding: 12px 6px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color); }
+        .spec-item span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
+        .spec-item strong { font-size: 13px; color: var(--yatas-navy); font-weight: 800; margin-top: 4px; display: block; }
         .spec-item strong.highlight-status { color: var(--yatas-red); }
 
-        .qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .qty-picker { display: flex; align-items: center; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: 6px; }
-        .qty-btn { width: 38px; height: 38px; background: none; border: none; color: var(--text-dark); font-size: 16px; cursor: pointer; font-weight: 800; }
-        .qty-input { width: 45px; text-align: center; background: none; border: none; color: var(--text-dark); font-weight: 800; font-size: 14px; }
+        .qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+        .qty-picker { display: flex; align-items: center; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 2px; }
+        .qty-btn { width: 42px; height: 42px; background: none; border: none; color: var(--text-dark); font-size: 18px; cursor: pointer; font-weight: 800; }
+        .qty-input { width: 65px; text-align: center; background: #fff; border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-dark); font-weight: 800; font-size: 15px; padding: 6px 0; outline: none; }
 
-        .total-price-tag { font-size: 24px; font-weight: 800; color: var(--yatas-red); }
+        .total-price-tag { font-size: 28px; font-weight: 800; color: var(--yatas-navy); }
 
         .add-cart-btn {
             width: 100%; background: var(--yatas-navy);
-            color: #ffffff; border: none; padding: 14px; border-radius: 6px;
-            font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            color: #ffffff; border: none; padding: 16px; border-radius: 8px;
+            font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
             box-shadow: 0 4px 12px rgba(0, 32, 91, 0.2); font-family: 'Open Sans', sans-serif;
         }
         .add-cart-btn:hover { background: var(--yatas-navy-hover); transform: translateY(-1px); }
 
-        /* CART DRAWER */
+        /* CART DRAWER & BACKDROP */
+        .cart-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 32, 91, 0.3); backdrop-filter: blur(2px);
+            z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .cart-overlay.active { opacity: 1; visibility: visible; }
+
         .cart-drawer {
-            position: fixed; right: -420px; top: 0; height: 100vh; width: 400px;
+            position: fixed; right: -440px; top: 0; height: 100vh; width: 420px;
             background: #ffffff; border-left: 1px solid var(--border-color);
             z-index: 2001; padding: 24px; display: flex; flex-direction: column;
             transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -295,22 +326,22 @@
 
         .cart-item-card {
             background: var(--bg-light); border: 1px solid var(--border-color);
-            border-radius: 6px; padding: 12px; display: flex; gap: 12px; align-items: center;
+            border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center;
         }
-        .cart-item-card img { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; cursor: pointer; }
+        .cart-item-card img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer; }
         .cart-item-info { flex: 1; cursor: pointer; }
-        .cart-item-info h4 { font-size: 13px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 2px; }
+        .cart-item-info h4 { font-size: 13.5px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 2px; }
         .cart-item-info p { font-size: 11px; color: var(--text-muted); }
-        .cart-item-price { font-size: 13px; font-weight: 800; color: var(--yatas-red); margin-top: 4px; }
+        .cart-item-price { font-size: 13.5px; font-weight: 800; color: var(--yatas-navy); margin-top: 4px; }
 
         .cart-qty-ctrl {
-            display: flex; align-items: center; gap: 6px;
-            background: #ffffff; border-radius: 4px;
-            padding: 2px 6px; margin-top: 6px; width: fit-content;
+            display: flex; align-items: center; gap: 4px;
+            background: #ffffff; border-radius: 6px;
+            padding: 2px 4px; margin-top: 6px; width: fit-content;
             border: 1px solid var(--border-color);
         }
-        .cart-qty-ctrl button { background: none; border: none; color: var(--text-dark); font-weight: 800; cursor: pointer; font-size: 12px; padding: 0 4px; }
-        .cart-qty-ctrl span { font-size: 11px; font-weight: 800; min-width: 16px; text-align: center; }
+        .cart-qty-ctrl button { background: none; border: none; color: var(--text-dark); font-weight: 800; cursor: pointer; font-size: 13px; padding: 0 6px; }
+        .cart-qty-input { width: 36px; text-align: center; border: none; font-size: 12px; font-weight: 800; color: var(--text-dark); outline: none; background: transparent; }
 
         /* LOGISTICS METER STYLES */
         .logistics-bar-container {
@@ -333,11 +364,28 @@
         }
         .export-excel-btn:hover { background: #059669; }
 
+        /* FOOTER BRANDING SIGNATURE */
+        footer {
+            background: var(--yatas-navy);
+            color: #ffffff;
+            padding: 20px 28px;
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+        }
+        footer .footer-left { color: rgba(255,255,255,0.7); }
+        footer .footer-right { font-weight: 600; color: var(--accent-gold); letter-spacing: 0.5px; }
+
         @media (max-width: 768px) {
             .cart-drawer { width: 100%; right: -100%; }
             .modal-card { flex-direction: column; }
-            .modal-left { height: 200px; }
+            .modal-left { height: 220px; }
             .specs-grid { grid-template-columns: repeat(3, 1fr); }
+            footer { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -365,7 +413,7 @@
                 <option value="RU">RU</option>
             </select>
 
-            <button class="cart-trigger-btn" onclick="toggleCart()">
+            <button class="cart-trigger-btn" onclick="toggleCart(true)">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span data-i18n="cart">Cart</span>
                 <span class="cart-badge" id="cartBadge">0</span>
@@ -377,7 +425,10 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <div class="sidebar-nav" id="sidebarNav">
-        <div class="sidebar-title" data-i18n="categories">Categories</div>
+        <div class="sidebar-header-logo">
+            <img src="yatas_grup_logo.jpg" alt="Yataş Group" onerror="this.src='https://yatasinternational.github.io/Products-Photos/yatas_logo.png'">
+            <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--text-muted);" onclick="toggleSidebar()"></i>
+        </div>
         <div id="navigationTree"></div>
     </div>
 
@@ -418,7 +469,7 @@
                         <select id="sizeSelect" onchange="onSizeChange()"></select>
                     </div>
 
-                    <!-- 5-COLUMN SPECS GRID -->
+                    <!-- 5-COLUMN SPECS GRID (BÜYÜTÜLMÜŞ METİNLER) -->
                     <div class="specs-grid">
                         <div class="spec-item">
                             <span data-i18n="gtip">HS CODE</span>
@@ -447,7 +498,7 @@
                     <div class="qty-row">
                         <div class="qty-picker">
                             <button class="qty-btn" onclick="updateModalQty(-1)">-</button>
-                            <input type="text" class="qty-input" id="modalQty" value="1" readonly>
+                            <input type="number" class="qty-input" id="modalQty" value="1" min="1" oninput="updateModalPrice()">
                             <button class="qty-btn" onclick="updateModalQty(1)">+</button>
                         </div>
                         <div class="total-price-tag" id="modalTotalPrice">$0</div>
@@ -461,11 +512,18 @@
         </div>
     </div>
 
-    <!-- CART & PROFORMA DRAWER -->
+    <!-- CART DRAWER BACKDROP & DRAWER -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart(false)"></div>
+
     <div class="cart-drawer" id="cartDrawer">
         <div class="cart-header">
             <h3 data-i18n="cart_title"><i class="fa-solid fa-file-invoice-dollar"></i> Proforma Order Summary</h3>
-            <button class="modal-close" onclick="toggleCart()" style="position:static;"><i class="fa-solid fa-xmark"></i></button>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button style="background:none; border:none; color:var(--yatas-red); cursor:pointer; font-size:14px; font-weight:700;" onclick="clearCart()" title="Clear Cart">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+                <button class="modal-close" onclick="toggleCart(false)" style="position:static;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
         </div>
 
         <div class="cart-items-list" id="cartItemsList"></div>
@@ -498,15 +556,15 @@
                 </div>
             </div>
 
-            <div style="font-size:10px; color:var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 6px; margin-top:8px;" id="logisticsMeta">
-                Total Vol: 0.00 m³ | Total Wt: 0.0 kg
+            <div style="font-size:10.5px; color:var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 6px; margin-top:8px; font-weight:600;" id="logisticsMeta">
+                Total Pcs: 0 | Total Vol: 0.00 m³ | Total Wt: 0.0 kg
             </div>
         </div>
 
         <div class="cart-footer">
-            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:16px; margin-bottom:15px; color:var(--yatas-navy);">
+            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:17px; margin-bottom:15px; color:var(--yatas-navy);">
                 <span data-i18n="grand_total">Grand Total:</span>
-                <span id="cartGrandTotal" style="color:var(--yatas-red);">$0</span>
+                <span id="cartGrandTotal" style="color:var(--yatas-navy);">$0</span>
             </div>
 
             <button class="export-excel-btn" onclick="exportProformaExcel()">
@@ -514,6 +572,16 @@
             </button>
         </div>
     </div>
+
+    <!-- FOOTER SIGNATURE -->
+    <footer>
+        <div class="footer-left">
+            Copyright © 2026 Yataş International. All rights reserved.
+        </div>
+        <div class="footer-right">
+            Proudly presented by International Sales Development Team
+        </div>
+    </footer>
 
     <script>
         // UI DICTIONARY
@@ -648,6 +716,7 @@
             `).join('');
         }
 
+        // AKORDEON DÜZENDE AKILLI AĞAÇ MENÜ
         function buildNavigationTree() {
             const tree = {};
             rawProducts.forEach(i => {
@@ -665,17 +734,22 @@
             for (const [brand, categories] of Object.entries(tree)) {
                 html += `<div class="nav-tree-item">
                     <div class="nav-tree-header" onclick="toggleNavAccordion(this)">
-                        <span><i class="fa-solid fa-layer-group"></i> ${brand}</span>
+                        <span><i class="fa-solid fa-store" style="margin-right:6px;"></i> ${brand}</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </div>
                     <div class="nav-tree-children">`;
                 for (const [cat, families] of Object.entries(categories)) {
                     const translatedCat = autoTranslateText(cat, currentLang);
-                    html += `<div style="margin: 4px 0;">
-                        <span class="sub-link" style="font-weight:700; color:var(--yatas-navy);" onclick="filterByCategory('${brand}', '${cat}')">📂 ${translatedCat}</span>`;
+                    html += `
+                        <div class="cat-tree-header" onclick="toggleNavAccordion(this)">
+                            <span><i class="fa-regular fa-folder" style="margin-right:6px;"></i> ${translatedCat}</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i>
+                        </div>
+                        <div class="cat-tree-children">
+                            <span class="sub-link" style="font-weight:700; color:var(--yatas-red);" onclick="filterByCategory('${brand}', '${cat}')">📂 ${translatedCat} (All)</span>`;
                     
-                    Array.from(families).slice(0, 20).forEach(fam => {
-                        html += `<span class="sub-link" style="padding-left:18px;" onclick="filterByFamily('${brand}', '${cat}', '${fam}')">• ${fam}</span>`;
+                    Array.from(families).forEach(fam => {
+                        html += `<span class="sub-link" onclick="filterByFamily('${brand}', '${cat}', '${fam}')">• ${fam}</span>`;
                     });
                     html += `</div>`;
                 }
@@ -684,11 +758,14 @@
             navContainer.innerHTML = html;
         }
 
-        function toggleNavAccordion(el) { el.nextElementSibling.classList.toggle('active'); }
+        function toggleNavAccordion(el) { 
+            const target = el.nextElementSibling;
+            if (target) target.classList.toggle('active'); 
+        }
 
         async function renderProductGrid() {
             const grid = document.getElementById('productGrid');
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
 
             let families = Object.values(productFamilies);
 
@@ -696,7 +773,7 @@
                 const matchBrand = (activeBrandFilter === 'ALL' || f.brand === activeBrandFilter);
                 const matchCat = (!activeCategoryFilter || f.category === activeCategoryFilter);
                 const matchFam = (!activeFamilyFilter || f.familyName === activeFamilyFilter);
-                const matchSearch = (f.familyName.toLowerCase().includes(searchVal) || f.variants.some(v => v.desc.toLowerCase().includes(searchVal)));
+                const matchSearch = (!searchVal || f.familyName.toLowerCase().includes(searchVal) || f.variants.some(v => v.desc && v.desc.toLowerCase().includes(searchVal)));
                 return matchBrand && matchCat && matchFam && matchSearch;
             });
 
@@ -711,6 +788,7 @@
                     <div class="card-img-wrap">
                         <img src="${f.photoUrl}" alt="${f.familyName}" onerror="this.src='https://via.placeholder.com/300x200?text=Yatas+Bedding'">
                         <div class="card-badge">${f.variants.length} Sizes</div>
+                        <div class="card-info-icon" title="Quick Info" onclick="event.stopPropagation(); alert('${f.familyName} - ${f.brand}\\nTotal Sizes: ${f.variants.length}');"><i class="fa-solid fa-info"></i></div>
                     </div>
                     <div class="card-body">
                         <div>
@@ -764,14 +842,17 @@
 
         function updateModalQty(delta) {
             const qtyInput = document.getElementById('modalQty');
-            let val = parseInt(qtyInput.value) + delta;
+            let val = parseInt(qtyInput.value || 1) + delta;
             if (val < 1) val = 1;
             qtyInput.value = val;
             updateModalPrice();
         }
 
         function updateModalPrice() {
-            const qty = parseInt(document.getElementById('modalQty').value);
+            const qtyInput = document.getElementById('modalQty');
+            let qty = parseInt(qtyInput.value);
+            if (isNaN(qty) || qty < 1) qty = 1;
+
             const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
             const symbol = currentCurrency === 'USD' ? '$' : '€';
             document.getElementById('modalTotalPrice').innerText = `${symbol}${(unitPrice * qty).toFixed(2)}`;
@@ -786,7 +867,10 @@
         }
 
         function addCurrentToCart() {
-            const qty = parseInt(document.getElementById('modalQty').value);
+            const qtyInput = document.getElementById('modalQty');
+            let qty = parseInt(qtyInput.value);
+            if (isNaN(qty) || qty < 1) qty = 1;
+
             const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
 
             const existingIndex = cart.findIndex(i => i.code === currentSelectedVariant.code && i.currency === currentCurrency);
@@ -824,12 +908,14 @@
             let totalVal = 0;
             let totalM3 = 0;
             let totalKg = 0;
+            let totalPcs = 0;
 
             list.innerHTML = cart.map((item, idx) => {
                 const itemTotal = item.qty * item.unitPrice;
                 totalVal += itemTotal;
                 totalM3 += item.qty * item.volume;
                 totalKg += item.qty * item.weight;
+                totalPcs += item.qty;
                 const symbol = item.currency === 'USD' ? '$' : '€';
 
                 return `
@@ -844,7 +930,7 @@
                         <button style="background:none; border:none; color:var(--yatas-red); cursor:pointer; font-size:14px; margin-left:auto; display:block;" onclick="removeFromCart(${idx})"><i class="fa-solid fa-trash"></i></button>
                         <div class="cart-qty-ctrl">
                             <button onclick="changeCartQty(${idx}, -1)">-</button>
-                            <span>${item.qty}</span>
+                            <input type="number" class="cart-qty-input" value="${item.qty}" min="1" onchange="setCartQtyDirect(${idx}, this.value)">
                             <button onclick="changeCartQty(${idx}, 1)">+</button>
                         </div>
                     </div>
@@ -854,7 +940,7 @@
             const mainSymbol = currentCurrency === 'USD' ? '$' : '€';
             document.getElementById('cartGrandTotal').innerText = `${mainSymbol}${totalVal.toFixed(2)}`;
 
-            calculateLogistics(totalM3, totalKg);
+            calculateLogistics(totalM3, totalKg, totalPcs);
         }
 
         function changeCartQty(idx, delta) {
@@ -866,9 +952,24 @@
             updateCartDisplay();
         }
 
+        function setCartQtyDirect(idx, val) {
+            let parsed = parseInt(val);
+            if (isNaN(parsed) || parsed < 1) parsed = 1;
+            cart[idx].qty = parsed;
+            updateCartDisplay();
+        }
+
         function removeFromCart(idx) { cart.splice(idx, 1); updateCartDisplay(); }
 
-        function calculateLogistics(totalM3, totalKg) {
+        function clearCart() {
+            if (cart.length === 0) return;
+            if (confirm("Sepetteki tüm ürünleri silmek istediğinizden emin misiniz?")) {
+                cart = [];
+                updateCartDisplay();
+            }
+        }
+
+        function calculateLogistics(totalM3, totalKg, totalPcs) {
             const HQ_CAPACITY = 68.0;
             const TRUCK_CAPACITY = 70.0;
 
@@ -904,13 +1005,23 @@
                 document.getElementById('truckProgressFill').style.width = `${truckRemainderPercent}%`;
             }
 
-            document.getElementById('logisticsMeta').innerText = `Total Vol: ${totalM3.toFixed(2)} m³ | Total Wt: ${totalKg.toFixed(1)} kg`;
+            document.getElementById('logisticsMeta').innerText = `Total Pcs: ${totalPcs} | Total Vol: ${totalM3.toFixed(2)} m³ | Total Wt: ${totalKg.toFixed(1)} kg`;
         }
 
         function toggleCart(forceOpen) {
             const drawer = document.getElementById('cartDrawer');
-            if (forceOpen) drawer.classList.add('open');
-            else drawer.classList.toggle('open');
+            const overlay = document.getElementById('cartOverlay');
+
+            if (forceOpen === true) {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+            } else if (forceOpen === false) {
+                drawer.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                drawer.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
         }
 
         function toggleSidebar() {
@@ -930,6 +1041,8 @@
 
         function filterByBrand(b) {
             activeBrandFilter = b;
+            activeCategoryFilter = null;
+            activeFamilyFilter = null;
             buildBrandChips();
             renderProductGrid();
         }
@@ -984,7 +1097,7 @@
             const worksheet = workbook.addWorksheet('Proforma Order');
 
             worksheet.columns = [
-                { header: 'Image', key: 'img', width: 20 },
+                { header: 'Image', key: 'img', width: 22 },
                 { header: 'Brand', key: 'brand', width: 18 },
                 { header: 'Product Family', key: 'family', width: 22 },
                 { header: 'Dimension / Size', key: 'size', width: 16 },
@@ -1022,7 +1135,7 @@
                     wt: (item.qty * item.weight).toFixed(2)
                 });
 
-                row.height = 60;
+                row.height = 65;
                 row.alignment = { vertical: 'middle', horizontal: 'center' };
 
                 try {
@@ -1037,7 +1150,7 @@
 
                     worksheet.addImage(imageId, {
                         tl: { col: 0, row: row.number - 1 },
-                        ext: { width: 110, height: 75 }
+                        ext: { width: 120, height: 80 }
                     });
                 } catch (e) {
                     console.warn("Resim Excel'e eklenemedi:", item.photoUrl);
