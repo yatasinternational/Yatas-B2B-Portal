@@ -831,8 +831,8 @@
                 const familyName = item['Ürün Ailesi'] || item['Malzeme Tanım'] || 'Diğer';
                 const category = item['Kategori'] || 'Yatak';
                 
-                let rawPhoto = item['Foto weblink'] || item['Görsel Link'] || item['Web Link'] || '';
-                let photoList = rawPhoto.split(',').map(p => p.trim()).filter(p => p.startsWith('http'));
+                let rawPhoto = item['Foto weblink'] || item['Görsel Link'] || item['Web Link'] || item['GÖRSEL'] || '';
+                let photoList = rawPhoto ? String(rawPhoto).split(',').map(p => p.trim()).filter(p => p.startsWith('http')) : [];
                 let mainPhoto = photoList.length > 0 ? photoList[0] : '';
 
                 if (!productFamilies[familyName]) {
@@ -858,22 +858,29 @@
                 const hardnessText = item['Sertlik Detayı'] || item['Sertlik'] || item['Sertlik Derecesi'] || '-';
                 const hardnessImg = item['Sertlik Detay Görsel'] || item['Sertlik Görsel'] || item['Sertlik Link'] || item['Sertlik Görseli'] || item['Sertlik Web Link'] || '';
 
+                // ÖLÇÜ ALANINI TEMİZLEME VE SADELEŞTİRME
+                let displaySize = item['Ölçü'] || item['Ebat'] || item['Size'] || '';
+                if (!displaySize && item['Malzeme Tanım']) {
+                    const match = item['Malzeme Tanım'].match(/\d{2,3}\times\d{2,3}/i) || item['Malzeme Tanım'].match(/\d{2,3}\/\d{2,3}/i);
+                    displaySize = match ? match[0] : item['Malzeme Tanım'];
+                }
+
                 productFamilies[familyName].categories[category].variants.push({
-                    code: item['Ürün Kodu'],
-                    size: item['Ölçü'],
-                    desc: item['Malzeme Tanım'],
-                    usdPrice: parseFloat(item['Birim USD Fiyat']) || 0,
-                    eurPrice: parseFloat(item['Birim EUR Fiyat']) || 0,
+                    code: item['Ürün Kodu'] || item['Malzeme'] || '-',
+                    size: String(displaySize).trim(),
+                    desc: item['Malzeme Tanım'] || '',
+                    usdPrice: parseFloat(item['Birim USD Fiyat']) || parseFloat(item['USD Fiyat']) || 0,
+                    eurPrice: parseFloat(item['Birim EUR Fiyat']) || parseFloat(item['EUR Fiyat']) || 0,
                     height: item['Yükseklik CM'] || item['Yükseklik'] || 0,
                     status: variantStatus,
-                    barcode: item['Barkod'],
-                    gtip: item['GTIP'] || '-',
-                    volume: parseFloat(item['Birim Hacim M3']) || 0,
-                    weight: parseFloat(item['Birim Ağırlık KG']) || 0,
+                    barcode: item['Barkod'] || '-',
+                    gtip: item['GTIP'] || item['GTİP'] || item['HS CODE'] || '-',
+                    volume: parseFloat(item['Birim Hacim M3']) || parseFloat(item['Hacim']) || 0,
+                    weight: parseFloat(item['Birim Ağırlık KG']) || parseFloat(item['Ağırlık']) || 0,
                     feature: item['Özellik'] || item['Özellikler'] || '-',
                     color: item['Renk'] || item['Renk Detayı'] || '-',
-                    hardness: hardnessText,
-                    hardnessImg: hardnessImg.trim(),
+                    hardness: String(hardnessText).trim(),
+                    hardnessImg: String(hardnessImg).trim(),
                     photoUrl: mainPhoto
                 });
             });
@@ -968,7 +975,8 @@
                     allVariants.push(...c.variants);
                 });
 
-                const minPrice = Math.min(...allVariants.map(v => currentCurrency === 'USD' ? v.usdPrice : v.eurPrice));
+                const prices = allVariants.map(v => currentCurrency === 'USD' ? v.usdPrice : v.eurPrice).filter(p => p > 0);
+                const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
                 const currencySymbol = currentCurrency === 'USD' ? '$' : '€';
                 const fromLabel = i18n[currentLang].from || 'from';
                 const availableCatNames = Object.keys(f.categories).map(c => autoTranslateText(c, currentLang)).join(', ');
@@ -1052,7 +1060,7 @@
             const allPhotosArray = Array.from(catData.allPhotos);
             const mainPhoto = allPhotosArray.length > 0 ? allPhotosArray[0] : catData.photoUrl;
             
-            document.getElementById('modalImg').src = mainPhoto;
+            document.getElementById('modalImg').src = mainPhoto || 'https://via.placeholder.com/400x300?text=No+Photo';
 
             const thumbsContainer = document.getElementById('modalThumbnailsBar');
             if (allPhotosArray.length > 1) {
@@ -1083,9 +1091,9 @@
         function onSizeChange() {
             const idx = document.getElementById('sizeSelect').value;
             const catData = currentActiveFamily.categories[currentActiveCategoryKey];
-            currentSelectedVariant = catData.variants[idx];
+            currentSelectedVariant = catData.variants[idx] || catData.variants[0];
 
-            document.getElementById('specGtip').innerText = currentSelectedVariant.gtip;
+            document.getElementById('specGtip').innerText = currentSelectedVariant.gtip || '-';
             document.getElementById('specVolume').innerText = `${currentSelectedVariant.volume} m³`;
             document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
             document.getElementById('specHeight').innerText = `${currentSelectedVariant.height} cm`;
@@ -1457,8 +1465,8 @@
                         });
 
                         worksheet.addImage(imageId, {
-                            tl: { col: 0, row: row.number - 1 },
-                            ext: { width: 120, height: 80 }
+                            tl: { col: 0.1, row: row.number - 0.9 },
+                            ext: { width: 120, height: 75 }
                         });
                     } catch (e) {
                         console.warn("Görsel Excel'e eklenemedi:", item.photoUrl);
