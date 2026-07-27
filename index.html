@@ -660,7 +660,7 @@
 
         async function loadExcelData() {
             try {
-                // Öncelikli olarak yüklenen tr_v2.xlsx dosyasından veriyi okur
+                // tr_v2.xlsx dosyasından dinamik veri yüklemesi
                 const response = await fetch('tr_v2.xlsx');
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -681,7 +681,7 @@
             rawProducts.forEach(item => {
                 const familyName = item['Ürün Ailesi'] || item['Malzeme Tanım'] || 'Diğer';
                 
-                // Virgülle ayrılmış resim linklerinden ilk ana görseli çek
+                // Virgülle ayrılmış görsel linklerinden ilkini seçer
                 let rawPhoto = item['Foto weblink'] || '';
                 let mainPhoto = rawPhoto.split(',')[0].trim();
 
@@ -844,7 +844,7 @@
             document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
             document.getElementById('specHeight').innerText = `${currentSelectedVariant.height} cm`;
             
-            // Seçilen varyantın gerçek MTO/MTS statüsü dinamik yansıtılır
+            // Seçilen varyantın gerçek MTO/MTS statüsü yansıtılır
             document.getElementById('specStatus').innerText = currentSelectedVariant.status || 'MTO';
 
             updateModalPrice();
@@ -979,10 +979,10 @@
             }
         }
 
-        // LOJİSTİK KAPASİTE HESABI (GÜNCELLENEN TIR KAPASİTESİ: 90 m³)
+        // LOJİSTİK KAPASİTE HESABI (TIR KAPASİTESİ: 90 m³)
         function calculateLogistics(totalM3, totalKg, totalPcs) {
             const HQ_CAPACITY = 68.0;
-            const TRUCK_CAPACITY = 90.0; // 70m3 -> 90m3 revize edildi
+            const TRUCK_CAPACITY = 90.0;
 
             const hqExact = totalM3 / HQ_CAPACITY;
             const hqFull = Math.floor(hqExact);
