@@ -12,390 +12,1314 @@
     <!-- Fonts & Third-Party Libraries -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --primary: #00205b;
-            --primary-hover: #00153d;
-            --accent: #c5a059;
-            --accent-hover: #b08d46;
-            --bg-light: #f8f9fa;
+            --yatas-navy: #00205b;
+            --yatas-navy-hover: #00143d;
+            --yatas-red: #d71921;
+            --yatas-red-hover: #b51219;
+            --bg-light: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #2b2b2b;
-            --text-muted: #6c757d;
-            --border-color: #e9ecef;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 16px;
-            --font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --accent-gold: #c5a059;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-family);
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
             background-color: var(--bg-light);
-            color: var(--text-main);
+            font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
-        /* Header Navigation */
-        .header {
-            background-color: #ffffff;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-sm);
+        /* HEADER NAVBAR */
+        header {
+            position: sticky; top: 0; z-index: 1000;
+            background: #ffffff;
+            border-bottom: 2px solid var(--border-color);
+            padding: 12px 28px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
         }
 
-        .header-container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 0.75rem 1.5rem;
+        .header-left { display: flex; align-items: center; gap: 20px; }
+
+        .hamburger-btn {
+            width: 40px; height: 40px;
+            background: var(--yatas-navy);
+            border: none;
+            border-radius: 6px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 18px; transition: background 0.2s;
+            z-index: 1002; position: relative;
+        }
+        .hamburger-btn:hover { background: var(--yatas-red); }
+
+        .brand-logo-btn {
+            background: transparent; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; height: 42px;
+        }
+        .brand-logo-btn img { height: 32px; width: auto; object-fit: contain; }
+
+        .header-right { display: flex; align-items: center; gap: 14px; }
+
+        .currency-selector, .lang-selector {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            color: var(--text-dark); padding: 8px 12px; border-radius: 6px;
+            font-size: 13px; font-weight: 600; cursor: pointer; outline: none;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .cart-trigger-btn {
+            position: relative;
+            background: var(--yatas-navy);
+            border: none;
+            color: #fff; padding: 9px 20px; border-radius: 6px;
+            font-size: 13px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 32, 91, 0.25); transition: all 0.2s;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .cart-trigger-btn:hover { background: var(--yatas-navy-hover); transform: translateY(-1px); }
+
+        .cart-badge {
+            background: var(--yatas-red); color: #fff;
+            font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 20px;
+        }
+
+        /* SIDEBAR OVERLAY & NAVIGATION */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 32, 91, 0.4); backdrop-filter: blur(2px);
+            z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar-nav {
+            position: fixed; left: -340px; top: 0; height: 100vh; width: 320px;
+            background: #ffffff; border-right: 1px solid var(--border-color);
+            z-index: 1001; padding: 30px 20px;
+            display: flex; flex-direction: column; gap: 15px;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto; box-shadow: 5px 0 25px rgba(0,0,0,0.08);
+        }
+        .sidebar-nav.open { left: 0; }
+
+        .sidebar-header-logo {
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--yatas-navy);
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
+        .sidebar-header-logo img { height: 28px; width: auto; cursor: pointer; }
 
-        .brand-logo-clickable {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-            transition: opacity 0.2s ease;
+        .nav-tree-item { margin-bottom: 6px; }
+        .nav-tree-header {
+            padding: 10px 12px; background: var(--bg-light);
+            border-radius: 6px; font-size: 13px; font-weight: 700; color: var(--yatas-navy);
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: all 0.2s; border: 1px solid var(--border-color);
+        }
+        .nav-tree-header:hover { background: #e2e8f0; }
+        .nav-tree-children { padding-left: 10px; display: none; margin-top: 4px; }
+        .nav-tree-children.active { display: block; }
+
+        .cat-tree-header {
+            padding: 8px 10px; font-size: 12px; font-weight: 700; color: var(--yatas-navy);
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; border-radius: 4px; margin-top: 2px;
+        }
+        .cat-tree-header:hover { background: #f1f5f9; }
+        .cat-tree-children { padding-left: 12px; display: none; }
+        .cat-tree-children.active { display: block; }
+
+        .sub-link {
+            padding: 6px 10px; font-size: 11.5px; color: var(--text-dark);
+            display: block; cursor: pointer; border-radius: 4px; transition: all 0.2s;
+        }
+        .sub-link:hover, .sub-link.active { color: var(--yatas-red); background: #f1f5f9; font-weight: 600; }
+
+        /* MAIN CONTENT AREA */
+        main { flex: 1; padding: 28px; max-width: 1600px; margin: 0 auto; width: 100%; }
+
+        /* FILTER & SEARCH BAR */
+        .filter-bar {
+            background: #ffffff; border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 16px 20px;
+            margin-bottom: 28px; display: flex; flex-wrap: wrap; gap: 16px;
+            align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
-        .brand-logo-clickable:hover {
-            opacity: 0.85;
+        .search-input-box { position: relative; flex: 1; min-width: 280px; }
+        .search-input-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-input-box input {
+            width: 100%; background: var(--bg-light); border: 1px solid var(--border-color);
+            padding: 10px 14px 10px 40px; border-radius: 6px; color: var(--text-dark); font-size: 13px; outline: none;
+            font-family: 'Open Sans', sans-serif;
         }
+        .search-input-box input:focus { border-color: var(--yatas-navy); background: #fff; }
 
-        .brand-logo-img {
-            height: 38px;
-            object-fit: contain;
+        .quick-filters { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-chip {
+            padding: 7px 16px; background: var(--bg-light);
+            border: 1px solid var(--border-color); border-radius: 20px;
+            font-size: 12px; font-weight: 700; color: var(--text-dark); cursor: pointer; transition: all 0.2s;
         }
+        .filter-chip:hover, .filter-chip.active { background: var(--yatas-navy); color: #ffffff; border-color: var(--yatas-navy); }
 
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .btn-currency {
-            background: #f1f3f5;
-            border: 1px solid var(--border-color);
-            padding: 0.4rem 0.8rem;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            color: var(--primary);
-            transition: all 0.2s;
-        }
-
-        .btn-currency:hover {
-            background: var(--primary);
-            color: #ffffff;
-        }
-
-        /* Card Layout Updates */
+        /* PRODUCT GRID */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: 1.5rem;
-            padding: 1.5rem;
-            max-width: 1440px;
-            margin: 0 auto;
-            width: 100%;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
         }
 
         .product-card {
             background: var(--card-bg);
-            border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 8px; overflow: hidden;
+            display: flex; flex-direction: column;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            position: relative;
         }
-
         .product-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+            border-color: var(--yatas-navy);
+            box-shadow: 0 10px 25px rgba(0, 32, 91, 0.1);
         }
 
-        .card-body {
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            flex: 1;
+        .card-img-wrap {
+            position: relative; width: 100%; height: 220px;
+            background: #f1f5f9; overflow: hidden; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .product-card:hover .card-img-wrap img { transform: scale(1.03); }
+
+        .card-badge {
+            position: absolute; top: 12px; right: 12px;
+            background: var(--yatas-navy); color: #fff;
+            font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px;
         }
 
-        /* Dimension Select Container */
-        .dimension-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: var(--radius-sm);
-            padding: 0.75rem;
+        .card-info-icon {
+            position: absolute; top: 12px; left: 12px;
+            background: rgba(255,255,255,0.9); color: var(--yatas-navy);
+            width: 28px; height: 28px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 13px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: all 0.2s;
+        }
+        .card-info-icon:hover { background: var(--yatas-navy); color: #fff; }
+
+        .card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-brand { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; }
+        .card-title { font-size: 18px; font-weight: 800; margin: 4px 0 12px 0; color: var(--yatas-navy); }
+
+        .card-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 8px;
+        }
+        .card-price { font-size: 17px; font-weight: 800; color: var(--yatas-navy); }
+
+        /* PRODUCT DETAIL MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 20, 60, 0.6); backdrop-filter: blur(4px);
+            z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: #ffffff; border-radius: 12px; width: 100%; max-width: 1150px;
+            max-height: 92vh; overflow-y: auto; display: flex; flex-wrap: wrap;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; border: 1px solid var(--border-color);
         }
 
-        .dimension-title {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.4rem;
+        .modal-close {
+            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
+            background: var(--bg-light); border-radius: 50%; border: 1px solid var(--border-color);
+            color: var(--text-dark); font-size: 16px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { background: var(--yatas-red); color: #fff; border-color: var(--yatas-red); }
+
+        .modal-left { flex: 1; min-width: 320px; background: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 30px; }
+        .modal-left img { max-width: 100%; max-height: 440px; object-fit: contain; }
+
+        .modal-right { flex: 1.5; min-width: 360px; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; }
+        .modal-header h2 { font-size: 28px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 4px; }
+        .modal-subtitle { font-size: 12px; color: var(--yatas-red); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; font-weight: 700; }
+
+        .variant-box {
+            background: var(--bg-light); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 18px; margin-bottom: 20px;
+        }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; }
+        .form-group select {
+            width: 100%; background: #ffffff; border: 1px solid var(--border-color);
+            color: var(--text-dark); padding: 10px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 700; outline: none;
+            font-family: 'Open Sans', sans-serif;
         }
 
-        .dimension-select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #cbd5e1;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--primary);
-            background: #ffffff;
-            margin-bottom: 0.75rem;
-            outline: none;
+        /* 8-COLUMN SPECS GRID (KÜÇÜLTÜLMÜŞ KUTUCUKLAR) */
+        .specs-grid { 
+            display: grid; 
+            grid-template-columns: repeat(8, 1fr); 
+            gap: 5px; 
+            margin-top: 14px; 
         }
-
-        /* 8-Grid Specs Layout */
-        .specs-grid-8 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.35rem;
-        }
-
-        .spec-item {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: var(--radius-sm);
-            padding: 0.35rem 0.25rem;
-            text-align: center;
+        .spec-item { 
+            background: #ffffff; 
+            padding: 8px 4px; 
+            border-radius: 6px; 
+            text-align: center; 
+            border: 1px solid var(--border-color); 
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 48px;
+            min-height: 58px;
         }
-
-        .spec-label {
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
+        .spec-item span { 
+            display: block; 
+            font-size: 8.5px; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            font-weight: 800; 
+            letter-spacing: 0.3px; 
             line-height: 1.1;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
         }
-
-        .spec-value {
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--primary);
-            line-height: 1.1;
+        .spec-item strong { 
+            font-size: 11px; 
+            color: var(--yatas-navy); 
+            font-weight: 800; 
+            margin-top: 3px; 
+            display: block; 
             word-break: break-word;
+            line-height: 1.2;
         }
-
-        .spec-value.mto-status {
-            color: #d97706;
-        }
-
-        .firmness-wrapper {
+        .spec-item strong.highlight-status { color: var(--yatas-red); }
+        .hardness-content {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 3px;
+            margin-top: 3px;
         }
-
-        .firmness-img {
-            height: 14px;
+        .hardness-img {
+            height: 16px;
             width: auto;
+            max-width: 24px;
             object-fit: contain;
         }
 
-        /* Price & Action Row */
-        .card-footer-action {
+        .qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .qty-picker { display: flex; align-items: center; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 2px; }
+        .qty-btn { width: 38px; height: 38px; background: none; border: none; color: var(--text-dark); font-size: 16px; cursor: pointer; font-weight: 800; }
+        .qty-input { width: 55px; text-align: center; background: #fff; border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-dark); font-weight: 800; font-size: 14px; padding: 4px 0; outline: none; }
+
+        .total-price-tag { font-size: 26px; font-weight: 800; color: var(--yatas-navy); }
+
+        .add-cart-btn {
+            width: 100%; background: var(--yatas-navy);
+            color: #ffffff; border: none; padding: 14px; border-radius: 8px;
+            font-size: 14.5px; font-weight: 800; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 32, 91, 0.2); font-family: 'Open Sans', sans-serif;
+        }
+        .add-cart-btn:hover { background: var(--yatas-navy-hover); transform: translateY(-1px); }
+
+        /* CART DRAWER & BACKDROP */
+        .cart-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 32, 91, 0.3); backdrop-filter: blur(2px);
+            z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .cart-overlay.active { opacity: 1; visibility: visible; }
+
+        .cart-drawer {
+            position: fixed; right: -440px; top: 0; height: 100vh; width: 420px;
+            background: #ffffff; border-left: 1px solid var(--border-color);
+            z-index: 2001; padding: 24px; display: flex; flex-direction: column;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+        }
+        .cart-drawer.open { right: 0; }
+
+        .cart-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; color: var(--yatas-navy); }
+        .cart-items-list { flex: 1; overflow-y: auto; padding: 15px 0; display: flex; flex-direction: column; gap: 12px; }
+
+        .cart-item-card {
+            background: var(--bg-light); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center;
+        }
+        .cart-item-card img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer; }
+        .cart-item-info { flex: 1; cursor: pointer; }
+        .cart-item-info h4 { font-size: 13.5px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 2px; }
+        .cart-item-info p { font-size: 11px; color: var(--text-muted); }
+        .cart-item-price { font-size: 13.5px; font-weight: 800; color: var(--yatas-navy); margin-top: 4px; }
+
+        .cart-qty-ctrl {
+            display: flex; align-items: center; gap: 4px;
+            background: #ffffff; border-radius: 6px;
+            padding: 2px 4px; margin-top: 6px; width: fit-content;
+            border: 1px solid var(--border-color);
+        }
+        .cart-qty-ctrl button { background: none; border: none; color: var(--text-dark); font-weight: 800; cursor: pointer; font-size: 13px; padding: 0 6px; }
+        .cart-qty-input { width: 36px; text-align: center; border: none; font-size: 12px; font-weight: 800; color: var(--text-dark); outline: none; background: transparent; }
+
+        /* LOGISTICS METER STYLES */
+        .logistics-bar-container {
+            background: var(--bg-light); border-radius: 8px; padding: 14px; margin: 12px 0;
+            border: 1px solid var(--border-color);
+        }
+        .logistics-title { font-size: 11px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .logistics-row { margin-bottom: 10px; }
+        .logistics-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: var(--text-dark); font-weight: 600; }
+        .progress-track { width: 100%; height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+        .progress-fill-hq { height: 100%; background: var(--yatas-navy); width: 0%; transition: width 0.3s; }
+        .progress-fill-truck { height: 100%; background: var(--accent-gold); width: 0%; transition: width 0.3s; }
+
+        .cart-footer { border-top: 2px solid var(--border-color); padding-top: 15px; }
+        .export-excel-btn {
+            width: 100%; background: #10b981; color: #fff; border: none;
+            padding: 13px; border-radius: 6px; font-size: 13px; font-weight: 800;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .export-excel-btn:hover { background: #059669; }
+
+        /* FOOTER BRANDING SIGNATURE */
+        footer {
+            background: var(--yatas-navy);
+            color: #ffffff;
+            padding: 20px 28px;
+            margin-top: 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: auto;
-            padding-top: 0.5rem;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+        }
+        footer .footer-left { color: rgba(255,255,255,0.7); }
+        footer .footer-right { font-weight: 600; color: var(--accent-gold); letter-spacing: 0.5px; }
+
+        @media (max-width: 992px) {
+            .specs-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
         }
 
-        .price-display {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .btn-add-cart {
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: background 0.2s ease;
-        }
-
-        .btn-add-cart:hover {
-            background: var(--primary-hover);
+        @media (max-width: 768px) {
+            .cart-drawer { width: 100%; right: -100%; }
+            .modal-card { flex-direction: column; }
+            .modal-left { height: 200px; }
+            .specs-grid { grid-template-columns: repeat(2, 1fr); }
+            footer { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header / Navbar -->
-    <header class="header">
-        <div class="header-container">
-            <!-- Tıklanınca Ana Sayfaya Döndüren Logo Alanı -->
-            <a href="#" class="brand-logo-clickable" onclick="resetToHome(event)">
-                <img src="https://yatasinternational.github.io/Products-Photos/yatas_logo.png" alt="Yataş Group" class="brand-logo-img" onerror="this.style.display='none'">
-                <span style="font-weight: 800; color: var(--primary); font-size: 1.1rem; letter-spacing: -0.5px;">YATAŞ GROUP</span>
-            </a>
+    <!-- HEADER NAVIGATION -->
+    <header>
+        <div class="header-left">
+            <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars" id="hamburgerIcon"></i></button>
+            <button class="brand-logo-btn" onclick="resetToHome()" title="Ana Sayfaya Dön">
+                <img src="yatas_grup_logo.jpg" alt="Yataş Group" onerror="this.src='https://yatasinternational.github.io/Products-Photos/yatas_logo.png'">
+            </button>
+        </div>
 
-            <div class="nav-actions">
-                <button class="btn-currency" id="currencyToggle" onclick="toggleCurrency()">USD ($)</button>
-            </div>
+        <div class="header-right">
+            <select class="currency-selector" id="currencySelect" onchange="changeCurrency(this.value)">
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+            </select>
+
+            <select class="lang-selector" id="langSelect" onchange="changeLanguage(this.value)">
+                <option value="TR">TR</option>
+                <option value="EN" selected>EN</option>
+                <option value="DE">DE</option>
+                <option value="RU">RU</option>
+            </select>
+
+            <button class="cart-trigger-btn" onclick="toggleCart(true)">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span data-i18n="cart">Cart</span>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </button>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main>
-        <div id="productGrid" class="product-grid">
-            <!-- JavaScript ile Dinamik Doldurulacaktır -->
+    <!-- SIDEBAR OVERLAY & DRAWER -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <div class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-header-logo">
+            <img src="yatas_grup_logo.jpg" alt="Yataş Group" onclick="resetToHome()" onerror="this.src='https://yatasinternational.github.io/Products-Photos/yatas_logo.png'">
+            <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--text-muted);" onclick="toggleSidebar()"></i>
         </div>
+        <div id="navigationTree"></div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main>
+        <!-- SEARCH & FILTER BAR -->
+        <div class="filter-bar">
+            <div class="search-input-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search product family or description..." oninput="applyFilters()" data-i18n-ph="search_placeholder">
+            </div>
+
+            <div class="quick-filters" id="brandFilterChips">
+                <div class="filter-chip active" onclick="filterByBrand('ALL')" data-i18n="all_brands">All Brands</div>
+            </div>
+        </div>
+
+        <!-- PRODUCT GRID -->
+        <div class="product-grid" id="productGrid"></div>
     </main>
 
-    <script>
-        let currentCurrency = 'USD';
-        let rawProductData = [];
+    <!-- PRODUCT DETAIL MODAL -->
+    <div class="modal-overlay" id="productModal" onclick="handleBackdropClick(event)">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-left">
+                <img id="modalImg" src="" alt="Product Image">
+            </div>
+            <div class="modal-right">
+                <div class="modal-header">
+                    <div class="modal-subtitle" id="modalBrandCategory">Yataş Bedding | Yatak</div>
+                    <h2 id="modalFamilyTitle">Activio</h2>
+                </div>
 
-        // Logoya basıldığında ana sayfaya resetleme
-        function resetToHome(e) {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+                <div class="variant-box">
+                    <div class="form-group">
+                        <label data-i18n="select_size">SELECT DIMENSION / SIZE</label>
+                        <select id="sizeSelect" onchange="onSizeChange()"></select>
+                    </div>
 
-        function toggleCurrency() {
-            currentCurrency = currentCurrency === 'USD' ? 'EUR' : 'USD';
-            document.getElementById('currencyToggle').innerText = currentCurrency === 'USD' ? 'USD ($)' : 'EUR (€)';
-            updatePrices();
-        }
-
-        function updatePrices() {
-            renderGrid(rawProductData);
-        }
-
-        function renderProductCard(item) {
-            const currencySymbol = currentCurrency === 'USD' ? '$' : '€';
-            const priceVal = currentCurrency === 'USD' ? (item['Birim USD Fiyat'] || item['USD Price'] || 0) : (item['Birim EUR Fiyat'] || item['EUR Price'] || 0);
-            const formattedPrice = Number(priceVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-            return `
-                <div class="product-card">
-                    <div class="card-body">
-                        <div class="dimension-box">
-                            <div class="dimension-title">SELECT DIMENSION / SIZE</div>
-                            <select class="dimension-select">
-                                <option>${item['Ölçü'] || item['Size'] || '090X190'} (${item['Sipariş Statü'] || item['Status'] || 'MTO'})</option>
-                            </select>
-                            
-                            <!-- 8'li Kutucuk Matrisi -->
-                            <div class="specs-grid-8">
-                                <div class="spec-item">
-                                    <div class="spec-label">HS CODE</div>
-                                    <div class="spec-value">${item['GTIP'] || item['HS Code'] || '-'}</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-label">UNIT VOL</div>
-                                    <div class="spec-value">${item['Birim Hacim M3'] ? item['Birim Hacim M3'] + ' m³' : '-'}</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-label">UNIT WT</div>
-                                    <div class="spec-value">${item['Birim Ağırlık KG'] ? item['Birim Ağırlık KG'] + ' kg' : '-'}</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-label">HEIGHT</div>
-                                    <div class="spec-value">${item['Yükseklik CM'] ? item['Yükseklik CM'] + ' cm' : '-'}</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-label">STATUS</div>
-                                    <div class="spec-value mto-status">${item['Sipariş Statü'] || item['Status'] || '-'}</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-label">FEATURE</div>
-                                    <div class="spec-value">${item['Özellik'] || item['Feature'] || '-'}</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-label">COLOR</div>
-                                    <div class="spec-value">${item['Renk'] || item['Color'] || '-'}</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-label">FIRMNESS</div>
-                                    <div class="spec-value firmness-wrapper">
-                                        <span>${item['Sertlik'] || item['Firmness'] || '-'}</span>
-                                        ${item['Sertlik weblink'] ? `<img src="${item['Sertlik weblink']}" class="firmness-img" alt="firmness">` : ''}
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- 8-COLUMN SPECS GRID -->
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span data-i18n="gtip">HS CODE</span>
+                            <strong id="specGtip">-</strong>
                         </div>
-
-                        <div class="card-footer-action">
-                            <div class="price-display">${currencySymbol}${formattedPrice}</div>
-                            <button class="btn-add-cart"><i class="fa-solid fa-cart-shopping"></i> Add to Order</button>
+                        <div class="spec-item">
+                            <span data-i18n="volume">UNIT VOL</span>
+                            <strong id="specVolume">0 m³</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="weight">UNIT WT</span>
+                            <strong id="specWeight">0 kg</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="height">HEIGHT</span>
+                            <strong id="specHeight">0 cm</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="status">STATUS</span>
+                            <strong id="specStatus" class="highlight-status">MTO</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="feature">FEATURE</span>
+                            <strong id="specFeature">-</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="color">COLOR</span>
+                            <strong id="specColor">-</strong>
+                        </div>
+                        <div class="spec-item">
+                            <span data-i18n="hardness">HARDNESS</span>
+                            <div class="hardness-content">
+                                <strong id="specHardness">-</strong>
+                                <img id="specHardnessImg" class="hardness-img" src="" alt="" style="display:none;" onerror="this.style.display='none'">
+                            </div>
                         </div>
                     </div>
                 </div>
-            `;
+
+                <div>
+                    <div class="qty-row">
+                        <div class="qty-picker">
+                            <button class="qty-btn" onclick="updateModalQty(-1)">-</button>
+                            <input type="number" class="qty-input" id="modalQty" value="1" min="1" oninput="updateModalPrice()">
+                            <button class="qty-btn" onclick="updateModalQty(1)">+</button>
+                        </div>
+                        <div class="total-price-tag" id="modalTotalPrice">$0</div>
+                    </div>
+
+                    <button class="add-cart-btn" onclick="addCurrentToCart()">
+                        <i class="fa-solid fa-cart-plus"></i> <span data-i18n="add_to_cart">Add to Proforma Order</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART DRAWER BACKDROP & DRAWER -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart(false)"></div>
+
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h3 data-i18n="cart_title"><i class="fa-solid fa-file-invoice-dollar"></i> Proforma Order Summary</h3>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button style="background:none; border:none; color:var(--yatas-red); cursor:pointer; font-size:14px; font-weight:700;" onclick="clearCart()" title="Clear Cart">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+                <button class="modal-close" onclick="toggleCart(false)" style="position:static;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+
+        <div class="cart-items-list" id="cartItemsList"></div>
+
+        <!-- DUAL LOGISTICS CALCULATOR -->
+        <div class="logistics-bar-container">
+            <div class="logistics-title">
+                <i class="fa-solid fa-truck-ramp-box"></i> <span data-i18n="logistics_calc">LOGISTICS & VEHICLE CAPACITY</span>
+            </div>
+
+            <!-- 40' HQ CONTAINER -->
+            <div class="logistics-row">
+                <div class="logistics-label">
+                    <span><i class="fa-solid fa-ship"></i> 40' HQ Container (68 m³)</span>
+                    <strong id="hqCountText">0 Cont. (%0)</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill-hq" id="hqProgressFill"></div>
+                </div>
+            </div>
+
+            <!-- 90 m³ TRUCK -->
+            <div class="logistics-row">
+                <div class="logistics-label">
+                    <span><i class="fa-solid fa-truck-front"></i> Standard Truck (90 m³)</span>
+                    <strong id="truckCountText">0 Truck (%0)</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill-truck" id="truckProgressFill"></div>
+                </div>
+            </div>
+
+            <div style="font-size:10.5px; color:var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 6px; margin-top:8px; font-weight:600;" id="logisticsMeta">
+                Total Pcs: 0 | Total Vol: 0.00 m³ | Total Wt: 0.0 kg
+            </div>
+        </div>
+
+        <div class="cart-footer">
+            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:17px; margin-bottom:15px; color:var(--yatas-navy);">
+                <span data-i18n="grand_total">Grand Total:</span>
+                <span id="cartGrandTotal" style="color:var(--yatas-navy);">$0</span>
+            </div>
+
+            <button class="export-excel-btn" onclick="exportProformaExcel()">
+                <i class="fa-solid fa-file-excel"></i> <span data-i18n="export_excel">Export Excel Order with Photos</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- FOOTER SIGNATURE -->
+    <footer>
+        <div class="footer-left">
+            Copyright © 2026 Yataş International. All rights reserved.
+        </div>
+        <div class="footer-right">
+            Proudly presented by International Sales Development Team
+        </div>
+    </footer>
+
+    <script>
+        // UI DICTIONARY
+        const i18n = {
+            TR: {
+                cart: "Sepet", categories: "Kategoriler", all_brands: "Tüm Markalar",
+                search_placeholder: "Ürün ailesi veya malzeme tanımı arayın...",
+                select_size: "ÖLÇÜ / EBAT SEÇİNİZ", gtip: "GTİP KODU", volume: "BİRİM HACİM", weight: "BİRİM AĞIRLIK", height: "YÜKSEKLİK", status: "DURUM",
+                feature: "ÖZELLİK", color: "RENK", hardness: "SERTLİK",
+                add_to_cart: "Siparişe Ekle", cart_title: "Proforma Sipariş Özeti",
+                logistics_calc: "LOJİSTİK KAPASİTE VE ARAÇ HESABI", grand_total: "Genel Toplam:",
+                export_excel: "Fotoğraflı Excel Sipariş Listesi İndir", from: "başlayan fiyatlar"
+            },
+            EN: {
+                cart: "Cart", categories: "Categories", all_brands: "All Brands",
+                search_placeholder: "Search product family or description...",
+                select_size: "SELECT DIMENSION / SIZE", gtip: "HS CODE", volume: "UNIT VOL", weight: "UNIT WT", height: "HEIGHT", status: "STATUS",
+                feature: "FEATURE", color: "COLOR", hardness: "HARDNESS",
+                add_to_cart: "Add to Proforma Order", cart_title: "Proforma Order Summary",
+                logistics_calc: "LOGISTICS & VEHICLE CAPACITY", grand_total: "Grand Total:",
+                export_excel: "Export Excel Order with Photos", from: "from"
+            },
+            DE: {
+                cart: "Warenkorb", categories: "Kategorien", all_brands: "Alle Marken",
+                search_placeholder: "Produktfamilie oder Beschreibung suchen...",
+                select_size: "GRÖSSE WÄHLEN", gtip: "HS CODE", volume: "VOLUMEN", weight: "GEWICHT", height: "HÖHE", status: "STATUS",
+                feature: "EIGENSCHAFT", color: "FARBE", hardness: "HÄRTE",
+                add_to_cart: "In die Proforma-Bestellung", cart_title: "Proforma-Bestellübersicht",
+                logistics_calc: "LOGISTIK- UND FAHRZEUGKAPAZITÄT", grand_total: "Gesamtsumme:",
+                export_excel: "Excel-Bestellung mit Fotos exportieren", from: "ab"
+            },
+            RU: {
+                cart: "Корзина", categories: "Категории", all_brands: "Все бренды",
+                search_placeholder: "Поиск семейства продуктов...",
+                select_size: "ВЫБЕРИТЕ РАЗМЕР", gtip: "ТН ВЭД", volume: "ОБЪЕМ", weight: "ВЕС", height: "ВЫСОТА", status: "СТАТУС",
+                feature: "СВОЙСТВО", color: "ЦВЕТ", hardness: "ЖЕСТКОСТЬ",
+                add_to_cart: "Добавить в заказ", cart_title: "Сводка Проформа-Заказа",
+                logistics_calc: "ЛОГИСТИКА И ЕМКОСТЬ ТRANSPORTA", grand_total: "Итого:",
+                export_excel: "Скачать Excel с фото", from: "от"
+            }
+        };
+
+        const termTranslations = {
+            "Yatak": { EN: "Mattress", DE: "Matratze", RU: "Матрас" },
+            "Baza": { EN: "Base / Boxspring", DE: "Bettkasten", RU: "Основание" },
+            "Başlık": { EN: "Headboard", DE: "Kopfteil", RU: "Изголовье" },
+            "Yastık": { EN: "Pillow", DE: "Kissen", RU: "Подушка" },
+            "Yorgan": { EN: "Duvet", DE: "Bettdecke", RU: "Одеяло" },
+            "Alez": { EN: "Mattress Protector", DE: "Matratzenschoner", RU: "Наматрасник" },
+            "Set": { EN: "Bed Set", DE: "Bett-Set", RU: "Комплект" },
+            "Genel": { EN: "General", DE: "Allgemein", RU: "Общие" }
+        };
+
+        function autoTranslateText(text, targetLang) {
+            if (!text || targetLang === 'TR') return text;
+            let translated = text;
+            for (const [trTerm, langMap] of Object.entries(termTranslations)) {
+                if (langMap[targetLang]) {
+                    const regex = new RegExp(`\\b${trTerm}\\b`, 'gi');
+                    translated = translated.replace(regex, langMap[targetLang]);
+                }
+            }
+            return translated;
         }
 
-        function renderGrid(data) {
-            const gridContainer = document.getElementById('productGrid');
-            if (!gridContainer) return;
-            
-            if (!data || data.length === 0) {
-                gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">No products found to display.</div>`;
+        let currentLang = 'EN';
+        let currentCurrency = 'USD';
+        let rawProducts = [];
+        let productFamilies = {};
+        let activeBrandFilter = 'ALL';
+        let activeCategoryFilter = null;
+        let activeFamilyFilter = null;
+        let cart = [];
+
+        let currentActiveFamily = null;
+        let currentSelectedVariant = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadExcelData();
+        });
+
+        async function loadExcelData() {
+            try {
+                const response = await fetch('tr_v2.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                rawProducts = XLSX.utils.sheet_to_json(firstSheet);
+                
+                processRawData();
+                buildBrandChips();
+                buildNavigationTree();
+                renderProductGrid();
+            } catch (err) {
+                console.error("Excel verisi okunamadı:", err);
+            }
+        }
+
+        function processRawData() {
+            productFamilies = {};
+            rawProducts.forEach(item => {
+                const familyName = item['Ürün Ailesi'] || item['Malzeme Tanım'] || 'Diğer';
+                
+                let rawPhoto = item['Foto weblink'] || '';
+                let mainPhoto = rawPhoto.split(',')[0].trim();
+
+                if (!productFamilies[familyName]) {
+                    productFamilies[familyName] = {
+                        familyName: familyName,
+                        brand: item['Marka'] || 'Yataş Group',
+                        category: item['Kategori'] || 'Genel',
+                        productType: item['Ürün Tipi'] || 'Genel',
+                        photoUrl: mainPhoto,
+                        variants: []
+                    };
+                }
+                
+                const variantStatus = item['Sipariş Statü'] || item['Status'] || item['MTO/MTS'] || 'MTO';
+
+                // Sertlik görseli/linki kontrolü (Farklı kolon adlarına dayanıklı)
+                const hardnessImg = item['Sertlik Detay Görsel'] || item['Sertlik Görsel'] || item['Sertlik Link'] || item['Sertlik Görseli'] || '';
+
+                productFamilies[familyName].variants.push({
+                    code: item['Ürün Kodu'],
+                    size: item['Ölçü'],
+                    desc: item['Malzeme Tanım'],
+                    usdPrice: parseFloat(item['Birim USD Fiyat']) || 0,
+                    eurPrice: parseFloat(item['Birim EUR Fiyat']) || 0,
+                    height: item['Yükseklik CM'] || item['Yükseklik'] || 0,
+                    status: variantStatus,
+                    barcode: item['Barkod'],
+                    gtip: item['GTIP'] || '-',
+                    volume: parseFloat(item['Birim Hacim M3']) || 0,
+                    weight: parseFloat(item['Birim Ağırlık KG']) || 0,
+                    // Yeni 4 Kolon
+                    feature: item['Özellik'] || item['Özellikler'] || '-',
+                    color: item['Renk'] || item['Renk Detayı'] || '-',
+                    hardness: item['Sertlik Detayı'] || item['Sertlik'] || '-',
+                    hardnessImg: hardnessImg.trim()
+                });
+            });
+        }
+
+        function buildBrandChips() {
+            const brands = ['ALL', ...new Set(rawProducts.map(i => i['Marka']).filter(Boolean))];
+            const chipContainer = document.getElementById('brandFilterChips');
+            chipContainer.innerHTML = brands.map(b => `
+                <div class="filter-chip ${b === activeBrandFilter ? 'active' : ''}" onclick="filterByBrand('${b}')">
+                    ${b === 'ALL' ? i18n[currentLang].all_brands : b}
+                </div>
+            `).join('');
+        }
+
+        function buildNavigationTree() {
+            const tree = {};
+            rawProducts.forEach(i => {
+                const b = i['Marka'] || 'Yataş';
+                const c = i['Kategori'] || 'Genel';
+                const fam = i['Ürün Ailesi'] || i['Malzeme Tanım'] || 'Diğer';
+                
+                if (!tree[b]) tree[b] = {};
+                if (!tree[b][c]) tree[b][c] = new Set();
+                tree[b][c].add(fam);
+            });
+
+            const navContainer = document.getElementById('navigationTree');
+            let html = '';
+            for (const [brand, categories] of Object.entries(tree)) {
+                html += `<div class="nav-tree-item">
+                    <div class="nav-tree-header" onclick="toggleNavAccordion(this)">
+                        <span><i class="fa-solid fa-store" style="margin-right:6px;"></i> ${brand}</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="nav-tree-children">`;
+                for (const [cat, families] of Object.entries(categories)) {
+                    const translatedCat = autoTranslateText(cat, currentLang);
+                    html += `
+                        <div class="cat-tree-header" onclick="toggleNavAccordion(this)">
+                            <span><i class="fa-regular fa-folder" style="margin-right:6px;"></i> ${translatedCat}</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i>
+                        </div>
+                        <div class="cat-tree-children">
+                            <span class="sub-link" style="font-weight:700; color:var(--yatas-red);" onclick="filterByCategory('${brand}', '${cat}')">📂 ${translatedCat} (All)</span>`;
+                    
+                    Array.from(families).forEach(fam => {
+                        html += `<span class="sub-link" onclick="filterByFamily('${brand}', '${cat}', '${fam}')">• ${fam}</span>`;
+                    });
+                    html += `</div>`;
+                }
+                html += `</div></div>`;
+            }
+            navContainer.innerHTML = html;
+        }
+
+        function toggleNavAccordion(el) { 
+            const target = el.nextElementSibling;
+            if (target) target.classList.toggle('active'); 
+        }
+
+        async function renderProductGrid() {
+            const grid = document.getElementById('productGrid');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            let families = Object.values(productFamilies);
+
+            families = families.filter(f => {
+                const matchBrand = (activeBrandFilter === 'ALL' || f.brand === activeBrandFilter);
+                const matchCat = (!activeCategoryFilter || f.category === activeCategoryFilter);
+                const matchFam = (!activeFamilyFilter || f.familyName === activeFamilyFilter);
+                const matchSearch = (!searchVal || f.familyName.toLowerCase().includes(searchVal) || f.variants.some(v => v.desc && v.desc.toLowerCase().includes(searchVal)));
+                return matchBrand && matchCat && matchFam && matchSearch;
+            });
+
+            grid.innerHTML = families.map(f => {
+                const minPrice = Math.min(...f.variants.map(v => currentCurrency === 'USD' ? v.usdPrice : v.eurPrice));
+                const currencySymbol = currentCurrency === 'USD' ? '$' : '€';
+                const translatedCat = autoTranslateText(f.category, currentLang);
+                const fromLabel = i18n[currentLang].from || 'from';
+
+                return `
+                <div class="product-card" onclick="openProductModal('${f.familyName}')">
+                    <div class="card-img-wrap">
+                        <img src="${f.photoUrl}" alt="${f.familyName}" onerror="this.src='https://via.placeholder.com/300x200?text=Yatas+Bedding'">
+                        <div class="card-badge">${f.variants.length} Sizes</div>
+                        <div class="card-info-icon" title="Quick Info" onclick="event.stopPropagation(); alert('${f.familyName} - ${f.brand}\\nTotal Sizes: ${f.variants.length}');"><i class="fa-solid fa-info"></i></div>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <div class="card-brand">${f.brand} | ${translatedCat}</div>
+                            <h3 class="card-title">${f.familyName}</h3>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-price">${fromLabel} ${currencySymbol}${minPrice}</div>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function resetToHome() {
+            activeBrandFilter = 'ALL';
+            activeCategoryFilter = null;
+            activeFamilyFilter = null;
+            document.getElementById('searchInput').value = '';
+            buildBrandChips();
+            renderProductGrid();
+            if (document.getElementById('sidebarNav').classList.contains('open')) {
+                toggleSidebar();
+            }
+        }
+
+        function openProductModal(familyName, targetCode = null) {
+            currentActiveFamily = productFamilies[familyName];
+            const translatedCat = autoTranslateText(currentActiveFamily.category, currentLang);
+            const translatedType = autoTranslateText(currentActiveFamily.productType, currentLang);
+
+            document.getElementById('modalFamilyTitle').innerText = currentActiveFamily.familyName;
+            document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${translatedCat} (${translatedType})`;
+            document.getElementById('modalImg').src = currentActiveFamily.photoUrl;
+
+            const sizeSelect = document.getElementById('sizeSelect');
+            sizeSelect.innerHTML = currentActiveFamily.variants.map((v, idx) => {
+                return `<option value="${idx}">${v.size} (${v.status})</option>`;
+            }).join('');
+
+            if (targetCode) {
+                const foundIdx = currentActiveFamily.variants.findIndex(v => v.code === targetCode);
+                if (foundIdx > -1) sizeSelect.value = foundIdx;
+            }
+
+            document.getElementById('modalQty').value = 1;
+            onSizeChange();
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function onSizeChange() {
+            const idx = document.getElementById('sizeSelect').value;
+            currentSelectedVariant = currentActiveFamily.variants[idx];
+
+            document.getElementById('specGtip').innerText = currentSelectedVariant.gtip;
+            document.getElementById('specVolume').innerText = `${currentSelectedVariant.volume} m³`;
+            document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
+            document.getElementById('specHeight').innerText = `${currentSelectedVariant.height} cm`;
+            document.getElementById('specStatus').innerText = currentSelectedVariant.status || 'MTO';
+
+            // Yeni 8'li Kutucuk Verileri
+            document.getElementById('specFeature').innerText = currentSelectedVariant.feature || '-';
+            document.getElementById('specColor').innerText = currentSelectedVariant.color || '-';
+            document.getElementById('specHardness').innerText = currentSelectedVariant.hardness || '-';
+
+            const hardnessImgEl = document.getElementById('specHardnessImg');
+            if (currentSelectedVariant.hardnessImg && currentSelectedVariant.hardnessImg.startsWith('http')) {
+                hardnessImgEl.src = currentSelectedVariant.hardnessImg;
+                hardnessImgEl.style.display = 'inline-block';
+            } else {
+                hardnessImgEl.style.display = 'none';
+            }
+
+            updateModalPrice();
+        }
+
+        function updateModalQty(delta) {
+            const qtyInput = document.getElementById('modalQty');
+            let val = parseInt(qtyInput.value || 1) + delta;
+            if (val < 1) val = 1;
+            qtyInput.value = val;
+            updateModalPrice();
+        }
+
+        function updateModalPrice() {
+            const qtyInput = document.getElementById('modalQty');
+            let qty = parseInt(qtyInput.value);
+            if (isNaN(qty) || qty < 1) qty = 1;
+
+            const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
+            const symbol = currentCurrency === 'USD' ? '$' : '€';
+            document.getElementById('modalTotalPrice').innerText = `${symbol}${(unitPrice * qty).toFixed(2)}`;
+        }
+
+        function closeModal() { document.getElementById('productModal').classList.remove('active'); }
+
+        function handleBackdropClick(e) {
+            if (e.target === e.currentTarget) {
+                closeModal();
+            }
+        }
+
+        function addCurrentToCart() {
+            const qtyInput = document.getElementById('modalQty');
+            let qty = parseInt(qtyInput.value);
+            if (isNaN(qty) || qty < 1) qty = 1;
+
+            const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
+
+            const existingIndex = cart.findIndex(i => i.code === currentSelectedVariant.code && i.currency === currentCurrency);
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += qty;
+            } else {
+                cart.push({
+                    family: currentActiveFamily.familyName,
+                    brand: currentActiveFamily.brand,
+                    photoUrl: currentActiveFamily.photoUrl,
+                    code: currentSelectedVariant.code,
+                    size: currentSelectedVariant.size,
+                    desc: currentSelectedVariant.desc,
+                    gtip: currentSelectedVariant.gtip,
+                    volume: currentSelectedVariant.volume,
+                    weight: currentSelectedVariant.weight,
+                    height: currentSelectedVariant.height,
+                    status: currentSelectedVariant.status,
+                    barcode: currentSelectedVariant.barcode,
+                    feature: currentSelectedVariant.feature,
+                    color: currentSelectedVariant.color,
+                    hardness: currentSelectedVariant.hardness,
+                    qty: qty,
+                    unitPrice: unitPrice,
+                    currency: currentCurrency
+                });
+            }
+
+            closeModal();
+            updateCartDisplay();
+            toggleCart(true);
+        }
+
+        function updateCartDisplay() {
+            document.getElementById('cartBadge').innerText = cart.reduce((acc, i) => acc + i.qty, 0);
+
+            const list = document.getElementById('cartItemsList');
+            let totalVal = 0;
+            let totalM3 = 0;
+            let totalKg = 0;
+            let totalPcs = 0;
+
+            list.innerHTML = cart.map((item, idx) => {
+                const itemTotal = item.qty * item.unitPrice;
+                totalVal += itemTotal;
+                totalM3 += item.qty * item.volume;
+                totalKg += item.qty * item.weight;
+                totalPcs += item.qty;
+                const symbol = item.currency === 'USD' ? '$' : '€';
+
+                return `
+                <div class="cart-item-card">
+                    <img src="${item.photoUrl}" onerror="this.src='https://via.placeholder.com/50'" onclick="openProductModal('${item.family}', '${item.code}')">
+                    <div class="cart-item-info" onclick="openProductModal('${item.family}', '${item.code}')">
+                        <h4>${item.family}</h4>
+                        <p>${item.size} (${item.status})</p>
+                        <div class="cart-item-price">${symbol}${itemTotal.toFixed(2)}</div>
+                    </div>
+                    <div>
+                        <button style="background:none; border:none; color:var(--yatas-red); cursor:pointer; font-size:14px; margin-left:auto; display:block;" onclick="removeFromCart(${idx})"><i class="fa-solid fa-trash"></i></button>
+                        <div class="cart-qty-ctrl">
+                            <button onclick="changeCartQty(${idx}, -1)">-</button>
+                            <input type="number" class="cart-qty-input" value="${item.qty}" min="1" onchange="setCartQtyDirect(${idx}, this.value)">
+                            <button onclick="changeCartQty(${idx}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+
+            const mainSymbol = currentCurrency === 'USD' ? '$' : '€';
+            document.getElementById('cartGrandTotal').innerText = `${mainSymbol}${totalVal.toFixed(2)}`;
+
+            calculateLogistics(totalM3, totalKg, totalPcs);
+        }
+
+        function changeCartQty(idx, delta) {
+            if (cart[idx].qty + delta > 0) {
+                cart[idx].qty += delta;
+            } else {
+                cart.splice(idx, 1);
+            }
+            updateCartDisplay();
+        }
+
+        function setCartQtyDirect(idx, val) {
+            let parsed = parseInt(val);
+            if (isNaN(parsed) || parsed < 1) parsed = 1;
+            cart[idx].qty = parsed;
+            updateCartDisplay();
+        }
+
+        function removeFromCart(idx) { cart.splice(idx, 1); updateCartDisplay(); }
+
+        function clearCart() {
+            if (cart.length === 0) return;
+            if (confirm("Sepetteki tüm ürünleri silmek istediğinizden emin misiniz?")) {
+                cart = [];
+                updateCartDisplay();
+            }
+        }
+
+        function calculateLogistics(totalM3, totalKg, totalPcs) {
+            const HQ_CAPACITY = 68.0;
+            const TRUCK_CAPACITY = 90.0;
+
+            const hqExact = totalM3 / HQ_CAPACITY;
+            const hqFull = Math.floor(hqExact);
+            const hqRemainderPercent = Math.round((hqExact - hqFull) * 100);
+            const totalHq = totalM3 > 0 ? Math.ceil(hqExact) : 0;
+
+            const truckExact = totalM3 / TRUCK_CAPACITY;
+            const truckFull = Math.floor(truckExact);
+            const truckRemainderPercent = Math.round((truckExact - truckFull) * 100);
+            const totalTrucks = totalM3 > 0 ? Math.ceil(truckExact) : 0;
+
+            if (totalHq === 0) {
+                document.getElementById('hqCountText').innerText = "0 Cont. (%0)";
+                document.getElementById('hqProgressFill').style.width = "0%";
+            } else if (hqFull === 0) {
+                document.getElementById('hqCountText').innerText = `1 Cont. (%${hqRemainderPercent} full)`;
+                document.getElementById('hqProgressFill').style.width = `${hqRemainderPercent}%`;
+            } else {
+                document.getElementById('hqCountText').innerText = `${hqFull} Full + 1 Cont. (%${hqRemainderPercent} full) [Total: ${totalHq}]`;
+                document.getElementById('hqProgressFill').style.width = `${hqRemainderPercent}%`;
+            }
+
+            if (totalTrucks === 0) {
+                document.getElementById('truckCountText').innerText = "0 Truck (%0)";
+                document.getElementById('truckProgressFill').style.width = "0%";
+            } else if (truckFull === 0) {
+                document.getElementById('truckCountText').innerText = `1 Truck (%${truckRemainderPercent} full)`;
+                document.getElementById('truckProgressFill').style.width = `${truckRemainderPercent}%`;
+            } else {
+                document.getElementById('truckCountText').innerText = `${truckFull} Full + 1 Truck (%${truckRemainderPercent} full) [Total: ${totalTrucks}]`;
+                document.getElementById('truckProgressFill').style.width = `${truckRemainderPercent}%`;
+            }
+
+            document.getElementById('logisticsMeta').innerText = `Total Pcs: ${totalPcs} | Total Vol: ${totalM3.toFixed(2)} m³ | Total Wt: ${totalKg.toFixed(1)} kg`;
+        }
+
+        function toggleCart(forceOpen) {
+            const drawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('cartOverlay');
+
+            if (forceOpen === true) {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+            } else if (forceOpen === false) {
+                drawer.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                drawer.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+        }
+
+        function toggleSidebar() {
+            const nav = document.getElementById('sidebarNav');
+            const overlay = document.getElementById('sidebarOverlay');
+            const icon = document.getElementById('hamburgerIcon');
+
+            nav.classList.toggle('open');
+            overlay.classList.toggle('active');
+
+            if (nav.classList.contains('open')) {
+                icon.className = "fa-solid fa-xmark";
+            } else {
+                icon.className = "fa-solid fa-bars";
+            }
+        }
+
+        function filterByBrand(b) {
+            activeBrandFilter = b;
+            activeCategoryFilter = null;
+            activeFamilyFilter = null;
+            buildBrandChips();
+            renderProductGrid();
+        }
+
+        function filterByCategory(brand, cat) {
+            activeBrandFilter = brand;
+            activeCategoryFilter = cat;
+            activeFamilyFilter = null;
+            renderProductGrid();
+            toggleSidebar();
+        }
+
+        function filterByFamily(brand, cat, fam) {
+            activeBrandFilter = brand;
+            activeCategoryFilter = cat;
+            activeFamilyFilter = fam;
+            renderProductGrid();
+            toggleSidebar();
+        }
+
+        function applyFilters() { renderProductGrid(); }
+
+        function changeCurrency(curr) {
+            currentCurrency = curr;
+            renderProductGrid();
+            updateCartDisplay();
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.innerText = i18n[lang][key];
+            });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if (i18n[lang][key]) el.placeholder = i18n[lang][key];
+            });
+            buildBrandChips();
+            buildNavigationTree();
+            renderProductGrid();
+        }
+
+        // FOTOĞRAFLI VE DİP TOPLAM SATIRLI EXCEL EXPORT (EXCELJS)
+        async function exportProformaExcel() {
+            if (cart.length === 0) {
+                alert("Sepetiniz boş / Cart is empty!");
                 return;
             }
 
-            gridContainer.innerHTML = data.map(item => renderProductCard(item)).join('');
-        }
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Proforma Order');
 
-        // Örnek başlangıç verisi ile yükleme
-        window.addEventListener('DOMContentLoaded', () => {
-            renderGrid(rawProductData);
-        });
+            worksheet.columns = [
+                { header: 'Image', key: 'img', width: 22 },
+                { header: 'Brand', key: 'brand', width: 18 },
+                { header: 'Product Family', key: 'family', width: 22 },
+                { header: 'Dimension / Size', key: 'size', width: 16 },
+                { header: 'Status', key: 'status', width: 12 },
+                { header: 'Height (cm)', key: 'height', width: 14 },
+                { header: 'Feature', key: 'feature', width: 16 },
+                { header: 'Color', key: 'color', width: 14 },
+                { header: 'Hardness', key: 'hardness', width: 14 },
+                { header: 'Product Code', key: 'code', width: 18 },
+                { header: 'Barcode', key: 'barcode', width: 18 },
+                { header: 'HS CODE (GTİP)', key: 'gtip', width: 18 },
+                { header: 'Qty', key: 'qty', width: 10 },
+                { header: 'Unit Price', key: 'unitPrice', width: 14 },
+                { header: 'Total Price', key: 'totalPrice', width: 16 },
+                { header: 'Total Vol (m³)', key: 'vol', width: 14 },
+                { header: 'Total Wt (kg)', key: 'wt', width: 14 }
+            ];
+
+            worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
+            worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '00205B' } };
+            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+
+            let sumQty = 0;
+            let sumPrice = 0;
+            let sumVol = 0;
+            let sumWt = 0;
+            let mainCurrency = cart[0].currency;
+
+            for (let i = 0; i < cart.length; i++) {
+                const item = cart[i];
+                const itemTotal = item.qty * item.unitPrice;
+                const itemVol = item.qty * item.volume;
+                const itemWt = item.qty * item.weight;
+
+                sumQty += item.qty;
+                sumPrice += itemTotal;
+                sumVol += itemVol;
+                sumWt += itemWt;
+
+                const row = worksheet.addRow({
+                    brand: item.brand,
+                    family: item.family,
+                    size: item.size,
+                    status: item.status || 'MTO',
+                    height: item.height,
+                    feature: item.feature || '-',
+                    color: item.color || '-',
+                    hardness: item.hardness || '-',
+                    code: item.code,
+                    barcode: item.barcode,
+                    gtip: item.gtip,
+                    qty: item.qty,
+                    unitPrice: `${item.unitPrice} ${item.currency}`,
+                    totalPrice: `${itemTotal.toFixed(2)} ${item.currency}`,
+                    vol: itemVol.toFixed(3),
+                    wt: itemWt.toFixed(2)
+                });
+
+                row.height = 65;
+                row.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                try {
+                    const imgResponse = await fetch(item.photoUrl);
+                    const imgBlob = await imgResponse.blob();
+                    const arrayBuffer = await imgBlob.arrayBuffer();
+                    
+                    const imageId = workbook.addImage({
+                        buffer: arrayBuffer,
+                        extension: 'png',
+                    });
+
+                    worksheet.addImage(imageId, {
+                        tl: { col: 0, row: row.number - 1 },
+                        ext: { width: 120, height: 80 }
+                    });
+                } catch (e) {
+                    console.warn("Resim Excel'e eklenemedi:", item.photoUrl);
+                }
+            }
+
+            // DİP TOPLAM SATIRI
+            const totalRow = worksheet.addRow({
+                img: '',
+                brand: '',
+                family: 'TOTAL / TOPLAM',
+                size: '',
+                status: '',
+                height: '',
+                feature: '',
+                color: '',
+                hardness: '',
+                code: '',
+                barcode: '',
+                gtip: '',
+                qty: sumQty,
+                unitPrice: '',
+                totalPrice: `${sumPrice.toFixed(2)} ${mainCurrency}`,
+                vol: sumVol.toFixed(3),
+                wt: sumWt.toFixed(2)
+            });
+
+            totalRow.height = 30;
+            totalRow.font = { bold: true, color: { argb: 'FFFFFF' }, size: 12 };
+            totalRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '00205B' } };
+            totalRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Yatas_Proforma_Order_${new Date().toISOString().slice(0,10)}.xlsx`;
+            link.click();
+        }
     </script>
 </body>
 </html>
