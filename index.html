@@ -42,6 +42,7 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
+            padding-bottom: 60px; /* Footer yüksekliği kadar boşluk */
         }
 
         /* HEADER NAVBAR */
@@ -250,8 +251,29 @@
         }
         .modal-close:hover { background: var(--yatas-red); color: #fff; border-color: var(--yatas-red); }
 
-        .modal-left { flex: 1; min-width: 320px; background: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 30px; }
-        .modal-left img { max-width: 100%; max-height: 440px; object-fit: contain; }
+        /* MODAL GALERİ VE SOL ALAN */
+        .modal-left { 
+            flex: 1; min-width: 320px; background: #f8fafc; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 24px; border-right: 1px solid var(--border-color);
+        }
+        .gallery-main-container {
+            width: 100%; height: 340px; display: flex; align-items: center; justify-content: center;
+        }
+        .gallery-main-container img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+
+        /* THUMBNAIL ÖNİZLEME LİSTESİ */
+        .modal-thumbnails-bar {
+            display: flex; gap: 8px; margin-top: 16px; padding: 6px 2px;
+            overflow-x: auto; max-width: 100%; width: 100%; justify-content: flex-start;
+        }
+        .thumb-img {
+            width: 60px; height: 60px; border-radius: 6px; border: 2px solid var(--border-color);
+            object-fit: cover; cursor: pointer; transition: all 0.2s; background: #fff; flex-shrink: 0;
+        }
+        .thumb-img:hover, .thumb-img.active {
+            border-color: var(--yatas-navy); transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
 
         .modal-right { flex: 1.5; min-width: 360px; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; }
         .modal-header h2 { font-size: 28px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 4px; }
@@ -299,7 +321,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 58px;
+            min-height: 60px;
         }
         .spec-item span { 
             display: block; 
@@ -320,10 +342,12 @@
             line-height: 1.2;
         }
         .spec-item strong.highlight-status { color: var(--yatas-red); }
+        
+        /* 8. KUTUCUK SERTLİK DÜZENLEMESİ */
         .hardness-content {
-            display: flex; align-items: center; justify-content: center; gap: 3px; margin-top: 3px;
+            display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 3px; flex-wrap: wrap;
         }
-        .hardness-img { height: 16px; width: auto; max-width: 24px; object-fit: contain; }
+        .hardness-img { height: 18px; width: auto; max-width: 32px; object-fit: contain; }
 
         .qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .qty-picker { display: flex; align-items: center; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 2px; }
@@ -401,20 +425,33 @@
         }
         .export-excel-btn:hover { background: #059669; }
 
-        /* FOOTER BRANDING SIGNATURE */
+        /* DİNAMİK SCROLL FOOTER BANNER */
         footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 900;
             background: var(--yatas-navy);
             color: #ffffff;
-            padding: 20px 28px;
-            margin-top: 40px;
+            padding: 14px 28px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 12px;
             font-size: 12px;
+            box-shadow: 0 -4px 15px rgba(0, 32, 91, 0.2);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
         }
-        footer .footer-left { color: rgba(255,255,255,0.7); }
+
+        footer.hidden-on-scroll {
+            transform: translateY(100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        footer .footer-left { color: rgba(255,255,255,0.8); }
         footer .footer-right { font-weight: 600; color: var(--accent-gold); letter-spacing: 0.5px; }
 
         @media (max-width: 992px) {
@@ -424,9 +461,10 @@
         @media (max-width: 768px) {
             .cart-drawer { width: 100%; right: -100%; }
             .modal-card { flex-direction: column; }
-            .modal-left { height: 200px; }
+            .modal-left { min-width: 100%; height: auto; }
+            .gallery-main-container { height: 220px; }
             .specs-grid { grid-template-columns: repeat(2, 1fr); }
-            footer { flex-direction: column; text-align: center; }
+            footer { flex-direction: column; text-align: center; padding: 10px 16px; }
         }
     </style>
 </head>
@@ -491,13 +529,19 @@
         <div class="product-grid" id="productGrid"></div>
     </main>
 
-    <!-- PRODUCT DETAIL MODAL (FAMILY CROSS-SELL DESIGN) -->
+    <!-- PRODUCT DETAIL MODAL (FAMILY CROSS-SELL + GALLERY) -->
     <div class="modal-overlay" id="productModal" onclick="handleBackdropClick(event)">
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            
             <div class="modal-left">
-                <img id="modalImg" src="" alt="Product Image">
+                <div class="gallery-main-container">
+                    <img id="modalImg" src="" alt="Product Main Image">
+                </div>
+                <!-- THUMBNAIL FOTO GALERİSİ -->
+                <div class="modal-thumbnails-bar" id="modalThumbnailsBar"></div>
             </div>
+
             <div class="modal-right">
                 <div class="modal-header">
                     <div class="modal-subtitle" id="modalBrandCategory">Yataş Bedding | Product Family Collection</div>
@@ -632,8 +676,8 @@
         </div>
     </div>
 
-    <!-- FOOTER SIGNATURE -->
-    <footer>
+    <!-- AKILLI DİNAMİK FOOTER BANNER -->
+    <footer id="appFooter">
         <div class="footer-left">
             Copyright © 2026 Yataş International. All rights reserved.
         </div>
@@ -721,7 +765,20 @@
 
         window.addEventListener('DOMContentLoaded', async () => {
             await loadExcelData();
+            initScrollFooterBehavior();
         });
+
+        // AKILLI SCROLL BANNER MANTIĞI
+        function initScrollFooterBehavior() {
+            const footer = document.getElementById('appFooter');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 30) {
+                    footer.classList.add('hidden-on-scroll');
+                } else {
+                    footer.classList.remove('hidden-on-scroll');
+                }
+            });
+        }
 
         async function loadExcelData() {
             try {
@@ -746,8 +803,9 @@
                 const familyName = item['Ürün Ailesi'] || item['Malzeme Tanım'] || 'Diğer';
                 const category = item['Kategori'] || 'Yatak';
                 
-                let rawPhoto = item['Foto weblink'] || '';
-                let mainPhoto = rawPhoto.split(',')[0].trim();
+                let rawPhoto = item['Foto weblink'] || item['Görsel Link'] || item['Web Link'] || '';
+                let photoList = rawPhoto.split(',').map(p => p.trim()).filter(p => p.startsWith('http'));
+                let mainPhoto = photoList.length > 0 ? photoList[0] : '';
 
                 if (!productFamilies[familyName]) {
                     productFamilies[familyName] = {
@@ -761,12 +819,19 @@
                     productFamilies[familyName].categories[category] = {
                         categoryName: category,
                         photoUrl: mainPhoto,
+                        allPhotos: new Set(photoList),
                         variants: []
                     };
+                } else {
+                    photoList.forEach(p => productFamilies[familyName].categories[category].allPhotos.add(p));
                 }
 
-                const variantStatus = item['Sipariş Statü'] || item['Status'] || item['MTO/MTS'] || 'MTO';
-                const hardnessImg = item['Sertlik Detay Görsel'] || item['Sertlik Görsel'] || item['Sertlik Link'] || item['Sertlik Görseli'] || '';
+                // ESNEK STATÜ / MTO-MTS TESPİTİ
+                const variantStatus = item['Sipariş Statü'] || item['Status'] || item['MTO/MTS'] || item['STATÜ'] || item['Statü'] || item['Siparis Statu'] || 'MTO';
+                
+                // ESNEK SERTLİK DERECE & SERTLİK İKON LINK TESPİTİ
+                const hardnessText = item['Sertlik Detayı'] || item['Sertlik'] || item['Sertlik Derecesi'] || '-';
+                const hardnessImg = item['Sertlik Detay Görsel'] || item['Sertlik Görsel'] || item['Sertlik Link'] || item['Sertlik Görseli'] || item['Sertlik Web Link'] || '';
 
                 productFamilies[familyName].categories[category].variants.push({
                     code: item['Ürün Kodu'],
@@ -782,8 +847,9 @@
                     weight: parseFloat(item['Birim Ağırlık KG']) || 0,
                     feature: item['Özellik'] || item['Özellikler'] || '-',
                     color: item['Renk'] || item['Renk Detayı'] || '-',
-                    hardness: item['Sertlik Detayı'] || item['Sertlik'] || '-',
-                    hardnessImg: hardnessImg.trim()
+                    hardness: hardnessText,
+                    hardnessImg: hardnessImg.trim(),
+                    photoUrl: mainPhoto
                 });
             });
         }
@@ -913,14 +979,13 @@
             }
         }
 
-        function openProductModal(familyName, targetCode = null) {
+        function openProductModal(familyName) {
             currentActiveFamily = productFamilies[familyName];
             document.getElementById('modalFamilyTitle').innerText = currentActiveFamily.familyName;
 
             const categoryKeys = Object.keys(currentActiveFamily.categories);
             const tabsContainer = document.getElementById('familyTabsBar');
             
-            // Sekme icon haritası
             const categoryIcons = {
                 "Yatak": "fa-bed",
                 "Baza": "fa-box-archive",
@@ -940,7 +1005,6 @@
                 `;
             }).join('');
 
-            // Varsayılan ilk kategoriyi seç
             switchFamilyCategory(categoryKeys[0]);
 
             document.getElementById('modalQty').value = 1;
@@ -959,14 +1023,37 @@
             const translatedCat = autoTranslateText(catKey, currentLang);
 
             document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${translatedCat}`;
-            document.getElementById('modalImg').src = catData.photoUrl;
 
+            // GALERİ VE THUMBNAIL YÜKLEME
+            const allPhotosArray = Array.from(catData.allPhotos);
+            const mainPhoto = allPhotosArray.length > 0 ? allPhotosArray[0] : catData.photoUrl;
+            
+            document.getElementById('modalImg').src = mainPhoto;
+
+            const thumbsContainer = document.getElementById('modalThumbnailsBar');
+            if (allPhotosArray.length > 1) {
+                thumbsContainer.innerHTML = allPhotosArray.map((pUrl, i) => `
+                    <img src="${pUrl}" class="thumb-img ${i === 0 ? 'active' : ''}" onclick="setModalMainImage('${pUrl}', this)" onerror="this.style.display='none'">
+                `).join('');
+                thumbsContainer.style.display = 'flex';
+            } else {
+                thumbsContainer.innerHTML = '';
+                thumbsContainer.style.display = 'none';
+            }
+
+            // DİNAMİK MTO / MTS STATÜ SEÇİMİ İLE ÖLÇÜ BİLGİSİ
             const sizeSelect = document.getElementById('sizeSelect');
             sizeSelect.innerHTML = catData.variants.map((v, idx) => {
                 return `<option value="${idx}">${v.size} (${v.status})</option>`;
             }).join('');
 
             onSizeChange();
+        }
+
+        function setModalMainImage(imgUrl, thumbEl) {
+            document.getElementById('modalImg').src = imgUrl;
+            document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+            if (thumbEl) thumbEl.classList.add('active');
         }
 
         function onSizeChange() {
@@ -978,10 +1065,15 @@
             document.getElementById('specVolume').innerText = `${currentSelectedVariant.volume} m³`;
             document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
             document.getElementById('specHeight').innerText = `${currentSelectedVariant.height} cm`;
-            document.getElementById('specStatus').innerText = currentSelectedVariant.status || 'MTO';
+            
+            // DİNAMİK STATÜ (MTO / MTS)
+            const specStatusEl = document.getElementById('specStatus');
+            specStatusEl.innerText = currentSelectedVariant.status || 'MTO';
 
             document.getElementById('specFeature').innerText = currentSelectedVariant.feature || '-';
             document.getElementById('specColor').innerText = currentSelectedVariant.color || '-';
+            
+            // 8. KUTUCUK SERTLİK DERECE + WEBLINK GÖRSELİ
             document.getElementById('specHardness').innerText = currentSelectedVariant.hardness || '-';
 
             const hardnessImgEl = document.getElementById('specHardnessImg');
@@ -1029,6 +1121,8 @@
             const unitPrice = currentCurrency === 'USD' ? currentSelectedVariant.usdPrice : currentSelectedVariant.eurPrice;
             const catData = currentActiveFamily.categories[currentActiveCategoryKey];
 
+            const activeMainPhoto = document.getElementById('modalImg').src || catData.photoUrl;
+
             const existingIndex = cart.findIndex(i => i.code === currentSelectedVariant.code && i.currency === currentCurrency);
             if (existingIndex > -1) {
                 cart[existingIndex].qty += qty;
@@ -1037,7 +1131,7 @@
                     family: currentActiveFamily.familyName,
                     category: currentActiveCategoryKey,
                     brand: currentActiveFamily.brand,
-                    photoUrl: catData.photoUrl,
+                    photoUrl: activeMainPhoto,
                     code: currentSelectedVariant.code,
                     size: currentSelectedVariant.size,
                     desc: currentSelectedVariant.desc,
