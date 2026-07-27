@@ -237,10 +237,9 @@
             display: flex; align-items: center; justify-content: space-between;
             border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 8px;
         }
-        /* KOYU KURUMSAL RENK TONU */
         .card-price { font-size: 17px; font-weight: 800; color: var(--yatas-navy); }
 
-        /* PRODUCT DETAIL MODAL (BÜYÜTÜLMÜŞ TASARIM) */
+        /* PRODUCT DETAIL MODAL */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 20, 60, 0.6); backdrop-filter: blur(4px);
@@ -281,7 +280,7 @@
             font-family: 'Open Sans', sans-serif;
         }
 
-        /* 5-COLUMN SPECS GRID (BÜYÜTÜLMÜŞ DETAYLAR) */
+        /* 5-COLUMN SPECS GRID */
         .specs-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 16px; }
         .spec-item { background: #ffffff; padding: 12px 6px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color); }
         .spec-item span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
@@ -469,7 +468,7 @@
                         <select id="sizeSelect" onchange="onSizeChange()"></select>
                     </div>
 
-                    <!-- 5-COLUMN SPECS GRID (BÜYÜTÜLMÜŞ METİNLER) -->
+                    <!-- 5-COLUMN SPECS GRID -->
                     <div class="specs-grid">
                         <div class="spec-item">
                             <span data-i18n="gtip">HS CODE</span>
@@ -545,10 +544,10 @@
                 </div>
             </div>
 
-            <!-- 70 m³ TRUCK -->
+            <!-- 90 m³ TRUCK -->
             <div class="logistics-row">
                 <div class="logistics-label">
-                    <span><i class="fa-solid fa-truck-front"></i> Standard Truck (70 m³)</span>
+                    <span><i class="fa-solid fa-truck-front"></i> Standard Truck (90 m³)</span>
                     <strong id="truckCountText">0 Truck (%0)</strong>
                 </div>
                 <div class="progress-track">
@@ -661,7 +660,8 @@
 
         async function loadExcelData() {
             try {
-                const response = await fetch('tr_yeni.xlsx');
+                // Öncelikli olarak yüklenen tr_v2.xlsx dosyasından veriyi okur
+                const response = await fetch('tr_v2.xlsx');
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -672,7 +672,7 @@
                 buildNavigationTree();
                 renderProductGrid();
             } catch (err) {
-                console.error("tr_yeni.xlsx okunamadı:", err);
+                console.error("Excel verisi okunamadı:", err);
             }
         }
 
@@ -680,16 +680,25 @@
             productFamilies = {};
             rawProducts.forEach(item => {
                 const familyName = item['Ürün Ailesi'] || item['Malzeme Tanım'] || 'Diğer';
+                
+                // Virgülle ayrılmış resim linklerinden ilk ana görseli çek
+                let rawPhoto = item['Foto weblink'] || '';
+                let mainPhoto = rawPhoto.split(',')[0].trim();
+
                 if (!productFamilies[familyName]) {
                     productFamilies[familyName] = {
                         familyName: familyName,
                         brand: item['Marka'] || 'Yataş Group',
                         category: item['Kategori'] || 'Genel',
                         productType: item['Ürün Tipi'] || 'Genel',
-                        photoUrl: item['Foto weblink'] || '',
+                        photoUrl: mainPhoto,
                         variants: []
                     };
                 }
+                
+                // Dinamik MTO/MTS Statü kontrolü
+                const variantStatus = item['Sipariş Statü'] || item['Status'] || item['MTO/MTS'] || 'MTO';
+
                 productFamilies[familyName].variants.push({
                     code: item['Ürün Kodu'],
                     size: item['Ölçü'],
@@ -697,7 +706,7 @@
                     usdPrice: parseFloat(item['Birim USD Fiyat']) || 0,
                     eurPrice: parseFloat(item['Birim EUR Fiyat']) || 0,
                     height: item['Yükseklik CM'] || item['Yükseklik'] || 0,
-                    status: item['Status'] || item['MTO/MTS'] || 'MTO',
+                    status: variantStatus,
                     barcode: item['Barkod'],
                     gtip: item['GTIP'] || '-',
                     volume: parseFloat(item['Birim Hacim M3']) || 0,
@@ -716,7 +725,6 @@
             `).join('');
         }
 
-        // AKORDEON DÜZENDE AKILLI AĞAÇ MENÜ
         function buildNavigationTree() {
             const tree = {};
             rawProducts.forEach(i => {
@@ -814,7 +822,7 @@
 
             const sizeSelect = document.getElementById('sizeSelect');
             sizeSelect.innerHTML = currentActiveFamily.variants.map((v, idx) => {
-                return `<option value="${idx}">${v.size}</option>`;
+                return `<option value="${idx}">${v.size} (${v.status})</option>`;
             }).join('');
 
             if (targetCode) {
@@ -835,6 +843,8 @@
             document.getElementById('specVolume').innerText = `${currentSelectedVariant.volume} m³`;
             document.getElementById('specWeight').innerText = `${currentSelectedVariant.weight} kg`;
             document.getElementById('specHeight').innerText = `${currentSelectedVariant.height} cm`;
+            
+            // Seçilen varyantın gerçek MTO/MTS statüsü dinamik yansıtılır
             document.getElementById('specStatus').innerText = currentSelectedVariant.status || 'MTO';
 
             updateModalPrice();
@@ -969,9 +979,10 @@
             }
         }
 
+        // LOJİSTİK KAPASİTE HESABI (GÜNCELLENEN TIR KAPASİTESİ: 90 m³)
         function calculateLogistics(totalM3, totalKg, totalPcs) {
             const HQ_CAPACITY = 68.0;
-            const TRUCK_CAPACITY = 70.0;
+            const TRUCK_CAPACITY = 90.0; // 70m3 -> 90m3 revize edildi
 
             const hqExact = totalM3 / HQ_CAPACITY;
             const hqFull = Math.floor(hqExact);
@@ -1086,7 +1097,7 @@
             renderProductGrid();
         }
 
-        // BÜYÜTÜLMÜŞ FOTOĞRAFLI EXCEL EXPORT (EXCELJS)
+        // FOTOĞRAFLI VE DİP TOPLAM SATIRLI EXCEL EXPORT (EXCELJS)
         async function exportProformaExcel() {
             if (cart.length === 0) {
                 alert("Sepetiniz boş / Cart is empty!");
@@ -1117,8 +1128,23 @@
             worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '00205B' } };
             worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
 
+            let sumQty = 0;
+            let sumPrice = 0;
+            let sumVol = 0;
+            let sumWt = 0;
+            let mainCurrency = cart[0].currency;
+
             for (let i = 0; i < cart.length; i++) {
                 const item = cart[i];
+                const itemTotal = item.qty * item.unitPrice;
+                const itemVol = item.qty * item.volume;
+                const itemWt = item.qty * item.weight;
+
+                sumQty += item.qty;
+                sumPrice += itemTotal;
+                sumVol += itemVol;
+                sumWt += itemWt;
+
                 const row = worksheet.addRow({
                     brand: item.brand,
                     family: item.family,
@@ -1130,9 +1156,9 @@
                     gtip: item.gtip,
                     qty: item.qty,
                     unitPrice: `${item.unitPrice} ${item.currency}`,
-                    totalPrice: `${(item.qty * item.unitPrice).toFixed(2)} ${item.currency}`,
-                    vol: (item.qty * item.volume).toFixed(3),
-                    wt: (item.qty * item.weight).toFixed(2)
+                    totalPrice: `${itemTotal.toFixed(2)} ${item.currency}`,
+                    vol: itemVol.toFixed(3),
+                    wt: itemWt.toFixed(2)
                 });
 
                 row.height = 65;
@@ -1156,6 +1182,29 @@
                     console.warn("Resim Excel'e eklenemedi:", item.photoUrl);
                 }
             }
+
+            // DİP TOPLAM SATIRI (TOTALS ROW)
+            const totalRow = worksheet.addRow({
+                img: '',
+                brand: '',
+                family: 'TOTAL / TOPLAM',
+                size: '',
+                status: '',
+                height: '',
+                code: '',
+                barcode: '',
+                gtip: '',
+                qty: sumQty,
+                unitPrice: '',
+                totalPrice: `${sumPrice.toFixed(2)} ${mainCurrency}`,
+                vol: sumVol.toFixed(3),
+                wt: sumWt.toFixed(2)
+            });
+
+            totalRow.height = 30;
+            totalRow.font = { bold: true, color: { argb: 'FFFFFF' }, size: 12 };
+            totalRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '00205B' } };
+            totalRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
