@@ -30,8 +30,8 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --accent-gold: #c5a059;
-            --header-bg: rgba(255, 255, 255, 0.85);
-            --glass-bg: rgba(255, 255, 255, 0.7);
+            --header-bg: rgba(255, 255, 255, 0.78);
+            --glass-bg: rgba(255, 255, 255, 0.65);
             --shadow-subtle: 0 8px 32px 0 rgba(0, 32, 91, 0.08);
             --radius-md: 12px;
             --radius-lg: 20px;
@@ -48,7 +48,7 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #1e293b;
-            --header-bg: rgba(2, 6, 23, 0.85);
+            --header-bg: rgba(2, 6, 23, 0.78);
             --glass-bg: rgba(15, 23, 42, 0.7);
             --shadow-subtle: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             --brand-ambient: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
@@ -97,7 +97,7 @@
         }
         .ticker-slide-item.active { opacity: 1; transform: translateY(0); }
 
-        /* HEADER NAVBAR */
+        /* LIQUID GLASS HEADER NAVBAR */
         header {
             position: sticky; top: 0; z-index: 1000;
             background: var(--header-bg);
@@ -219,7 +219,7 @@
         }
         .hero-cta-btn:hover { transform: translateY(-2px); background: var(--yatas-red); color: #fff; }
 
-        /* YENİLENEN MARKA ÇİPLERİ VE LOGO NETLİK DÜZELTMESİ (image_71af57.png FIX) */
+        /* MARKA ÇİPLERİ VE LOGO NETLİK DÜZELTMESİ */
         .filter-control-panel {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: var(--radius-lg); padding: 16px 24px; margin-bottom: 28px;
@@ -252,7 +252,7 @@
             font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer; font-family: inherit;
         }
 
-        /* SIDEBAR NAV DRAWER */
+        /* SIDEBAR NAV DRAWER (LOGO ARKA PLAN DÜZELTMESİ - image_713300.png FIX) */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 32, 91, 0.3); backdrop-filter: blur(4px);
@@ -270,10 +270,12 @@
         .sidebar-nav.open { left: 0; }
 
         .sidebar-header-logo {
-            padding-bottom: 16px; border-bottom: 2px solid #00205b;
+            padding: 12px 16px; background: #ffffff;
+            border-radius: var(--radius-md); border: 1px solid var(--border-color);
             margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .sidebar-header-logo img { height: 30px; width: auto; cursor: pointer; }
+        .sidebar-header-logo img { height: 28px; width: auto; cursor: pointer; object-fit: contain; }
 
         .nav-tree-item { margin-bottom: 8px; }
         .nav-tree-header {
@@ -379,7 +381,6 @@
         }
         .gallery-main-container img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s ease; }
 
-        /* GÖRSEL ÜSTÜ ŞEFFAF VE HOVER EFEKTLİ OKLAR (image_71b29d.jpg FIX) */
         .modal-nav-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             width: 44px; height: 44px; background: rgba(255, 255, 255, 0.88);
@@ -601,15 +602,47 @@
         }
         .chat-opt-btn:hover { background: #00205b; color: #fff; }
 
-        /* LIGHTBOX MODAL */
+        /* YUKARI ÇIK (SCROLL TO TOP) OK BUTONU - image_712b5a.png FIX */
+        .scroll-top-btn {
+            position: fixed; bottom: 80px; left: 28px; z-index: 2500;
+            width: 48px; height: 48px; border-radius: 50%;
+            background: #00205b; color: #ffffff; border: 1.5px solid rgba(255,255,255,0.25);
+            box-shadow: 0 6px 20px rgba(0, 32, 91, 0.3); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; opacity: 0; visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .scroll-top-btn.visible { opacity: 1; visibility: visible; }
+        .scroll-top-btn:hover { transform: translateY(-4px); background: var(--yatas-red); }
+
+        /* GELİŞTİRİLMİŞ TAM EKRAN LIGHTBOX MODAL (image_714623.png FIX) */
         .lightbox-modal {
             display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.9); backdrop-filter: blur(6px); align-items: center; justify-content: center;
+            background-color: rgba(0, 0, 0, 0.92); backdrop-filter: blur(10px);
+            align-items: center; justify-content: center; user-select: none;
         }
         .lightbox-modal.active { display: flex; }
-        .lightbox-content { max-width: 85%; max-height: 85vh; border-radius: 8px; object-fit: contain; }
+        .lightbox-content { max-width: 88%; max-height: 85vh; border-radius: 8px; object-fit: contain; cursor: pointer; }
 
-        /* YENİLENEN YATAŞ LACİVERTLİ ŞIK LIQUID GLASS FOOTER (image_714206.png FIX) */
+        .lightbox-nav-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 52px; height: 52px; background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255,255,255,0.25); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #ffffff; font-size: 20px; cursor: pointer; z-index: 10000;
+            transition: all 0.25s ease; backdrop-filter: blur(8px);
+        }
+        .lightbox-nav-arrow:hover { background: #ffffff; color: #00205b; transform: translateY(-50%) scale(1.1); }
+        .lightbox-nav-arrow.prev { left: 30px; }
+        .lightbox-nav-arrow.next { right: 30px; }
+
+        .lightbox-counter {
+            position: absolute; top: 24px; left: 30px; color: rgba(255,255,255,0.85);
+            font-size: 14px; font-weight: 800; background: rgba(0,0,0,0.4);
+            padding: 6px 16px; border-radius: 20px; backdrop-filter: blur(5px);
+        }
+
+        /* YENİLENEN YATAŞ LACİVERTLİ SABİT FOOTER (image_714206.png FIX) */
         footer {
             position: fixed; bottom: 0; left: 0; width: 100%; z-index: 900;
             background: var(--header-bg);
@@ -619,7 +652,9 @@
             display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.05); transition: opacity 0.3s;
         }
+        footer .footer-right { color: #00205b !important; font-weight: 800; }
         [data-theme="dark"] footer { color: #38bdf8; }
+        [data-theme="dark"] footer .footer-right { color: #38bdf8 !important; }
 
         @media (max-width: 992px) { 
             .specs-grid { grid-template-columns: repeat(2, 1fr); }
@@ -637,6 +672,9 @@
             .hero-title { font-size: 22px; }
             .chat-window { width: 90%; right: 5%; bottom: 100px; }
             footer { padding: 10px 16px; flex-direction: column; gap: 4px; text-align: center; }
+            .lightbox-nav-arrow { width: 40px; height: 40px; font-size: 14px; }
+            .lightbox-nav-arrow.prev { left: 10px; }
+            .lightbox-nav-arrow.next { right: 10px; }
         }
     </style>
 </head>
@@ -736,7 +774,7 @@
             </div>
         </div>
 
-        <!-- YENİLENEN MARKA LOGOLU FİLTRELEME VE SIRALAMA BARLARI -->
+        <!-- ADVANCED FILTERING & SORTING TOOLBAR -->
         <div class="filter-control-panel">
             <div class="quick-filters" id="brandFilterChips">
                 <div class="filter-chip active" onclick="filterByBrand('ALL')">
@@ -807,6 +845,11 @@
                 <button class="chat-opt-btn" onclick="sendChatQuery('Fabric Options')" data-i18n="chat_opt3">🎨 Fabrics & Colors</button>
             </div>
         </div>
+    </div>
+
+    <!-- YUKARI ÇIK (SCROLL TO TOP) OK BUTONU -->
+    <div class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()" title="Scroll to top">
+        <i class="fa-solid fa-chevron-up"></i>
     </div>
 
     <!-- SPOTLIGHT SEARCH MODAL -->
@@ -905,10 +948,14 @@
         </div>
     </div>
 
-    <!-- LIGHTBOX MODAL WITH MAGNIFIER & EASY EXIT -->
+    <!-- GELİŞTİRİLMİŞ LIGHTBOX MODAL (image_714623.png FIX) -->
     <div id="imageLightboxModal" class="lightbox-modal" onclick="closeLightboxOnBackdrop(event)">
-        <span style="position:absolute; top:24px; right:36px; color:#fff; font-size:36px; cursor:pointer;" onclick="closeLightbox()">&times;</span>
-        <img class="lightbox-content" id="lightboxImg" src="" alt="Zoomed Photo">
+        <span style="position:absolute; top:24px; right:36px; color:#fff; font-size:36px; cursor:pointer; z-index:10001;" onclick="closeLightbox()">&times;</span>
+        <span class="lightbox-counter" id="lightboxCounter">1 / 1</span>
+        
+        <button class="lightbox-nav-arrow prev" onclick="prevLightboxPhoto(event)"><i class="fa-solid fa-chevron-left"></i></button>
+        <img class="lightbox-content" id="lightboxImg" src="" alt="Zoomed Photo" onclick="nextLightboxPhoto(event)">
+        <button class="lightbox-nav-arrow next" onclick="nextLightboxPhoto(event)"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
 
     <!-- CART DRAWER BACKDROP & DRAWER -->
@@ -965,10 +1012,10 @@
         </div>
     </div>
 
-    <!-- LIQUID GLASS FOOTER SIGNATURE -->
+    <!-- LIQUID GLASS FOOTER SIGNATURE (image_714206.png FIX) -->
     <footer id="appFooter">
         <div>Copyright © 2026 Yataş International. All rights reserved.</div>
-        <div style="color:var(--accent-gold); font-weight:700;">Proudly presented by International Sales Development Team</div>
+        <div class="footer-right">Proudly presented by International Sales Development Team</div>
     </footer>
 
     <script>
@@ -1188,7 +1235,26 @@
             initKeyboardShortcuts();
             initSwipeGestures();
             initNoticeTicker();
+            initScrollTopButton();
+            // AÇILIŞTA TAM DİLİ TETİKLE
+            changeLanguage(currentLang);
         });
+
+        /* YUKARI ÇIK (SCROLL TO TOP) BUTON MOTORU */
+        function initScrollTopButton() {
+            const btn = document.getElementById('scrollTopBtn');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+            });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         function initNoticeTicker() {
             let tIdx = 0;
@@ -1279,6 +1345,10 @@
                 if (document.getElementById('productModal').classList.contains('active')) {
                     if (e.key === 'ArrowRight') nextModalPhoto();
                     if (e.key === 'ArrowLeft') prevModalPhoto();
+                }
+                if (document.getElementById('imageLightboxModal').classList.contains('active')) {
+                    if (e.key === 'ArrowRight') nextLightboxPhoto();
+                    if (e.key === 'ArrowLeft') prevLightboxPhoto();
                 }
             });
         }
@@ -1407,7 +1477,7 @@
             });
         }
 
-        /* YENİLENEN MARKA ÇİPLERİ VE LOGO ÇİZİMİ (image_71af57.png FIX) */
+        /* YENİLENEN MARKA ÇİPLERİ VE LOGO NETLİĞİ (image_71af57.png FIX) */
         function buildBrandChips() {
             const chipContainer = document.getElementById('brandFilterChips');
             let chipsHtml = `
@@ -1583,6 +1653,48 @@
         function prevModalPhoto(e = null) { if (e) e.stopPropagation(); if (modalPhotosList.length <= 1) return; currentPhotoIndex = (currentPhotoIndex - 1 + modalPhotosList.length) % modalPhotosList.length; updateModalPhotoDisplay(); }
         function handleMainImageClick(e) { if (e.target.closest('.modal-nav-arrow')) return; openLightboxFromMain(); }
 
+        /* GELİŞTİRİLMİŞ TAM EKRAN LIGHTBOX MOTORU */
+        function openLightboxFromMain() {
+            openLightboxWithList(modalPhotosList, currentPhotoIndex);
+        }
+
+        function openLightboxFromGrid(e, src) {
+            e.stopPropagation();
+            openLightboxWithList([src], 0);
+        }
+
+        function openLightboxWithList(photosArray, startIndex) {
+            modalPhotosList = photosArray && photosArray.length > 0 ? photosArray : [document.getElementById('modalImg').src];
+            currentPhotoIndex = startIndex || 0;
+            updateLightboxDisplay();
+            document.getElementById('imageLightboxModal').classList.add('active');
+        }
+
+        function updateLightboxDisplay() {
+            if (modalPhotosList.length === 0) return;
+            document.getElementById('lightboxImg').src = modalPhotosList[currentPhotoIndex];
+            document.getElementById('lightboxCounter').innerText = `${currentPhotoIndex + 1} / ${modalPhotosList.length}`;
+        }
+
+        function nextLightboxPhoto(e = null) {
+            if (e) e.stopPropagation();
+            if (modalPhotosList.length <= 1) return;
+            currentPhotoIndex = (currentPhotoIndex + 1) % modalPhotosList.length;
+            updateLightboxDisplay();
+            updateModalPhotoDisplay();
+        }
+
+        function prevLightboxPhoto(e = null) {
+            if (e) e.stopPropagation();
+            if (modalPhotosList.length <= 1) return;
+            currentPhotoIndex = (currentPhotoIndex - 1 + modalPhotosList.length) % modalPhotosList.length;
+            updateLightboxDisplay();
+            updateModalPhotoDisplay();
+        }
+
+        function closeLightbox() { document.getElementById('imageLightboxModal').classList.remove('active'); }
+        function closeLightboxOnBackdrop(e) { if (e.target === e.currentTarget) closeLightbox(); }
+
         function renderKartelaSection(variants) {
             const kartelaSec = document.getElementById('kartelaSection');
             const kartelaGrid = document.getElementById('kartelaCardsGrid');
@@ -1750,21 +1862,6 @@
 
         function closeModal() { document.getElementById('productModal').classList.remove('active'); }
         function handleBackdropClick(e) { if (e.target === e.currentTarget) closeModal(); }
-
-        function openLightboxFromMain() {
-            const src = document.getElementById('modalImg').src;
-            document.getElementById('lightboxImg').src = src;
-            document.getElementById('imageLightboxModal').classList.add('active');
-        }
-
-        function openLightboxFromGrid(e, src) {
-            e.stopPropagation();
-            document.getElementById('lightboxImg').src = src;
-            document.getElementById('imageLightboxModal').classList.add('active');
-        }
-
-        function closeLightbox() { document.getElementById('imageLightboxModal').classList.remove('active'); }
-        function closeLightboxOnBackdrop(e) { if (e.target === e.currentTarget) closeLightbox(); }
 
         function addCurrentToCart() {
             if (!activeSelectedVariant) return;
