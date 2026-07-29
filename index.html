@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Yataş Group - Executive B2B Order Portal</title>
+    <title>Yataş Group - Executive B2B Experience Portal</title>
     
-    <!-- PWA Meta -->
+    <!-- PWA & Mobile Meta -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#00205b">
 
     <!-- Fonts & Third-Party Libraries -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
@@ -24,15 +24,18 @@
             --yatas-navy-hover: #00143d;
             --yatas-red: #d71921;
             --bg-main: #f8fafc;
-            --card-bg: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(226, 232, 240, 0.8);
             --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --accent-gold: #c5a059;
-            --header-bg: rgba(255, 255, 255, 0.88);
-            --shadow-subtle: 0 4px 20px -2px rgba(0, 32, 91, 0.05);
-            --radius-md: 10px;
-            --radius-lg: 16px;
+            --header-bg: rgba(255, 255, 255, 0.75);
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --shadow-subtle: 0 8px 32px 0 rgba(0, 32, 91, 0.06);
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --brand-ambient: radial-gradient(circle at 10% 20%, rgba(0, 40, 112, 0.05) 0%, transparent 50%);
         }
 
         [data-theme="dark"] {
@@ -40,40 +43,45 @@
             --yatas-navy-hover: #0284c7;
             --yatas-red: #f43f5e;
             --bg-main: #020617;
-            --card-bg: #0f172a;
+            --card-bg: rgba(15, 23, 42, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #1e293b;
-            --header-bg: rgba(2, 6, 23, 0.88);
-            --shadow-subtle: 0 4px 25px -2px rgba(0, 0, 0, 0.5);
+            --header-bg: rgba(2, 6, 23, 0.75);
+            --glass-bg: rgba(15, 23, 42, 0.7);
+            --shadow-subtle: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            --brand-ambient: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
         body {
             background-color: var(--bg-main);
+            background-image: var(--brand-ambient);
             font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             color: var(--text-main);
             min-height: 100vh;
+            min-height: 100dvh;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
             padding-bottom: 60px;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.4s ease, color 0.3s;
         }
 
-        /* HEADER NAVBAR */
+        /* LIQUID GLASS HEADER NAVBAR */
         header {
             position: sticky; top: 0; z-index: 1000;
             background: var(--header-bg);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border-bottom: 1px solid var(--border-color);
-            padding: 14px 32px;
+            padding: 12px 28px;
             display: flex; align-items: center; justify-content: space-between;
             box-shadow: var(--shadow-subtle);
         }
 
-        .header-left { display: flex; align-items: center; gap: 20px; }
+        .header-left { display: flex; align-items: center; gap: 18px; }
 
         .hamburger-btn {
             width: 42px; height: 42px;
@@ -92,9 +100,10 @@
 
         .spotlight-trigger {
             display: flex; align-items: center; gap: 10px;
-            background: var(--bg-main); border: 1px solid var(--border-color);
+            background: var(--glass-bg); border: 1px solid var(--border-color);
             padding: 8px 16px; border-radius: 30px; cursor: pointer;
             font-size: 13px; color: var(--text-muted); transition: all 0.2s;
+            backdrop-filter: blur(10px);
         }
         .spotlight-trigger:hover { border-color: #00205b; color: var(--text-main); }
         .spotlight-key {
@@ -105,18 +114,18 @@
         .header-right { display: flex; align-items: center; gap: 12px; }
 
         .theme-toggle-btn {
-            background: var(--bg-main); border: 1px solid var(--border-color);
+            background: var(--glass-bg); border: 1px solid var(--border-color);
             color: var(--text-main); width: 40px; height: 40px; border-radius: 50%;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
+            transition: all 0.2s; backdrop-filter: blur(10px);
         }
         .theme-toggle-btn:hover { transform: rotate(15deg); }
 
         .currency-selector, .lang-selector {
-            background: var(--bg-main); border: 1px solid var(--border-color);
+            background: var(--glass-bg); border: 1px solid var(--border-color);
             color: var(--text-main); padding: 8px 12px; border-radius: var(--radius-md);
             font-size: 12.5px; font-weight: 700; cursor: pointer; outline: none;
-            font-family: inherit;
+            font-family: inherit; backdrop-filter: blur(10px);
         }
 
         .cart-trigger-btn {
@@ -133,6 +142,60 @@
             font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px;
         }
 
+        /* HERO SLIDER SECTION */
+        .hero-banner-container {
+            position: relative;
+            width: 100%; height: 380px;
+            margin-bottom: 28px; border-radius: var(--radius-lg);
+            overflow: hidden; box-shadow: var(--shadow-subtle);
+            border: 1px solid var(--border-color);
+        }
+        .hero-slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; visibility: hidden; transition: opacity 0.8s ease-in-out, visibility 0.8s;
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; padding: 0 60px;
+        }
+        .hero-slide.active { opacity: 1; visibility: visible; }
+        .hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, rgba(0, 32, 91, 0.85) 0%, rgba(0, 32, 91, 0.3) 60%, transparent 100%);
+        }
+        .hero-content {
+            position: relative; z-index: 2; max-width: 580px; color: #ffffff;
+        }
+        .hero-tag {
+            display: inline-block; padding: 4px 12px; background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px); border-radius: 20px; font-size: 11px;
+            font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;
+        }
+        .hero-title { font-size: 36px; font-weight: 800; line-height: 1.15; margin-bottom: 12px; }
+        .hero-desc { font-size: 14px; opacity: 0.9; margin-bottom: 20px; line-height: 1.5; }
+        .hero-cta-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 22px; background: #ffffff; color: #00205b;
+            border-radius: 30px; font-size: 13px; font-weight: 800;
+            text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .hero-cta-btn:hover { transform: translateY(-2px); background: var(--yatas-red); color: #fff; }
+
+        .hero-dots {
+            position: absolute; bottom: 18px; right: 30px; z-index: 5;
+            display: flex; gap: 8px;
+        }
+        .hero-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s;
+        }
+        .hero-dot.active { width: 28px; border-radius: 10px; background: #ffffff; }
+
+        /* BEST SELLERS RIBBON */
+        .section-title-wrap {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; margin-top: 10px;
+        }
+        .section-title { font-size: 18px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+
         /* SIDEBAR NAV DRAWER */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -147,6 +210,7 @@
             z-index: 1001; padding: 32px 24px; display: flex; flex-direction: column; gap: 16px;
             transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             overflow-y: auto; box-shadow: var(--shadow-subtle);
+            backdrop-filter: blur(25px);
         }
         .sidebar-nav.open { left: 0; }
 
@@ -181,13 +245,13 @@
         .sub-link:hover { color: var(--yatas-red); background: var(--bg-main); font-weight: 700; }
 
         /* MAIN LAYOUT & FILTER BAR */
-        main { flex: 1; padding: 32px; max-width: 1600px; margin: 0 auto; width: 100%; }
+        main { flex: 1; padding: 28px 32px; max-width: 1600px; margin: 0 auto; width: 100%; }
 
         .filter-bar {
             background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg); padding: 18px 24px; margin-bottom: 32px;
+            border-radius: var(--radius-lg); padding: 16px 24px; margin-bottom: 28px;
             display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between;
-            box-shadow: var(--shadow-subtle);
+            box-shadow: var(--shadow-subtle); backdrop-filter: blur(15px);
         }
 
         .quick-filters { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -202,10 +266,10 @@
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 28px; }
 
         .product-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
+            background: var(--card-bg); border: 1px solid var(--card-border);
             border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column;
             cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative;
-            box-shadow: var(--shadow-subtle);
+            box-shadow: var(--shadow-subtle); backdrop-filter: blur(15px);
         }
         .product-card:hover { transform: translateY(-5px); border-color: #00205b; box-shadow: 0 12px 30px rgba(0, 32, 91, 0.12); }
 
@@ -229,10 +293,10 @@
         .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 14px; }
         .card-price { font-size: 17px; font-weight: 800; color: var(--yatas-navy); }
 
-        /* PRODUCT DETAIL MODAL */
+        /* PRODUCT DETAIL MODAL & GÖRSEL ÜSTÜ GALERİ KONTROLLERİ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 20, 60, 0.6); backdrop-filter: blur(6px);
+            background: rgba(0, 20, 60, 0.6); backdrop-filter: blur(8px);
             z-index: 2000; display: none; align-items: center; justify-content: center; padding: 24px;
         }
         .modal-overlay.active { display: flex; }
@@ -241,6 +305,7 @@
             background: var(--card-bg); border-radius: var(--radius-lg); width: 100%; max-width: 1200px;
             max-height: 90vh; overflow-y: auto; display: flex; flex-wrap: wrap;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative; border: 1px solid var(--border-color);
+            backdrop-filter: blur(25px);
         }
 
         .modal-close {
@@ -254,11 +319,37 @@
         .modal-left { 
             flex: 1.1; min-width: 360px; background: var(--bg-main); 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 28px; border-right: 1px solid var(--border-color);
+            padding: 28px; border-right: 1px solid var(--border-color); position: relative;
         }
-        .gallery-main-container { width: 100%; height: 340px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .gallery-main-container img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; transition: transform 0.2s; }
-        .gallery-main-container img:hover { transform: scale(1.02); }
+
+        /* GÖRSEL ÜSTÜ GALERİ KAYDIRICI VE OKLAR */
+        .gallery-main-container {
+            position: relative; width: 100%; height: 350px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; overflow: hidden; border-radius: 12px;
+            user-select: none;
+        }
+        .gallery-main-container img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s ease; }
+
+        .modal-nav-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 40px; height: 40px; background: rgba(255, 255, 255, 0.85);
+            border: 1px solid var(--border-color); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #00205b; font-size: 14px; cursor: pointer; z-index: 5;
+            transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            backdrop-filter: blur(5px);
+        }
+        .modal-nav-arrow:hover { background: #00205b; color: #fff; transform: translateY(-50%) scale(1.1); }
+        .modal-nav-arrow.prev { left: 12px; }
+        .modal-nav-arrow.next { right: 12px; }
+
+        .modal-photo-counter {
+            position: absolute; top: 12px; left: 12px; z-index: 5;
+            background: rgba(0, 32, 91, 0.75); color: #fff;
+            padding: 4px 10px; border-radius: 20px; font-size: 10.5px;
+            font-weight: 800; backdrop-filter: blur(5px); letter-spacing: 0.5px;
+        }
 
         .modal-thumbnails-bar { display: flex; gap: 8px; margin-top: 18px; overflow-x: auto; max-width: 100%; width: 100%; padding-bottom: 4px; }
         .thumb-img {
@@ -282,7 +373,6 @@
         .variant-box { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-bottom: 22px; }
         .form-group label { display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 800; letter-spacing: 0.5px; }
         
-        /* KARTELA CARDS */
         .kartela-cards-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
         .kartela-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
@@ -302,7 +392,6 @@
         }
         .kartela-code-text { font-size: 11px; font-weight: 800; color: var(--text-main); letter-spacing: 0.5px; }
 
-        /* COLOR CHIPS */
         .color-chips-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
         .color-chip {
             padding: 6px 14px; background: var(--card-bg); border: 1px solid var(--border-color);
@@ -311,7 +400,6 @@
         }
         .color-chip.active { background: #00205b; color: #fff; border-color: #00205b; }
 
-        /* SIZE CHIPS */
         .size-chips-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
         .size-chip {
             padding: 6px 14px; background: var(--card-bg); border: 1px solid var(--border-color);
@@ -319,7 +407,6 @@
         }
         .size-chip.active { background: #00205b; color: #fff; border-color: #00205b; }
 
-        /* FIRMNESS GAUGE */
         .firmness-gauge-container {
             display: inline-flex; align-items: center; gap: 10px;
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -338,7 +425,6 @@
         }
         .firmness-dot.active { background: #00205b; box-shadow: 0 0 8px rgba(0, 32, 91, 0.4); }
 
-        /* SPECS GRID */
         .specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
         .spec-item { 
             background: var(--card-bg); padding: 10px 6px; border-radius: 8px; text-align: center; 
@@ -374,7 +460,7 @@
             position: fixed; right: -460px; top: 0; height: 100vh; width: 440px;
             background: var(--card-bg); border-left: 1px solid var(--border-color);
             z-index: 2001; padding: 28px; display: flex; flex-direction: column; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: var(--shadow-subtle);
+            box-shadow: var(--shadow-subtle); backdrop-filter: blur(25px);
         }
         .cart-drawer.open { right: 0; }
 
@@ -441,11 +527,21 @@
         }
         footer.hidden-on-scroll { transform: translateY(100%); }
 
-        @media (max-width: 992px) { .specs-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 992px) { 
+            .specs-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-banner-container { height: 300px; }
+            .hero-title { font-size: 26px; }
+        }
         @media (max-width: 768px) {
+            main { padding: 20px 16px; }
+            header { padding: 12px 16px; }
             .cart-drawer { width: 100%; right: -100%; }
             .modal-card { flex-direction: column; }
             .spotlight-trigger { display: none; }
+            .hero-banner-container { height: 260px; }
+            .hero-slide { padding: 0 24px; }
+            .hero-title { font-size: 22px; }
+            .hero-desc { font-size: 12px; margin-bottom: 12px; }
         }
     </style>
 </head>
@@ -504,6 +600,41 @@
 
     <!-- MAIN CONTENT AREA -->
     <main>
+        <!-- HERO BANNER SLIDER -->
+        <div class="hero-banner-container" id="heroBanner">
+            <!-- SLIDE 1: YATAŞ BEDDING -->
+            <div class="hero-slide active" style="background-image: url('https://yatasinternational.github.io/Products-Photos/Activio/activio.jpg');">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <span class="hero-tag">YATAŞ BEDDING COLLECTION</span>
+                    <h1 class="hero-title">Not All Sleep Is The Same. This is Yataş Sleep.</h1>
+                    <p class="hero-desc">Engineered for global comfort with premium spinal support & innovative fabric technology.</p>
+                    <a href="https://www.yatasbedding.com/en-EN/" target="_blank" class="hero-cta-btn">
+                        <span>Explore Yataş World</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: ENZA HOME -->
+            <div class="hero-slide" style="background-image: url('https://yatasinternational.github.io/Products-Photos/Supreme%20Pedic/supreme_pedic_baza.jpg');">
+                <div class="hero-overlay" style="background: linear-gradient(90deg, rgba(120, 50, 20, 0.88) 0%, rgba(120, 50, 20, 0.3) 60%, transparent 100%);"></div>
+                <div class="hero-content">
+                    <span class="hero-tag" style="background: rgba(215, 25, 33, 0.4);">ENZA HOME DESIGN</span>
+                    <h1 class="hero-title">Contemporary Living & Dining Solutions</h1>
+                    <p class="hero-desc">Transforming global homes with aesthetic furniture, upholstery & bedroom concepts.</p>
+                    <a href="https://www.enzahome.com/en-EN/" target="_blank" class="hero-cta-btn">
+                        <span>Discover Enza Home</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SLIDER NAVIGATION DOTS -->
+            <div class="hero-dots">
+                <div class="hero-dot active" onclick="setHeroSlide(0)"></div>
+                <div class="hero-dot" onclick="setHeroSlide(1)"></div>
+            </div>
+        </div>
+
         <div class="filter-bar">
             <div class="quick-filters" id="brandFilterChips">
                 <div class="filter-chip active" onclick="filterByBrand('ALL')" data-i18n="all_brands">All Brands</div>
@@ -531,10 +662,14 @@
             <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             
             <div class="modal-left">
-                <div class="gallery-main-container" onclick="openLightboxFromMain()">
+                <!-- GÖRSEL ÜSTÜ OK KONTROLLERİ & TIKLAMA İLE GEÇİŞ -->
+                <div class="gallery-main-container" id="galleryContainer" onclick="handleMainImageClick(event)">
+                    <span class="modal-photo-counter" id="modalPhotoCounter">1 / 1</span>
+                    <button class="modal-nav-arrow prev" onclick="prevModalPhoto(event)"><i class="fa-solid fa-chevron-left"></i></button>
                     <img id="modalImg" src="" alt="Product Main Image">
+                    <button class="modal-nav-arrow next" onclick="nextModalPhoto(event)"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
-                <!-- DİNAMİK FOTOĞRAF GALERİSİ -->
+                <!-- DİNAMİK FOTOĞRAF GALERİSİ THUMBNAILS -->
                 <div class="modal-thumbnails-bar" id="modalThumbnailsBar"></div>
             </div>
 
@@ -570,7 +705,6 @@
                     <div id="firmnessSection" style="margin-bottom: 12px; display: none; align-items: center; justify-content: space-between;">
                         <span style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">FIRMNESS / SERTLİK</span>
                         
-                        <!-- 4 NOKTALI SİMETRİK GAUGE -->
                         <div class="firmness-gauge-container">
                             <div class="firmness-icon-circle" title="Soft"><i class="fa-solid fa-feather"></i></div>
                             <span id="firmnessLabelText" style="margin: 0 4px;">Medium</span>
@@ -673,7 +807,7 @@
                 <i class="fa-solid fa-file-excel"></i> <span data-i18n="export_excel">Export Excel Order with Photos</span>
             </button>
         </div>
-    </div>
+    </footer>
 
     <!-- FOOTER SIGNATURE -->
     <footer id="appFooter">
@@ -711,14 +845,15 @@
 
         /* GELİŞTİRİLMİŞ OTOMATİK DİL ÇEVİRİ KÜTÜPHANESİ */
         const termTranslations = {
-            // Kategoriler
             "Yatak": { EN: "Mattress", DE: "Matratze", RU: "Матрас" },
             "Baza": { EN: "Base / Boxspring", DE: "Bettkasten", RU: "Основание" },
             "Başlık": { EN: "Headboard", DE: "Kopfteil", RU: "Изголовье" },
             "Yastık": { EN: "Pillow", DE: "Kissen", RU: "Подушка" },
             "Yorgan": { EN: "Duvet", DE: "Bettdecke", RU: "Одеяло" },
             "Alez": { EN: "Mattress Protector", DE: "Matratzenschoner", RU: "Наматрасник" },
-            // Renkler
+            "Karyola": { EN: "Bed Frame", DE: "Bettgestell", RU: "Кровать" },
+            "Aksesuar": { EN: "Accessories", DE: "Zubehör", RU: "Аксессуары" },
+            "Çocuk Yatak": { EN: "Kids Mattress", DE: "Kindermatratze", RU: "Детский матрас" },
             "Pacific": { EN: "Pacific Blue", DE: "Pazifikblau", RU: "Тихий океан" },
             "Krem": { EN: "Cream", DE: "Creme", RU: "Кремовый" },
             "Vizon": { EN: "Mink / Taupe", DE: "Mink", RU: "Норковый" },
@@ -736,7 +871,6 @@
             "Kemik": { EN: "Bone", DE: "Elfenbein", RU: "Слоновая кость" },
             "Kül": { EN: "Ash", DE: "Asche", RU: "Пепельный" },
             "Sütlü Kahve": { EN: "Milk Coffee", DE: "Milchkaffee", RU: "Кофе с молоком" },
-            // Özellikler & Sertlik
             "Spring": { EN: "Spring", DE: "Federkern", RU: "Пружинный" },
             "Springless": { EN: "Foam / Springless", DE: "Schaumstoff", RU: "Беспружинный" },
             "Hibrit": { EN: "Hybrid", DE: "Hybrid", RU: "Гибридный" },
@@ -759,22 +893,14 @@
             return translated;
         }
 
-        /* ULUSLARARASI BİNLİK AYRAÇ FORMATLAYICI (11000 -> 11,000.00) */
         function formatCurrency(amount, currencySymbol = '$') {
             const num = parseFloat(amount) || 0;
-            const formatted = num.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-            return `${currencySymbol}${formatted}`;
+            return `${currencySymbol}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         }
 
         function formatNumber(amount) {
             const num = parseFloat(amount) || 0;
-            return num.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
         let currentLang = 'EN';
@@ -789,16 +915,68 @@
         let currentActiveFamily = null;
         let currentActiveCategoryKey = null;
 
-        // KADEMELİ KONFİGÜRASYON DURUMLARI
         let activeSelectedKartela = null;
         let activeSelectedColor = null;
         let activeSelectedVariant = null;
+
+        // GALERİ İÇİN FOTOĞRAF DİZİSİ VE İNDEKSİ
+        let modalPhotosList = [];
+        let currentPhotoIndex = 0;
+
+        // HERO SLIDER BİLGİSİ
+        let heroSlideIndex = 0;
+        let heroTimer = null;
 
         window.addEventListener('DOMContentLoaded', async () => {
             await loadExcelData();
             initScrollFooterBehavior();
             initKeyboardShortcuts();
+            initHeroSlider();
+            initSwipeGestures();
         });
+
+        /* HERO BANNER OTO-SLIDER */
+        function initHeroSlider() {
+            heroTimer = setInterval(() => {
+                heroSlideIndex = (heroSlideIndex + 1) % 2;
+                setHeroSlide(heroSlideIndex);
+            }, 6000);
+        }
+
+        function setHeroSlide(idx) {
+            heroSlideIndex = idx;
+            const slides = document.querySelectorAll('.hero-slide');
+            const dots = document.querySelectorAll('.hero-dot');
+            
+            slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+
+        /* MOBİL İÇİN DOKUNMATİK SWIPE GESTURE ENTEGRASYONU */
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function initSwipeGestures() {
+            const gContainer = document.getElementById('galleryContainer');
+            if (!gContainer) return;
+
+            gContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            gContainer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipeGesture();
+            }, { passive: true });
+        }
+
+        function handleSwipeGesture() {
+            const diff = touchEndX - touchStartX;
+            if (Math.abs(diff) > 40) {
+                if (diff < 0) nextModalPhoto();
+                else prevModalPhoto();
+            }
+        }
 
         function initKeyboardShortcuts() {
             window.addEventListener('keydown', (e) => {
@@ -810,6 +988,10 @@
                     closeSpotlight();
                     closeModal();
                     closeLightbox();
+                }
+                if (document.getElementById('productModal').classList.contains('active')) {
+                    if (e.key === 'ArrowRight') nextModalPhoto();
+                    if (e.key === 'ArrowLeft') prevModalPhoto();
                 }
             });
         }
@@ -1029,12 +1211,10 @@
             buildBrandChips(); renderProductGrid();
         }
 
-        /* MODAL AÇILDIĞINDA MİKTAR BÖLÜMÜNÜ SIFIRLAYARAK HATA BİLEŞENLERİNİ ENGELLEME */
         function openProductModal(familyName) {
             currentActiveFamily = productFamilies[familyName];
             document.getElementById('modalFamilyTitle').innerText = currentActiveFamily.familyName;
             
-            // BUG FIX: Miktarı fiyat hesaplanmadan ÖNCE 1 yap
             document.getElementById('modalQty').value = 1;
 
             const categoryKeys = Object.keys(currentActiveFamily.categories);
@@ -1052,8 +1232,6 @@
 
         function switchFamilyCategory(catKey, btnEl = null) {
             currentActiveCategoryKey = catKey;
-            
-            // BUG FIX: Miktarı Kategori Değişiminde de Resetle
             document.getElementById('modalQty').value = 1;
 
             if (btnEl) {
@@ -1064,27 +1242,59 @@
             document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${autoTranslateText(catKey, currentLang)}`;
 
             // FOTOĞRAF GALERİSİ
-            const allPhotosArray = Array.from(catData.allPhotos);
-            const mainPhoto = allPhotosArray.length > 0 ? allPhotosArray[0] : catData.photoUrl;
-            document.getElementById('modalImg').src = mainPhoto;
-
-            const thumbsBar = document.getElementById('modalThumbnailsBar');
-            if (allPhotosArray.length > 1) {
-                thumbsBar.style.display = 'flex';
-                thumbsBar.innerHTML = allPhotosArray.map((pUrl, i) => `
-                    <img src="${pUrl}" class="thumb-img ${i === 0 ? 'active' : ''}" onclick="setModalMainImage('${pUrl}', this)" onerror="this.style.display='none'">
-                `).join('');
-            } else {
-                thumbsBar.style.display = 'none';
+            modalPhotosList = Array.from(catData.allPhotos);
+            if (modalPhotosList.length === 0 && catData.photoUrl) {
+                modalPhotosList = [catData.photoUrl];
             }
+            currentPhotoIndex = 0;
+            updateModalPhotoDisplay();
 
             renderKartelaSection(catData.variants);
         }
 
-        function setModalMainImage(imgUrl, thumbEl) {
-            document.getElementById('modalImg').src = imgUrl;
-            document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
-            if (thumbEl) thumbEl.classList.add('active');
+        /* GÖRSEL ÜSTÜ GALERİ KAYDIRMA MOTORU */
+        function updateModalPhotoDisplay() {
+            if (modalPhotosList.length === 0) return;
+            const imgEl = document.getElementById('modalImg');
+            const counterEl = document.getElementById('modalPhotoCounter');
+            const thumbsBar = document.getElementById('modalThumbnailsBar');
+
+            imgEl.src = modalPhotosList[currentPhotoIndex];
+            counterEl.innerText = `${currentPhotoIndex + 1} / ${modalPhotosList.length}`;
+
+            if (modalPhotosList.length > 1) {
+                thumbsBar.style.display = 'flex';
+                thumbsBar.innerHTML = modalPhotosList.map((pUrl, i) => `
+                    <img src="${pUrl}" class="thumb-img ${i === currentPhotoIndex ? 'active' : ''}" onclick="setModalPhotoIndex(${i})" onerror="this.style.display='none'">
+                `).join('');
+            } else {
+                thumbsBar.style.display = 'none';
+            }
+        }
+
+        function setModalPhotoIndex(idx) {
+            currentPhotoIndex = idx;
+            updateModalPhotoDisplay();
+        }
+
+        function nextModalPhoto(e = null) {
+            if (e) e.stopPropagation();
+            if (modalPhotosList.length <= 1) return;
+            currentPhotoIndex = (currentPhotoIndex + 1) % modalPhotosList.length;
+            updateModalPhotoDisplay();
+        }
+
+        function prevModalPhoto(e = null) {
+            if (e) e.stopPropagation();
+            if (modalPhotosList.length <= 1) return;
+            currentPhotoIndex = (currentPhotoIndex - 1 + modalPhotosList.length) % modalPhotosList.length;
+            updateModalPhotoDisplay();
+        }
+
+        function handleMainImageClick(e) {
+            // Eğer tıklanan yer ok butonu değilse sonraki resme geç
+            if (e.target.closest('.modal-nav-arrow')) return;
+            nextModalPhoto();
         }
 
         function renderKartelaSection(variants) {
@@ -1204,7 +1414,7 @@
             document.getElementById('specKartela').innerText = v.kartela || '-';
             document.getElementById('specColor').innerText = autoTranslateText(v.color, currentLang) || '-';
 
-            // DÜZELTME: SERTLİK DERECESİ SADECE YATAK (MATTRESS) KATEGORİSİNDE VE GEÇERLİ İSE GÖRÜNÜR
+            // SERTLİK SADECE YATAK (MATTRESS) KATEGORİSİNDE GÖRÜNÜR
             const isMattress = currentActiveCategoryKey.toLowerCase().includes('yatak') || currentActiveCategoryKey.toLowerCase().includes('mattress');
             const firmnessSec = document.getElementById('firmnessSection');
             
@@ -1370,7 +1580,7 @@
             buildBrandChips(); buildNavigationTree(); renderProductGrid();
         }
 
-        /* ÇİFT MOTORLU GELİŞMİŞ EXCEL GÖRSEL VE TABLO YÜKLEME (CORS/CANVAS FALLBACK) */
+        /* DİNAMİK RESİM YÜKLEYİCİ VE EXCEL MOTORU */
         async function getImageBuffer(url) {
             try {
                 const response = await fetch(url, { mode: 'cors' });
@@ -1403,7 +1613,6 @@
             }
         }
 
-        /* BÜTÜN KOLONLARI VE BİNLİK AYRAÇLARI İÇEREN PROFORMASAL EXCEL EXPORT */
         async function exportProformaExcel() {
             if (cart.length === 0) { alert("Cart is empty!"); return; }
             const workbook = new ExcelJS.Workbook();
@@ -1469,7 +1678,6 @@
                 row.height = 65;
                 row.alignment = { vertical: 'middle', horizontal: 'center' };
 
-                // BİNLİK SAYISAL BİÇİMLENDİRME (NUMERIC FORMATTING)
                 row.getCell('vol').numFmt = '#,##0.000';
                 row.getCell('wt').numFmt = '#,##0.00';
                 row.getCell('qty').numFmt = '#,##0';
@@ -1492,7 +1700,6 @@
                 }
             }
 
-            // TOPLAM SATIRI (TOTAL ROW)
             const totalRow = worksheet.addRow({
                 family: 'TOTAL / TOPLAM',
                 qty: sumQty,
