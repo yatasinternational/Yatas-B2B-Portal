@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Yataş Group - Executive B2B Experience & Order Portal</title>
     
-    <!-- PWA & Mobile Meta -->
+    <!-- PWA Meta -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#00205b">
 
@@ -22,6 +22,7 @@
         :root {
             --yatas-navy: #00205b;
             --yatas-navy-hover: #00143d;
+            --yatas-blue: #00d2ff;
             --yatas-red: #d71921;
             --bg-main: #f8fafc;
             --card-bg: rgba(255, 255, 255, 0.88);
@@ -41,6 +42,7 @@
         [data-theme="dark"] {
             --yatas-navy: #38bdf8;
             --yatas-navy-hover: #0284c7;
+            --yatas-blue: #38bdf8;
             --yatas-red: #f43f5e;
             --bg-main: #020617;
             --card-bg: rgba(15, 23, 42, 0.75);
@@ -97,7 +99,7 @@
         }
         .ticker-slide-item.active { opacity: 1; transform: translateY(0); }
 
-        /* LIQUID GLASS HEADER NAVBAR */
+        /* HEADER NAVBAR */
         header {
             position: sticky; top: 0; z-index: 1000;
             background: var(--header-bg);
@@ -219,7 +221,6 @@
         }
         .hero-cta-btn:hover { transform: translateY(-2px); background: var(--yatas-red); color: #fff; }
 
-        /* MARKA ÇİPLERİ VE LOGO NETLİK DÜZELTMESİ */
         .filter-control-panel {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: var(--radius-lg); padding: 16px 24px; margin-bottom: 28px;
@@ -252,7 +253,7 @@
             font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer; font-family: inherit;
         }
 
-        /* SIDEBAR NAV DRAWER (LOGO ARKA PLAN DÜZELTMESİ - image_713300.png FIX) */
+        /* SOL BANNER BÜTÜNCÜL BEYAZ ZEMİN (image_713300.png FIX) */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 32, 91, 0.3); backdrop-filter: blur(4px);
@@ -262,20 +263,20 @@
 
         .sidebar-nav {
             position: fixed; left: -360px; top: 0; height: 100vh; width: 340px;
-            background: var(--card-bg); border-right: 1px solid var(--border-color);
+            background: #ffffff; border-right: 1px solid var(--border-color);
             z-index: 1001; padding: 32px 24px; display: flex; flex-direction: column; gap: 16px;
             transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            overflow-y: auto; box-shadow: var(--shadow-subtle); backdrop-filter: blur(25px);
+            overflow-y: auto; box-shadow: var(--shadow-subtle);
         }
+        [data-theme="dark"] .sidebar-nav { background: #0f172a; }
         .sidebar-nav.open { left: 0; }
 
         .sidebar-header-logo {
-            padding: 12px 16px; background: #ffffff;
-            border-radius: var(--radius-md); border: 1px solid var(--border-color);
+            padding-bottom: 16px; border-bottom: 2px solid #00205b;
             margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            background: transparent;
         }
-        .sidebar-header-logo img { height: 28px; width: auto; cursor: pointer; object-fit: contain; }
+        .sidebar-header-logo img { height: 30px; width: auto; cursor: pointer; object-fit: contain; }
 
         .nav-tree-item { margin-bottom: 8px; }
         .nav-tree-header {
@@ -381,6 +382,7 @@
         }
         .gallery-main-container img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s ease; }
 
+        /* GÖRSEL ÜSTÜ ŞEFFAF VE HOVER EFEKTLİ OKLAR (image_71b29d.jpg FIX) */
         .modal-nav-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             width: 44px; height: 44px; background: rgba(255, 255, 255, 0.88);
@@ -416,13 +418,16 @@
         .modal-header h2 { font-size: 28px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
         .modal-subtitle { font-size: 12px; color: var(--yatas-red); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; font-weight: 800; }
 
+        /* ÜRÜNE ÖZEL İKONLU VE YATAŞ MAVİSİ VEKTÖREL SEKMELER (image_70cabc.png FIX) */
         .family-tabs-bar { display: flex; gap: 8px; margin-bottom: 18px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; overflow-x: auto; }
         .family-tab-btn {
             padding: 8px 16px; background: var(--bg-main); border: 1px solid var(--border-color);
-            border-radius: var(--radius-md); font-size: 12px; font-weight: 700; color: var(--text-main);
+            border-radius: var(--radius-md); font-size: 12px; font-weight: 800; color: #00205b;
             cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 8px; transition: all 0.2s;
         }
-        .family-tab-btn.active { background: #00205b; color: #fff; border-color: #00205b; }
+        .family-tab-btn i { font-size: 14px; color: #00205b; }
+        .family-tab-btn.active { background: #00205b; color: #ffffff; border-color: #00205b; box-shadow: 0 4px 12px rgba(0, 32, 91, 0.2); }
+        .family-tab-btn.active i { color: #ffffff; }
 
         .variant-box { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-bottom: 22px; }
         .form-group label { display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 800; letter-spacing: 0.5px; }
@@ -564,17 +569,22 @@
         .spotlight-item { padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
         .spotlight-item:hover { background: var(--bg-main); }
 
-        /* AI SALES ASSISTANT CHATBOT WIDGET */
+        /* YENİLENEN YATAŞ CHATBOT ROBOT İKONU VE LOGOSU */
         .chat-widget-btn {
             position: fixed; bottom: 80px; right: 28px; z-index: 2500;
             width: 58px; height: 58px; border-radius: 50%;
             background: linear-gradient(135deg, #00205b, #0040b0);
-            color: #ffffff; border: 2px solid rgba(255,255,255,0.2);
+            color: #ffffff; border: 2px solid rgba(255,255,255,0.25);
             box-shadow: 0 8px 25px rgba(0, 32, 91, 0.35); cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            font-size: 22px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 24px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .chat-widget-btn:hover { transform: scale(1.1) rotate(5deg); }
+        .chat-widget-btn::after {
+            content: ""; position: absolute; top: 2px; right: 2px;
+            width: 12px; height: 12px; background: #10b981; border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
 
         .chat-window {
             position: fixed; bottom: 150px; right: 28px; z-index: 2500;
@@ -817,13 +827,13 @@
 
     <!-- AI SALES ASSISTANT CHATBOT WIDGET -->
     <div class="chat-widget-btn" onclick="toggleChatWindow()" title="AI Sales Assistant">
-        <i class="fa-solid fa-robot"></i>
+        <i class="fa-solid fa-headset"></i>
     </div>
 
     <div class="chat-window" id="chatWindow">
         <div class="chat-header">
             <div style="display:flex; align-items:center; gap:10px;">
-                <i class="fa-solid fa-robot" style="font-size:18px;"></i>
+                <i class="fa-solid fa-headset" style="font-size:18px;"></i>
                 <div>
                     <h4 style="font-size:14px; font-weight:800;" data-i18n="chat_title">Yataş B2B AI Assistant</h4>
                     <span style="font-size:10px; opacity:0.8;" data-i18n="chat_status">Online • Product Advisor</span>
@@ -1236,11 +1246,9 @@
             initSwipeGestures();
             initNoticeTicker();
             initScrollTopButton();
-            // AÇILIŞTA TAM DİLİ TETİKLE
             changeLanguage(currentLang);
         });
 
-        /* YUKARI ÇIK (SCROLL TO TOP) BUTON MOTORU */
         function initScrollTopButton() {
             const btn = document.getElementById('scrollTopBtn');
             window.addEventListener('scroll', () => {
@@ -1431,7 +1439,6 @@
             }
         }
 
-        /* MANUEL KIDS MATTRESS MANİPÜLASYONU VE TAM DİL TEMİZLİĞİ */
         function processRawData() {
             productFamilies = {};
             rawProducts.forEach(item => {
@@ -1477,7 +1484,6 @@
             });
         }
 
-        /* YENİLENEN MARKA ÇİPLERİ VE LOGO NETLİĞİ (image_71af57.png FIX) */
         function buildBrandChips() {
             const chipContainer = document.getElementById('brandFilterChips');
             let chipsHtml = `
@@ -1590,6 +1596,19 @@
             buildBrandChips(); renderProductGrid();
         }
 
+        function getCategoryIcon(catKey) {
+            const key = String(catKey).toLowerCase();
+            if (key.includes('yatak') || key.includes('mattress')) return 'fa-bed';
+            if (key.includes('baza') || key.includes('base') || key.includes('boxspring')) return 'fa-box-archive';
+            if (key.includes('başlık') || key.includes('headboard')) return 'fa-couch';
+            if (key.includes('yastık') || key.includes('pillow')) return 'fa-feather';
+            if (key.includes('yorgan') || key.includes('duvet')) return 'fa-scroll';
+            if (key.includes('karyola') || key.includes('frame')) return 'fa-border-all';
+            if (key.includes('aksesuar') || key.includes('accessories')) return 'fa-shapes';
+            if (key.includes('kids') || key.includes('çocuk')) return 'fa-child';
+            return 'fa-layer-group';
+        }
+
         function openProductModal(familyName) {
             currentActiveFamily = productFamilies[familyName];
             document.getElementById('modalFamilyTitle').innerText = currentActiveFamily.familyName;
@@ -1600,7 +1619,7 @@
 
             tabsContainer.innerHTML = categoryKeys.map((catKey, index) => `
                 <button class="family-tab-btn ${index === 0 ? 'active' : ''}" onclick="switchFamilyCategory('${catKey}', this)">
-                    <i class="fa-solid fa-layer-group"></i> ${autoTranslateText(catKey, currentLang)}
+                    <i class="fa-solid ${getCategoryIcon(catKey)}"></i> ${autoTranslateText(catKey, currentLang)}
                 </button>
             `).join('');
 
@@ -1653,7 +1672,7 @@
         function prevModalPhoto(e = null) { if (e) e.stopPropagation(); if (modalPhotosList.length <= 1) return; currentPhotoIndex = (currentPhotoIndex - 1 + modalPhotosList.length) % modalPhotosList.length; updateModalPhotoDisplay(); }
         function handleMainImageClick(e) { if (e.target.closest('.modal-nav-arrow')) return; openLightboxFromMain(); }
 
-        /* GELİŞTİRİLMİŞ TAM EKRAN LIGHTBOX MOTORU */
+        /* GELİŞTİRİLMİŞ TAM EKRAN LIGHTBOX MOTORU (image_714623.png FIX) */
         function openLightboxFromMain() {
             openLightboxWithList(modalPhotosList, currentPhotoIndex);
         }
