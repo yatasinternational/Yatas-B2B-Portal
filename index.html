@@ -90,7 +90,6 @@
         }
         .brand-logo-btn img { height: 32px; width: auto; object-fit: contain; }
 
-        /* SPOTLIGHT COMMAND PALETTE BUTTON */
         .spotlight-trigger {
             display: flex; align-items: center; gap: 10px;
             background: var(--bg-main); border: 1px solid var(--border-color);
@@ -261,7 +260,6 @@
         .gallery-main-container img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; transition: transform 0.2s; }
         .gallery-main-container img:hover { transform: scale(1.02); }
 
-        /* GALERİ ÖNİZLEME ÇUBUĞU */
         .modal-thumbnails-bar { display: flex; gap: 8px; margin-top: 18px; overflow-x: auto; max-width: 100%; width: 100%; padding-bottom: 4px; }
         .thumb-img {
             width: 60px; height: 60px; border-radius: 8px; border: 2px solid var(--border-color);
@@ -284,6 +282,37 @@
         .variant-box { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-bottom: 22px; }
         .form-group label { display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 800; letter-spacing: 0.5px; }
         
+        /* KARTELA KUTUCUKLARI (FABRIC COLLECTION CARDS) */
+        .kartela-cards-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+        .kartela-card {
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 8px; width: 100px;
+            display: flex; flex-direction: column; align-items: center; cursor: pointer;
+            transition: all 0.2s; position: relative;
+        }
+        .kartela-card:hover, .kartela-card.active { border-color: #00205b; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 32, 91, 0.15); }
+        .kartela-card.active::after {
+            content: "✓"; position: absolute; top: -6px; right: -6px;
+            background: #00205b; color: #fff; font-size: 10px; font-weight: 800;
+            width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .kartela-swatch-box {
+            width: 100%; height: 42px; border-radius: 6px; background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 6px;
+        }
+        .kartela-swatch-box img { width: 100%; height: 100%; object-fit: cover; }
+        .kartela-code-text { font-size: 11px; font-weight: 800; color: var(--text-main); letter-spacing: 0.5px; }
+
+        /* RENK ÇİPLERİ (COLOR CHIPS) */
+        .color-chips-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .color-chip {
+            padding: 6px 14px; background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .color-chip.active { background: #00205b; color: #fff; border-color: #00205b; }
+
+        /* EBAT ÇİPLERİ (SIZE CHIPS) */
         .size-chips-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
         .size-chip {
             padding: 6px 14px; background: var(--card-bg); border: 1px solid var(--border-color);
@@ -362,7 +391,6 @@
         .cart-item-info h4 { font-size: 14px; font-weight: 800; color: var(--text-main); }
         .cart-item-price { font-size: 13.5px; font-weight: 800; color: var(--yatas-navy); margin-top: 4px; }
 
-        /* LOGISTICS METER STYLES */
         .logistics-bar-container { background: var(--bg-main); border-radius: var(--radius-md); padding: 16px; margin: 14px 0; border: 1px solid var(--border-color); }
         .logistics-title { font-size: 11px; font-weight: 800; color: var(--yatas-navy); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         .logistics-row { margin-bottom: 12px; }
@@ -520,7 +548,21 @@
                 <div class="family-tabs-bar" id="familyTabsBar"></div>
 
                 <div class="variant-box">
-                    <div class="form-group">
+                    
+                    <!-- KARTELA SEÇİM ALANI -->
+                    <div class="form-group" id="kartelaSection" style="display:none;">
+                        <label>SELECT FABRIC COLLECTION / KARTELA</label>
+                        <div class="kartela-cards-grid" id="kartelaCardsGrid"></div>
+                    </div>
+
+                    <!-- RENK SEÇİM ALANI -->
+                    <div class="form-group" id="colorSection" style="display:none;">
+                        <label>SELECT COLOR / RENK</label>
+                        <div class="color-chips-grid" id="colorChipsGrid"></div>
+                    </div>
+
+                    <!-- ÖLÇÜ / EBAT SEÇİM ALANI -->
+                    <div class="form-group" id="sizeSection">
                         <label data-i18n="select_size">SELECT DIMENSION / SIZE</label>
                         <div class="size-chips-grid" id="sizeChipsGrid"></div>
                     </div>
@@ -700,7 +742,11 @@
 
         let currentActiveFamily = null;
         let currentActiveCategoryKey = null;
-        let currentSelectedVariantIndex = 0;
+
+        // KADEMELİ KONFİGÜRASYON SEÇİM DURUMLARI
+        let activeSelectedKartela = null;
+        let activeSelectedColor = null;
+        let activeSelectedVariant = null;
 
         window.addEventListener('DOMContentLoaded', async () => {
             await loadExcelData();
@@ -810,7 +856,7 @@
             }
         }
 
-        /* VİRGÜLLE AYRILMIŞ TÜM FOTOĞRAFLARI ÇEKEN YENİLENMİŞ MOTOR */
+        /* TÜM FOTOĞRAFLARI VE KARTELA BİLGİLERİNİ ÇEKEN MOTOR */
         function processRawData() {
             productFamilies = {};
             rawProducts.forEach(item => {
@@ -832,11 +878,22 @@
                 }
 
                 productFamilies[familyName].categories[category].variants.push({
-                    code: String(item['Ürün Kodu'] || 'SKU-100'), size: String(item['Ölçü'] || '160x200'), desc: item['Malzeme Tanım'] || familyName,
-                    usdPrice: parseFloat(item['Birim USD Fiyat']) || 250, eurPrice: parseFloat(item['Birim EUR Fiyat']) || 230,
-                    height: item['Yükseklik CM'] || 28, status: item['Sipariş Statü'] || 'MTO', barcode: String(item['Barkod'] || '-'),
-                    gtip: String(item['GTIP'] || '9404.21'), volume: parseFloat(item['Birim Hacim M3']) || 0.45, weight: parseFloat(item['Birim Ağırlık KG']) || 32,
-                    feature: item['Özellik'] || '-', kartela: String(item['Kartela'] || '-'), color: String(item['Renk'] || '-'), hardness: String(item['Sertlik'] || 'Medium')
+                    code: String(item['Ürün Kodu'] || 'SKU-100'),
+                    size: String(item['Ölçü'] || '160x200'),
+                    desc: item['Malzeme Tanım'] || familyName,
+                    usdPrice: parseFloat(item['Birim USD Fiyat']) || 250,
+                    eurPrice: parseFloat(item['Birim EUR Fiyat']) || 230,
+                    height: item['Yükseklik CM'] || 28,
+                    status: item['Sipariş Statü'] || 'MTO',
+                    barcode: String(item['Barkod'] || '-'),
+                    gtip: String(item['GTIP'] || '9404.21'),
+                    volume: parseFloat(item['Birim Hacim M3']) || 0.45,
+                    weight: parseFloat(item['Birim Ağırlık KG']) || 32,
+                    feature: item['Özellik'] || '-',
+                    kartela: String(item['Kartela'] || '-').trim(),
+                    color: String(item['Renk'] || '-').trim(),
+                    hardness: String(item['Sertlik'] || 'Medium'),
+                    photoUrl: mainPhoto
                 });
             });
         }
@@ -944,6 +1001,7 @@
             document.getElementById('productModal').classList.add('active');
         }
 
+        /* KADEMELİ KONFİGÜRASYON BAŞLANGICI: KATEGORİ SIFIRLAMA */
         function switchFamilyCategory(catKey, btnEl = null) {
             currentActiveCategoryKey = catKey;
             if (btnEl) {
@@ -953,7 +1011,7 @@
             const catData = currentActiveFamily.categories[catKey];
             document.getElementById('modalBrandCategory').innerText = `${currentActiveFamily.brand} | ${autoTranslateText(catKey, currentLang)}`;
 
-            // FOTOĞRAF GALERİSİNİ DOLDURMA
+            // FOTOĞRAF GALERİSİ
             const allPhotosArray = Array.from(catData.allPhotos);
             const mainPhoto = allPhotosArray.length > 0 ? allPhotosArray[0] : catData.photoUrl;
             document.getElementById('modalImg').src = mainPhoto;
@@ -968,8 +1026,8 @@
                 thumbsBar.style.display = 'none';
             }
 
-            renderSizeChips(catData.variants);
-            selectSizeVariant(0);
+            // KADEMELİ KONFİGÜRASYON 1. ADIM: KARTELALARI YÜKLE
+            renderKartelaSection(catData.variants);
         }
 
         function setModalMainImage(imgUrl, thumbEl) {
@@ -978,22 +1036,121 @@
             if (thumbEl) thumbEl.classList.add('active');
         }
 
-        function renderSizeChips(variants) {
-            const grid = document.getElementById('sizeChipsGrid');
-            grid.innerHTML = variants.map((v, idx) => `
-                <div class="size-chip ${idx === 0 ? 'active' : ''}" onclick="selectSizeVariant(${idx}, this)">${v.size}</div>
-            `).join('');
+        /* ADIM 1: KARTELA KUTUCUKLARI OLUŞTURMA */
+        function renderKartelaSection(variants) {
+            const kartelaSec = document.getElementById('kartelaSection');
+            const kartelaGrid = document.getElementById('kartelaCardsGrid');
+
+            // Benzersiz Kartelaları Çek
+            const uniqueKartelas = [...new Set(variants.map(v => v.kartela))].filter(k => k && k !== '-' && k !== 'undefined');
+
+            if (uniqueKartelas.length > 0) {
+                kartelaSec.style.display = 'block';
+                kartelaGrid.innerHTML = uniqueKartelas.map((kCode, idx) => `
+                    <div class="kartela-card ${idx === 0 ? 'active' : ''}" onclick="selectKartela('${kCode}', this)">
+                        <div class="kartela-swatch-box">
+                            <i class="fa-solid fa-swatchbook" style="color:var(--text-muted); font-size:18px;"></i>
+                        </div>
+                        <span class="kartela-code-text">${kCode}</span>
+                    </div>
+                `).join('');
+                
+                selectKartela(uniqueKartelas[0]);
+            } else {
+                kartelaSec.style.display = 'none';
+                activeSelectedKartela = '-';
+                renderColorSection(variants);
+            }
         }
 
-        function selectSizeVariant(idx, el = null) {
-            currentSelectedVariantIndex = idx;
+        /* ADIM 2: RENK ÇİPLERİNİ FİLTRELEYEREK YÜKLEME */
+        function selectKartela(kCode, el = null) {
+            activeSelectedKartela = kCode;
+            if (el) {
+                document.querySelectorAll('.kartela-card').forEach(c => c.classList.remove('active'));
+                el.classList.add('active');
+            }
+
+            const catData = currentActiveFamily.categories[currentActiveCategoryKey];
+            const matchingVariants = catData.variants.filter(v => activeSelectedKartela === '-' || v.kartela === activeSelectedKartela);
+
+            renderColorSection(matchingVariants);
+        }
+
+        function renderColorSection(variants) {
+            const colorSec = document.getElementById('colorSection');
+            const colorGrid = document.getElementById('colorChipsGrid');
+
+            const uniqueColors = [...new Set(variants.map(v => v.color))].filter(c => c && c !== '-' && c !== 'undefined');
+
+            if (uniqueColors.length > 0) {
+                colorSec.style.display = 'block';
+                colorGrid.innerHTML = uniqueColors.map((cName, idx) => `
+                    <div class="color-chip ${idx === 0 ? 'active' : ''}" onclick="selectColor('${cName}', this)">
+                        <span style="width:8px; height:8px; border-radius:50%; background:#00205b; display:inline-block;"></span>
+                        ${autoTranslateText(cName, currentLang)}
+                    </div>
+                `).join('');
+
+                selectColor(uniqueColors[0]);
+            } else {
+                colorSec.style.display = 'none';
+                activeSelectedColor = '-';
+                renderSizeChips(variants);
+            }
+        }
+
+        /* ADIM 3: TEMİZ VE BENZERSIZ ÖLÇÜLERİ YÜKLEME */
+        function selectColor(cName, el = null) {
+            activeSelectedColor = cName;
+            if (el) {
+                document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('active'));
+                el.classList.add('active');
+            }
+
+            const catData = currentActiveFamily.categories[currentActiveCategoryKey];
+            const matchingVariants = catData.variants.filter(v => {
+                const matchK = activeSelectedKartela === '-' || v.kartela === activeSelectedKartela;
+                const matchC = activeSelectedColor === '-' || v.color === activeSelectedColor;
+                return matchK && matchC;
+            });
+
+            renderSizeChips(matchingVariants);
+        }
+
+        function renderSizeChips(matchingVariants) {
+            const sizeGrid = document.getElementById('sizeChipsGrid');
+            
+            // Sadece Seçilen Kartela + Renk Kombinasyonuna Uyan BENZERSIZ Ölçüleri Filtrele
+            const uniqueSizes = [...new Set(matchingVariants.map(v => v.size))];
+
+            sizeGrid.innerHTML = uniqueSizes.map((sVal, idx) => `
+                <div class="size-chip ${idx === 0 ? 'active' : ''}" onclick="selectSize('${sVal}', this)">${sVal}</div>
+            `).join('');
+
+            if (uniqueSizes.length > 0) {
+                selectSize(uniqueSizes[0]);
+            }
+        }
+
+        /* ADIM 4: TAM VARYANTI PINPOINT İLE SEÇİP BİLGİLERİ GÜNCELLEME */
+        function selectSize(sVal, el = null) {
             if (el) {
                 document.querySelectorAll('.size-chip').forEach(c => c.classList.remove('active'));
                 el.classList.add('active');
             }
 
             const catData = currentActiveFamily.categories[currentActiveCategoryKey];
-            const v = catData.variants[idx];
+            
+            // Kartela + Renk + Ölçü Filtresiyle Tam Varyantı Bul
+            activeSelectedVariant = catData.variants.find(v => {
+                const matchK = activeSelectedKartela === '-' || v.kartela === activeSelectedKartela;
+                const matchC = activeSelectedColor === '-' || v.color === activeSelectedColor;
+                const matchS = v.size === sVal;
+                return matchK && matchC && matchS;
+            }) || matchingVariants[0] || catData.variants[0];
+
+            const v = activeSelectedVariant;
 
             document.getElementById('specGtip').innerText = v.gtip;
             document.getElementById('specVolume').innerText = `${v.volume} m³`;
@@ -1004,7 +1161,7 @@
             document.getElementById('specKartela').innerText = v.kartela || '-';
             document.getElementById('specColor').innerText = v.color || '-';
 
-            // 4 NOKTALI SİMETRİK SERTLİK İNDİKATÖRÜ HESABI
+            // 4 NOKTALI SİMETRİK SERTLİK İNDİKATÖRÜ
             updateFirmnessGauge(v.hardness);
 
             updateModalPrice();
@@ -1043,9 +1200,8 @@
 
         function updateModalPrice() {
             const qty = parseInt(document.getElementById('modalQty').value || 1);
-            const catData = currentActiveFamily.categories[currentActiveCategoryKey];
-            const v = catData.variants[currentSelectedVariantIndex];
-            const unitPrice = currentCurrency === 'USD' ? v.usdPrice : v.eurPrice;
+            if (!activeSelectedVariant) return;
+            const unitPrice = currentCurrency === 'USD' ? activeSelectedVariant.usdPrice : activeSelectedVariant.eurPrice;
             const symbol = currentCurrency === 'USD' ? '$' : '€';
             document.getElementById('modalTotalPrice').innerText = `${symbol}${(unitPrice * qty).toFixed(2)}`;
         }
@@ -1061,9 +1217,9 @@
         function closeLightbox() { document.getElementById('imageLightboxModal').classList.remove('active'); }
 
         function addCurrentToCart() {
+            if (!activeSelectedVariant) return;
             const qty = parseInt(document.getElementById('modalQty').value || 1);
-            const catData = currentActiveFamily.categories[currentActiveCategoryKey];
-            const v = catData.variants[currentSelectedVariantIndex];
+            const v = activeSelectedVariant;
             const unitPrice = currentCurrency === 'USD' ? v.usdPrice : v.eurPrice;
 
             const existingIndex = cart.findIndex(i => i.code === v.code && i.currency === currentCurrency);
@@ -1074,6 +1230,7 @@
                     photoUrl: document.getElementById('modalImg').src, code: v.code, size: v.size,
                     gtip: v.gtip, volume: v.volume, weight: v.weight,
                     height: v.height, status: v.status, barcode: v.barcode,
+                    kartela: v.kartela, color: v.color,
                     qty: qty, unitPrice: unitPrice, currency: currentCurrency
                 });
             }
@@ -1095,7 +1252,8 @@
                     <img src="${item.photoUrl}" onerror="this.src='https://via.placeholder.com/50'">
                     <div class="cart-item-info">
                         <h4>${item.family} - ${item.size}</h4>
-                        <p>${item.qty} x ${symbol}${item.unitPrice} = <strong>${symbol}${itemTotal.toFixed(2)}</strong></p>
+                        <p>${item.kartela !== '-' ? 'Kartela: ' + item.kartela + ' • ' : ''}${item.color !== '-' ? item.color + ' • ' : ''}${item.qty} x ${symbol}${item.unitPrice}</p>
+                        <div class="cart-item-price">${symbol}${itemTotal.toFixed(2)}</div>
                     </div>
                     <button style="background:none; border:none; color:var(--yatas-red); cursor:pointer;" onclick="removeFromCart(${idx})"><i class="fa-solid fa-trash"></i></button>
                 </div>
@@ -1159,6 +1317,8 @@
                 { header: 'Brand', key: 'brand', width: 18 },
                 { header: 'Product Family', key: 'family', width: 22 },
                 { header: 'Dimension / Size', key: 'size', width: 16 },
+                { header: 'Kartela', key: 'kartela', width: 14 },
+                { header: 'Color', key: 'color', width: 14 },
                 { header: 'Status', key: 'status', width: 12 },
                 { header: 'Product Code', key: 'code', width: 18 },
                 { header: 'HS CODE', key: 'gtip', width: 16 },
@@ -1180,7 +1340,7 @@
                 sumQty += item.qty; sumPrice += itemTotal; sumVol += (item.qty * item.volume); sumWt += (item.qty * item.weight);
 
                 const row = worksheet.addRow({
-                    brand: item.brand, family: item.family, size: item.size, status: item.status || 'MTO',
+                    brand: item.brand, family: item.family, size: item.size, kartela: item.kartela || '-', color: item.color || '-', status: item.status || 'MTO',
                     code: item.code, gtip: item.gtip, qty: item.qty, unitPrice: `${item.unitPrice} ${item.currency}`,
                     totalPrice: `${itemTotal.toFixed(2)} ${item.currency}`, vol: (item.qty * item.volume).toFixed(3), wt: (item.qty * item.weight).toFixed(2)
                 });
