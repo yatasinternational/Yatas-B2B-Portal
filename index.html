@@ -30,8 +30,8 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --accent-gold: #c5a059;
-            --header-bg: rgba(255, 255, 255, 0.78);
-            --glass-bg: rgba(255, 255, 255, 0.65);
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --glass-bg: rgba(255, 255, 255, 0.7);
             --shadow-subtle: 0 8px 32px 0 rgba(0, 32, 91, 0.08);
             --radius-md: 12px;
             --radius-lg: 20px;
@@ -48,7 +48,7 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #1e293b;
-            --header-bg: rgba(2, 6, 23, 0.78);
+            --header-bg: rgba(2, 6, 23, 0.85);
             --glass-bg: rgba(15, 23, 42, 0.7);
             --shadow-subtle: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             --brand-ambient: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
@@ -66,11 +66,11 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            padding-bottom: 60px;
+            padding-bottom: 70px;
             transition: background-color 0.4s ease, color 0.3s;
         }
 
-        /* 360 DEGREE TICKER ANNOUNCEMENT BANNER */
+        /* ANNOUNCEMENT TICKER BANNER */
         .announcement-ticker-bar {
             background: linear-gradient(90deg, #00205b, #0040b0);
             color: #ffffff;
@@ -97,7 +97,7 @@
         }
         .ticker-slide-item.active { opacity: 1; transform: translateY(0); }
 
-        /* LIQUID GLASS HEADER NAVBAR */
+        /* HEADER NAVBAR */
         header {
             position: sticky; top: 0; z-index: 1000;
             background: var(--header-bg);
@@ -110,7 +110,6 @@
 
         .header-left { display: flex; align-items: center; gap: 16px; }
 
-        /* HOVER LIFT ANIMASYONLU BUTONLAR */
         .hamburger-btn, .view-tab-btn, .theme-toggle-btn, .cart-trigger-btn, .filter-chip {
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -185,7 +184,7 @@
             font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px;
         }
 
-        /* HERO SLIDER SECTION */
+        /* HERO SLIDER */
         .hero-banner-container {
             position: relative;
             width: 100%; height: 380px;
@@ -220,7 +219,7 @@
         }
         .hero-cta-btn:hover { transform: translateY(-2px); background: var(--yatas-red); color: #fff; }
 
-        /* YENİLENEN LOGOLU MARKA FİLTRE DİZİLİMİ */
+        /* YENİLENEN MARKA ÇİPLERİ VE LOGO NETLİK DÜZELTMESİ (image_71af57.png FIX) */
         .filter-control-panel {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: var(--radius-lg); padding: 16px 24px; margin-bottom: 28px;
@@ -231,13 +230,20 @@
         .quick-filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         
         .filter-chip {
-            padding: 8px 18px; background: var(--glass-bg);
-            border: 1px solid var(--border-color); border-radius: 30px;
-            font-size: 12.5px; font-weight: 800; color: var(--text-main); cursor: pointer;
+            padding: 8px 20px; background: #ffffff;
+            border: 1.5px solid var(--border-color); border-radius: 30px;
+            font-size: 12.5px; font-weight: 800; color: #00205b; cursor: pointer;
             display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
         }
-        .filter-chip.active { background: #00205b; color: #ffffff; border-color: #00205b; box-shadow: 0 4px 12px rgba(0, 32, 91, 0.2); }
-        .filter-chip-logo { height: 20px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        .filter-chip.active {
+            background: #ffffff; border-color: #00205b;
+            box-shadow: 0 4px 16px rgba(0, 32, 91, 0.22);
+            transform: translateY(-2px);
+        }
+        [data-theme="dark"] .filter-chip { background: #0f172a; color: #f8fafc; }
+        [data-theme="dark"] .filter-chip.active { background: #0f172a; border-color: #38bdf8; box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25); }
+
+        .filter-chip-logo { height: 22px; width: auto; object-fit: contain; }
 
         .filter-dropdown-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
         .filter-select {
@@ -324,12 +330,12 @@
 
         .card-magnifier-btn {
             position: absolute; bottom: 12px; right: 12px;
-            background: rgba(255,255,255,0.85); color: #00205b; width: 32px; height: 32px;
+            background: rgba(255,255,255,0.85); color: #00205b; width: 34px; height: 34px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 12px; backdrop-filter: blur(5px); transition: all 0.2s;
+            font-size: 13px; backdrop-filter: blur(5px); transition: all 0.2s;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
-        .card-magnifier-btn:hover { background: #00205b; color: #fff; transform: scale(1.1); }
+        .card-magnifier-btn:hover { background: #00205b; color: #fff; transform: scale(1.12); }
 
         .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .card-brand { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); font-weight: 800; }
@@ -373,7 +379,7 @@
         }
         .gallery-main-container img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s ease; }
 
-        /* GÖRSEL ÜSTÜ ŞEFFAF VE HOVER EFEKTLİ OKLAR */
+        /* GÖRSEL ÜSTÜ ŞEFFAF VE HOVER EFEKTLİ OKLAR (image_71b29d.jpg FIX) */
         .modal-nav-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             width: 44px; height: 44px; background: rgba(255, 255, 255, 0.88);
@@ -603,16 +609,17 @@
         .lightbox-modal.active { display: flex; }
         .lightbox-content { max-width: 85%; max-height: 85vh; border-radius: 8px; object-fit: contain; }
 
-        /* SABİT VE ŞIK LIQUID GLASS FOOTER */
+        /* YENİLENEN YATAŞ LACİVERTLİ ŞIK LIQUID GLASS FOOTER (image_714206.png FIX) */
         footer {
             position: fixed; bottom: 0; left: 0; width: 100%; z-index: 900;
             background: var(--header-bg);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border-top: 1px solid var(--border-color);
-            color: var(--text-main); padding: 12px 32px;
-            display: flex; align-items: center; justify-content: space-between; font-size: 12px;
+            color: #00205b; padding: 12px 32px;
+            display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.05); transition: opacity 0.3s;
         }
+        [data-theme="dark"] footer { color: #38bdf8; }
 
         @media (max-width: 992px) { 
             .specs-grid { grid-template-columns: repeat(2, 1fr); }
@@ -729,7 +736,7 @@
             </div>
         </div>
 
-        <!-- ADVANCED FILTERING & SORTING TOOLBAR -->
+        <!-- YENİLENEN MARKA LOGOLU FİLTRELEME VE SIRALAMA BARLARI -->
         <div class="filter-control-panel">
             <div class="quick-filters" id="brandFilterChips">
                 <div class="filter-chip active" onclick="filterByBrand('ALL')">
@@ -765,7 +772,7 @@
         <div class="product-grid" id="productGrid"></div>
     </main>
 
-    <!-- CANLI KATALOG SİTESİ (IFRAME DİREKT ENTEGRASYONU) -->
+    <!-- CANLI KATALOG SİTESİ -->
     <main id="catalogViewSection" style="display:none; text-align:center; padding:16px 32px;">
         <iframe src="https://yatasinternational.github.io/Yatas-Corporate-Deck/" style="width:100%; height:82vh; border:1px solid var(--border-color); border-radius:var(--radius-lg); box-shadow:var(--shadow-subtle);"></iframe>
     </main>
@@ -1354,14 +1361,13 @@
             }
         }
 
-        /* MANUEL KİDS MATTRESS MANİPÜLASYONU VE TAM DİL TEMİZLİĞİ */
+        /* MANUEL KIDS MATTRESS MANİPÜLASYONU VE TAM DİL TEMİZLİĞİ */
         function processRawData() {
             productFamilies = {};
             rawProducts.forEach(item => {
                 const familyName = item['Ürün Ailesi'] || item['Malzeme Tanım'] || 'Activio Collection';
                 let category = item['Kategori'] || 'Yatak';
                 
-                // MANUEL ÇOCUK YATAK -> KIDS MATTRESS DÜZELTMESİ
                 if (category === 'Çocuk Yatak' || category === 'Çocuk Mattress' || category.includes('Çocuk')) {
                     category = 'Kids Mattress';
                 }
@@ -1401,10 +1407,9 @@
             });
         }
 
+        /* YENİLENEN MARKA ÇİPLERİ VE LOGO ÇİZİMİ (image_71af57.png FIX) */
         function buildBrandChips() {
-            const brands = ['ALL', ...new Set(rawProducts.map(i => i['Marka']).filter(Boolean))];
             const chipContainer = document.getElementById('brandFilterChips');
-            
             let chipsHtml = `
                 <div class="filter-chip ${activeBrandFilter === 'ALL' ? 'active' : ''}" onclick="filterByBrand('ALL')">
                     <i class="fa-solid fa-layer-group"></i> <span data-i18n="all_brands">All Brands</span>
@@ -1576,7 +1581,7 @@
         function setModalPhotoIndex(idx) { currentPhotoIndex = idx; updateModalPhotoDisplay(); }
         function nextModalPhoto(e = null) { if (e) e.stopPropagation(); if (modalPhotosList.length <= 1) return; currentPhotoIndex = (currentPhotoIndex + 1) % modalPhotosList.length; updateModalPhotoDisplay(); }
         function prevModalPhoto(e = null) { if (e) e.stopPropagation(); if (modalPhotosList.length <= 1) return; currentPhotoIndex = (currentPhotoIndex - 1 + modalPhotosList.length) % modalPhotosList.length; updateModalPhotoDisplay(); }
-        function handleMainImageClick(e) { if (e.target.closest('.modal-nav-arrow')) return; nextModalPhoto(); }
+        function handleMainImageClick(e) { if (e.target.closest('.modal-nav-arrow')) return; openLightboxFromMain(); }
 
         function renderKartelaSection(variants) {
             const kartelaSec = document.getElementById('kartelaSection');
@@ -1850,7 +1855,6 @@
         function changeLanguage(lang) {
             currentLang = lang;
             
-            // 1. Data-i18n elementleri güncelle
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (i18n[lang] && i18n[lang][key]) {
@@ -1858,7 +1862,6 @@
                 }
             });
 
-            // 2. Data-i18n-ph (Placeholders) güncelle
             document.querySelectorAll('[data-i18n-ph]').forEach(el => {
                 const key = el.getAttribute('data-i18n-ph');
                 if (i18n[lang] && i18n[lang][key]) {
@@ -1866,13 +1869,11 @@
                 }
             });
 
-            // 3. Chatbot elementlerini güncelle
             const chatWelcome = document.getElementById('chatWelcomeMsg');
             if (chatWelcome && i18n[lang]['chat_welcome']) {
                 chatWelcome.innerText = i18n[lang]['chat_welcome'];
             }
 
-            // 4. Bütün dinamik ağaçları, filtreleri ve sepeti yenile
             buildBrandChips();
             buildNavigationTree();
             renderProductGrid();
