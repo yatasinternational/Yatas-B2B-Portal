@@ -282,7 +282,7 @@
         .variant-box { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-bottom: 22px; }
         .form-group label { display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; font-weight: 800; letter-spacing: 0.5px; }
         
-        /* KARTELA KUTUCUKLARI (FABRIC COLLECTION CARDS) */
+        /* KARTELA CARDS */
         .kartela-cards-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
         .kartela-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
@@ -300,10 +300,9 @@
             width: 100%; height: 42px; border-radius: 6px; background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
             display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 6px;
         }
-        .kartela-swatch-box img { width: 100%; height: 100%; object-fit: cover; }
         .kartela-code-text { font-size: 11px; font-weight: 800; color: var(--text-main); letter-spacing: 0.5px; }
 
-        /* RENK ÇİPLERİ (COLOR CHIPS) */
+        /* COLOR CHIPS */
         .color-chips-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
         .color-chip {
             padding: 6px 14px; background: var(--card-bg); border: 1px solid var(--border-color);
@@ -312,7 +311,7 @@
         }
         .color-chip.active { background: #00205b; color: #fff; border-color: #00205b; }
 
-        /* EBAT ÇİPLERİ (SIZE CHIPS) */
+        /* SIZE CHIPS */
         .size-chips-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
         .size-chip {
             padding: 6px 14px; background: var(--card-bg); border: 1px solid var(--border-color);
@@ -320,7 +319,7 @@
         }
         .size-chip.active { background: #00205b; color: #fff; border-color: #00205b; }
 
-        /* SİMETRİK 4 NOKTALI SERTLİK İNDİKATÖRÜ (FIRMNESS GAUGE) */
+        /* FIRMNESS GAUGE */
         .firmness-gauge-container {
             display: inline-flex; align-items: center; gap: 10px;
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -567,8 +566,8 @@
                         <div class="size-chips-grid" id="sizeChipsGrid"></div>
                     </div>
 
-                    <!-- SERTLİK İNDİKATÖRÜ VE TEKNİK SPECLER -->
-                    <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                    <!-- SERTLİK İNDİKATÖRÜ (SADECE YATAK KATEGORİSİNDE GÖRÜNÜR) -->
+                    <div id="firmnessSection" style="margin-bottom: 12px; display: none; align-items: center; justify-content: space-between;">
                         <span style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">FIRMNESS / SERTLİK</span>
                         
                         <!-- 4 NOKTALI SİMETRİK GAUGE -->
@@ -593,7 +592,7 @@
                         <div class="spec-item"><span data-i18n="status">STATUS</span><strong id="specStatus" style="color:var(--yatas-red);">MTO</strong></div>
                         <div class="spec-item"><span data-i18n="feature">FEATURE</span><strong id="specFeature">-</strong></div>
                         <div class="spec-item"><span>KARTELA</span><strong id="specKartela">-</strong></div>
-                        <div class="spec-item"><span>RENK</span><strong id="specColor">-</strong></div>
+                        <div class="spec-item"><span data-i18n="color">COLOR</span><strong id="specColor">-</strong></div>
                     </div>
                 </div>
 
@@ -604,7 +603,7 @@
                             <input type="number" class="qty-input" id="modalQty" value="1" min="1" oninput="updateModalPrice()">
                             <button class="qty-btn" onclick="updateModalQty(1)">+</button>
                         </div>
-                        <div class="total-price-tag" id="modalTotalPrice">$0</div>
+                        <div class="total-price-tag" id="modalTotalPrice">$0.00</div>
                     </div>
 
                     <button class="add-cart-btn" onclick="addCurrentToCart()">
@@ -667,7 +666,7 @@
         <div class="cart-footer">
             <div style="display:flex; justify-content:space-between; font-weight:800; font-size:18px; margin-bottom:16px;">
                 <span data-i18n="grand_total">Grand Total:</span>
-                <span id="cartGrandTotal" style="color:var(--yatas-navy);">$0</span>
+                <span id="cartGrandTotal" style="color:var(--yatas-navy);">$0.00</span>
             </div>
 
             <button class="export-excel-btn" onclick="exportProformaExcel()">
@@ -710,13 +709,42 @@
             }
         };
 
+        /* GELİŞTİRİLMİŞ OTOMATİK DİL ÇEVİRİ KÜTÜPHANESİ */
         const termTranslations = {
+            // Kategoriler
             "Yatak": { EN: "Mattress", DE: "Matratze", RU: "Матрас" },
             "Baza": { EN: "Base / Boxspring", DE: "Bettkasten", RU: "Основание" },
             "Başlık": { EN: "Headboard", DE: "Kopfteil", RU: "Изголовье" },
             "Yastık": { EN: "Pillow", DE: "Kissen", RU: "Подушка" },
             "Yorgan": { EN: "Duvet", DE: "Bettdecke", RU: "Одеяло" },
-            "Alez": { EN: "Mattress Protector", DE: "Matratzenschoner", RU: "Наматрасник" }
+            "Alez": { EN: "Mattress Protector", DE: "Matratzenschoner", RU: "Наматрасник" },
+            // Renkler
+            "Pacific": { EN: "Pacific Blue", DE: "Pazifikblau", RU: "Тихий океан" },
+            "Krem": { EN: "Cream", DE: "Creme", RU: "Кремовый" },
+            "Vizon": { EN: "Mink / Taupe", DE: "Mink", RU: "Норковый" },
+            "Açık Gri": { EN: "Light Gray", DE: "Hellgrau", RU: "Светло-серый" },
+            "Antrasit": { EN: "Anthracite", DE: "Anthrazit", RU: "Антрацит" },
+            "Mavi": { EN: "Blue", DE: "Blau", RU: "Синий" },
+            "Çağla": { EN: "Almond Green", DE: "Mandelgrün", RU: "Миндально-зеленый" },
+            "Koyu Gri": { EN: "Dark Gray", DE: "Dunkelgrau", RU: "Темно-серый" },
+            "Gri": { EN: "Gray", DE: "Grau", RU: "Серый" },
+            "Kum": { EN: "Sand", DE: "Sand", RU: "Песочный" },
+            "Bej": { EN: "Beige", DE: "Beige", RU: "Бежевый" },
+            "Pudra": { EN: "Powder Pink", DE: "Puder", RU: "Пудровый" },
+            "Lacivert": { EN: "Navy Blue", DE: "Marineblau", RU: "Темно-синий" },
+            "Ekru": { EN: "Ecru", DE: "Ekrü", RU: "Экрю" },
+            "Kemik": { EN: "Bone", DE: "Elfenbein", RU: "Слоновая кость" },
+            "Kül": { EN: "Ash", DE: "Asche", RU: "Пепельный" },
+            "Sütlü Kahve": { EN: "Milk Coffee", DE: "Milchkaffee", RU: "Кофе с молоком" },
+            // Özellikler & Sertlik
+            "Spring": { EN: "Spring", DE: "Federkern", RU: "Пружинный" },
+            "Springless": { EN: "Foam / Springless", DE: "Schaumstoff", RU: "Беспружинный" },
+            "Hibrit": { EN: "Hybrid", DE: "Hybrid", RU: "Гибридный" },
+            "Foam": { EN: "Foam", DE: "Schaumstoff", RU: "Поролоновый" },
+            "Storage Base": { EN: "Storage Base", DE: "Bettkasten Baza", RU: "Основание с ящиком" },
+            "Sert": { EN: "Firm / Hard", DE: "Hart", RU: "Жесткий" },
+            "Medium": { EN: "Medium", DE: "Mittel", RU: "Средний" },
+            "Ultra Sert": { EN: "Extra Firm", DE: "Sehr Hart", RU: "Супер жесткий" }
         };
 
         function autoTranslateText(text, targetLang) {
@@ -731,6 +759,24 @@
             return translated;
         }
 
+        /* ULUSLARARASI BİNLİK AYRAÇ FORMATLAYICI (11000 -> 11,000.00) */
+        function formatCurrency(amount, currencySymbol = '$') {
+            const num = parseFloat(amount) || 0;
+            const formatted = num.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            return `${currencySymbol}${formatted}`;
+        }
+
+        function formatNumber(amount) {
+            const num = parseFloat(amount) || 0;
+            return num.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
         let currentLang = 'EN';
         let currentCurrency = 'USD';
         let rawProducts = [];
@@ -743,7 +789,7 @@
         let currentActiveFamily = null;
         let currentActiveCategoryKey = null;
 
-        // KADEMELİ KONFİGÜRASYON SEÇİM DURUMLARI
+        // KADEMELİ KONFİGÜRASYON DURUMLARI
         let activeSelectedKartela = null;
         let activeSelectedColor = null;
         let activeSelectedVariant = null;
@@ -856,7 +902,6 @@
             }
         }
 
-        /* TÜM FOTOĞRAFLARI VE KARTELA BİLGİLERİNİ ÇEKEN MOTOR */
         function processRawData() {
             productFamilies = {};
             rawProducts.forEach(item => {
@@ -881,18 +926,18 @@
                     code: String(item['Ürün Kodu'] || 'SKU-100'),
                     size: String(item['Ölçü'] || '160x200'),
                     desc: item['Malzeme Tanım'] || familyName,
-                    usdPrice: parseFloat(item['Birim USD Fiyat']) || 250,
-                    eurPrice: parseFloat(item['Birim EUR Fiyat']) || 230,
-                    height: item['Yükseklik CM'] || 28,
+                    usdPrice: parseFloat(item['Birim USD Fiyat']) || 0,
+                    eurPrice: parseFloat(item['Birim EUR Fiyat']) || 0,
+                    height: item['Yükseklik CM'] || 0,
                     status: item['Sipariş Statü'] || 'MTO',
                     barcode: String(item['Barkod'] || '-'),
                     gtip: String(item['GTIP'] || '9404.21'),
-                    volume: parseFloat(item['Birim Hacim M3']) || 0.45,
-                    weight: parseFloat(item['Birim Ağırlık KG']) || 32,
+                    volume: parseFloat(item['Birim Hacim M3']) || 0,
+                    weight: parseFloat(item['Birim Ağırlık KG']) || 0,
                     feature: item['Özellik'] || '-',
                     kartela: String(item['Kartela'] || '-').trim(),
                     color: String(item['Renk'] || '-').trim(),
-                    hardness: String(item['Sertlik'] || 'Medium'),
+                    hardness: String(item['Sertlik'] || '-').trim(),
                     photoUrl: mainPhoto
                 });
             });
@@ -972,7 +1017,7 @@
                             <h3 class="card-title">${f.familyName}</h3>
                         </div>
                         <div class="card-footer">
-                            <div class="card-price">${fromLabel} ${currencySymbol}${minPrice}</div>
+                            <div class="card-price">${fromLabel} ${formatCurrency(minPrice, currencySymbol)}</div>
                         </div>
                     </div>
                 </div>
@@ -984,9 +1029,14 @@
             buildBrandChips(); renderProductGrid();
         }
 
+        /* MODAL AÇILDIĞINDA MİKTAR BÖLÜMÜNÜ SIFIRLAYARAK HATA BİLEŞENLERİNİ ENGELLEME */
         function openProductModal(familyName) {
             currentActiveFamily = productFamilies[familyName];
             document.getElementById('modalFamilyTitle').innerText = currentActiveFamily.familyName;
+            
+            // BUG FIX: Miktarı fiyat hesaplanmadan ÖNCE 1 yap
+            document.getElementById('modalQty').value = 1;
+
             const categoryKeys = Object.keys(currentActiveFamily.categories);
             const tabsContainer = document.getElementById('familyTabsBar');
 
@@ -997,13 +1047,15 @@
             `).join('');
 
             switchFamilyCategory(categoryKeys[0]);
-            document.getElementById('modalQty').value = 1;
             document.getElementById('productModal').classList.add('active');
         }
 
-        /* KADEMELİ KONFİGÜRASYON BAŞLANGICI: KATEGORİ SIFIRLAMA */
         function switchFamilyCategory(catKey, btnEl = null) {
             currentActiveCategoryKey = catKey;
+            
+            // BUG FIX: Miktarı Kategori Değişiminde de Resetle
+            document.getElementById('modalQty').value = 1;
+
             if (btnEl) {
                 document.querySelectorAll('.family-tab-btn').forEach(b => b.classList.remove('active'));
                 btnEl.classList.add('active');
@@ -1026,7 +1078,6 @@
                 thumbsBar.style.display = 'none';
             }
 
-            // KADEMELİ KONFİGÜRASYON 1. ADIM: KARTELALARI YÜKLE
             renderKartelaSection(catData.variants);
         }
 
@@ -1036,12 +1087,10 @@
             if (thumbEl) thumbEl.classList.add('active');
         }
 
-        /* ADIM 1: KARTELA KUTUCUKLARI OLUŞTURMA */
         function renderKartelaSection(variants) {
             const kartelaSec = document.getElementById('kartelaSection');
             const kartelaGrid = document.getElementById('kartelaCardsGrid');
 
-            // Benzersiz Kartelaları Çek
             const uniqueKartelas = [...new Set(variants.map(v => v.kartela))].filter(k => k && k !== '-' && k !== 'undefined');
 
             if (uniqueKartelas.length > 0) {
@@ -1063,7 +1112,6 @@
             }
         }
 
-        /* ADIM 2: RENK ÇİPLERİNİ FİLTRELEYEREK YÜKLEME */
         function selectKartela(kCode, el = null) {
             activeSelectedKartela = kCode;
             if (el) {
@@ -1100,7 +1148,6 @@
             }
         }
 
-        /* ADIM 3: TEMİZ VE BENZERSIZ ÖLÇÜLERİ YÜKLEME */
         function selectColor(cName, el = null) {
             activeSelectedColor = cName;
             if (el) {
@@ -1120,8 +1167,6 @@
 
         function renderSizeChips(matchingVariants) {
             const sizeGrid = document.getElementById('sizeChipsGrid');
-            
-            // Sadece Seçilen Kartela + Renk Kombinasyonuna Uyan BENZERSIZ Ölçüleri Filtrele
             const uniqueSizes = [...new Set(matchingVariants.map(v => v.size))];
 
             sizeGrid.innerHTML = uniqueSizes.map((sVal, idx) => `
@@ -1133,7 +1178,6 @@
             }
         }
 
-        /* ADIM 4: TAM VARYANTI PINPOINT İLE SEÇİP BİLGİLERİ GÜNCELLEME */
         function selectSize(sVal, el = null) {
             if (el) {
                 document.querySelectorAll('.size-chip').forEach(c => c.classList.remove('active'));
@@ -1142,13 +1186,12 @@
 
             const catData = currentActiveFamily.categories[currentActiveCategoryKey];
             
-            // Kartela + Renk + Ölçü Filtresiyle Tam Varyantı Bul
             activeSelectedVariant = catData.variants.find(v => {
                 const matchK = activeSelectedKartela === '-' || v.kartela === activeSelectedKartela;
                 const matchC = activeSelectedColor === '-' || v.color === activeSelectedColor;
                 const matchS = v.size === sVal;
                 return matchK && matchC && matchS;
-            }) || matchingVariants[0] || catData.variants[0];
+            }) || catData.variants[0];
 
             const v = activeSelectedVariant;
 
@@ -1157,12 +1200,20 @@
             document.getElementById('specWeight').innerText = `${v.weight} kg`;
             document.getElementById('specHeight').innerText = `${v.height} cm`;
             document.getElementById('specStatus').innerText = v.status || 'MTO';
-            document.getElementById('specFeature').innerText = v.feature || '-';
+            document.getElementById('specFeature').innerText = autoTranslateText(v.feature, currentLang) || '-';
             document.getElementById('specKartela').innerText = v.kartela || '-';
-            document.getElementById('specColor').innerText = v.color || '-';
+            document.getElementById('specColor').innerText = autoTranslateText(v.color, currentLang) || '-';
 
-            // 4 NOKTALI SİMETRİK SERTLİK İNDİKATÖRÜ
-            updateFirmnessGauge(v.hardness);
+            // DÜZELTME: SERTLİK DERECESİ SADECE YATAK (MATTRESS) KATEGORİSİNDE VE GEÇERLİ İSE GÖRÜNÜR
+            const isMattress = currentActiveCategoryKey.toLowerCase().includes('yatak') || currentActiveCategoryKey.toLowerCase().includes('mattress');
+            const firmnessSec = document.getElementById('firmnessSection');
+            
+            if (isMattress && v.hardness && v.hardness !== '-') {
+                firmnessSec.style.display = 'flex';
+                updateFirmnessGauge(v.hardness);
+            } else {
+                firmnessSec.style.display = 'none';
+            }
 
             updateModalPrice();
         }
@@ -1170,7 +1221,7 @@
         function updateFirmnessGauge(hardnessVal) {
             const val = String(hardnessVal).toLowerCase();
             const labelEl = document.getElementById('firmnessLabelText');
-            labelEl.innerText = hardnessVal || 'Medium';
+            labelEl.innerText = autoTranslateText(hardnessVal, currentLang) || 'Medium';
 
             const d1 = document.getElementById('fDot1');
             const d2 = document.getElementById('fDot2');
@@ -1203,7 +1254,7 @@
             if (!activeSelectedVariant) return;
             const unitPrice = currentCurrency === 'USD' ? activeSelectedVariant.usdPrice : activeSelectedVariant.eurPrice;
             const symbol = currentCurrency === 'USD' ? '$' : '€';
-            document.getElementById('modalTotalPrice').innerText = `${symbol}${(unitPrice * qty).toFixed(2)}`;
+            document.getElementById('modalTotalPrice').innerText = formatCurrency(unitPrice * qty, symbol);
         }
 
         function closeModal() { document.getElementById('productModal').classList.remove('active'); }
@@ -1226,12 +1277,25 @@
             if (existingIndex > -1) { cart[existingIndex].qty += qty; }
             else {
                 cart.push({
-                    family: currentActiveFamily.familyName, category: currentActiveCategoryKey, brand: currentActiveFamily.brand,
-                    photoUrl: document.getElementById('modalImg').src, code: v.code, size: v.size,
-                    gtip: v.gtip, volume: v.volume, weight: v.weight,
-                    height: v.height, status: v.status, barcode: v.barcode,
-                    kartela: v.kartela, color: v.color,
-                    qty: qty, unitPrice: unitPrice, currency: currentCurrency
+                    family: currentActiveFamily.familyName,
+                    category: currentActiveCategoryKey,
+                    brand: currentActiveFamily.brand,
+                    photoUrl: document.getElementById('modalImg').src,
+                    code: v.code,
+                    size: v.size,
+                    gtip: v.gtip,
+                    volume: v.volume,
+                    weight: v.weight,
+                    height: v.height,
+                    status: v.status,
+                    barcode: v.barcode,
+                    feature: v.feature,
+                    hardness: v.hardness,
+                    kartela: v.kartela,
+                    color: v.color,
+                    qty: qty,
+                    unitPrice: unitPrice,
+                    currency: currentCurrency
                 });
             }
             updateCartDisplay(); toggleCart(true); closeModal();
@@ -1251,16 +1315,16 @@
                 <div class="cart-item-card">
                     <img src="${item.photoUrl}" onerror="this.src='https://via.placeholder.com/50'">
                     <div class="cart-item-info">
-                        <h4>${item.family} - ${item.size}</h4>
-                        <p>${item.kartela !== '-' ? 'Kartela: ' + item.kartela + ' • ' : ''}${item.color !== '-' ? item.color + ' • ' : ''}${item.qty} x ${symbol}${item.unitPrice}</p>
-                        <div class="cart-item-price">${symbol}${itemTotal.toFixed(2)}</div>
+                        <h4>${item.family} (${autoTranslateText(item.category, currentLang)}) - ${item.size}</h4>
+                        <p>${item.kartela !== '-' ? 'Kartela: ' + item.kartela + ' • ' : ''}${item.color !== '-' ? autoTranslateText(item.color, currentLang) + ' • ' : ''}${item.qty} x ${formatCurrency(item.unitPrice, symbol)}</p>
+                        <div class="cart-item-price">${formatCurrency(itemTotal, symbol)}</div>
                     </div>
                     <button style="background:none; border:none; color:var(--yatas-red); cursor:pointer;" onclick="removeFromCart(${idx})"><i class="fa-solid fa-trash"></i></button>
                 </div>
             `}).join('');
 
             const mainSymbol = currentCurrency === 'USD' ? '$' : '€';
-            document.getElementById('cartGrandTotal').innerText = `${mainSymbol}${totalVal.toFixed(2)}`;
+            document.getElementById('cartGrandTotal').innerText = formatCurrency(totalVal, mainSymbol);
             calculateLogistics(totalM3, totalKg, totalPcs);
         }
 
@@ -1278,7 +1342,7 @@
             document.getElementById('truckCountText').innerText = `${(totalM3 / TRUCK_CAPACITY).toFixed(1)} Truck (%${truckPercent})`;
             document.getElementById('truckProgressFill').style.width = `${truckPercent}%`;
 
-            document.getElementById('logisticsMeta').innerText = `Total Pcs: ${totalPcs} | Total Vol: ${totalM3.toFixed(2)} m³ | Total Wt: ${totalKg.toFixed(1)} kg`;
+            document.getElementById('logisticsMeta').innerText = `Total Pcs: ${totalPcs} | Total Vol: ${formatNumber(totalM3)} m³ | Total Wt: ${formatNumber(totalKg)} kg`;
         }
 
         function toggleCart(forceOpen) {
@@ -1306,7 +1370,40 @@
             buildBrandChips(); buildNavigationTree(); renderProductGrid();
         }
 
-        /* EXCEL EXPORT WITH PHOTOS & SUMMARY ROW */
+        /* ÇİFT MOTORLU GELİŞMİŞ EXCEL GÖRSEL VE TABLO YÜKLEME (CORS/CANVAS FALLBACK) */
+        async function getImageBuffer(url) {
+            try {
+                const response = await fetch(url, { mode: 'cors' });
+                if (!response.ok) throw new Error('Fetch failed');
+                const blob = await response.blob();
+                const arrayBuffer = await blob.arrayBuffer();
+                const ext = url.toLowerCase().endsWith('.png') ? 'png' : 'jpeg';
+                return { buffer: arrayBuffer, extension: ext };
+            } catch (e) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.crossOrigin = "Anonymous";
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth || img.width;
+                        canvas.height = img.naturalHeight || img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                blob.arrayBuffer().then(buf => resolve({ buffer: buf, extension: 'png' }));
+                            } else {
+                                reject('Canvas blob failed');
+                            }
+                        }, 'image/png');
+                    };
+                    img.onerror = () => reject('Image load failed');
+                    img.src = url;
+                });
+            }
+        }
+
+        /* BÜTÜN KOLONLARI VE BİNLİK AYRAÇLARI İÇEREN PROFORMASAL EXCEL EXPORT */
         async function exportProformaExcel() {
             if (cart.length === 0) { alert("Cart is empty!"); return; }
             const workbook = new ExcelJS.Workbook();
@@ -1316,42 +1413,102 @@
                 { header: 'Image', key: 'img', width: 22 },
                 { header: 'Brand', key: 'brand', width: 18 },
                 { header: 'Product Family', key: 'family', width: 22 },
+                { header: 'Category', key: 'category', width: 16 },
                 { header: 'Dimension / Size', key: 'size', width: 16 },
                 { header: 'Kartela', key: 'kartela', width: 14 },
-                { header: 'Color', key: 'color', width: 14 },
+                { header: 'Color', key: 'color', width: 16 },
                 { header: 'Status', key: 'status', width: 12 },
-                { header: 'Product Code', key: 'code', width: 18 },
-                { header: 'HS CODE', key: 'gtip', width: 16 },
+                { header: 'Height (cm)', key: 'height', width: 14 },
+                { header: 'Feature', key: 'feature', width: 16 },
+                { header: 'Hardness', key: 'hardness', width: 14 },
+                { header: 'Product Code', key: 'code', width: 20 },
+                { header: 'Barcode', key: 'barcode', width: 18 },
+                { header: 'HS CODE (GTİP)', key: 'gtip', width: 18 },
                 { header: 'Qty', key: 'qty', width: 10 },
-                { header: 'Unit Price', key: 'unitPrice', width: 14 },
-                { header: 'Total Price', key: 'totalPrice', width: 16 },
-                { header: 'Total Vol (m³)', key: 'vol', width: 14 },
-                { header: 'Total Wt (kg)', key: 'wt', width: 14 }
+                { header: 'Unit Price', key: 'unitPrice', width: 16 },
+                { header: 'Total Price', key: 'totalPrice', width: 18 },
+                { header: 'Total Vol (m³)', key: 'vol', width: 16 },
+                { header: 'Total Wt (kg)', key: 'wt', width: 16 }
             ];
 
             worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
             worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '00205B' } };
+            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
 
             let sumQty = 0, sumPrice = 0, sumVol = 0, sumWt = 0;
 
             for (let i = 0; i < cart.length; i++) {
                 const item = cart[i];
                 const itemTotal = item.qty * item.unitPrice;
-                sumQty += item.qty; sumPrice += itemTotal; sumVol += (item.qty * item.volume); sumWt += (item.qty * item.weight);
+                const itemVol = item.qty * item.volume;
+                const itemWt = item.qty * item.weight;
+
+                sumQty += item.qty; sumPrice += itemTotal; sumVol += itemVol; sumWt += itemWt;
 
                 const row = worksheet.addRow({
-                    brand: item.brand, family: item.family, size: item.size, kartela: item.kartela || '-', color: item.color || '-', status: item.status || 'MTO',
-                    code: item.code, gtip: item.gtip, qty: item.qty, unitPrice: `${item.unitPrice} ${item.currency}`,
-                    totalPrice: `${itemTotal.toFixed(2)} ${item.currency}`, vol: (item.qty * item.volume).toFixed(3), wt: (item.qty * item.weight).toFixed(2)
+                    brand: item.brand,
+                    family: item.family,
+                    category: autoTranslateText(item.category, currentLang),
+                    size: item.size,
+                    kartela: item.kartela || '-',
+                    color: autoTranslateText(item.color, currentLang) || '-',
+                    status: item.status || 'MTO',
+                    height: item.height || '-',
+                    feature: autoTranslateText(item.feature, currentLang) || '-',
+                    hardness: autoTranslateText(item.hardness, currentLang) || '-',
+                    code: item.code,
+                    barcode: item.barcode,
+                    gtip: item.gtip,
+                    qty: item.qty,
+                    unitPrice: `${formatNumber(item.unitPrice)} ${item.currency}`,
+                    totalPrice: `${formatNumber(itemTotal)} ${item.currency}`,
+                    vol: itemVol,
+                    wt: itemWt
                 });
-                row.height = 60;
+
+                row.height = 65;
+                row.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                // BİNLİK SAYISAL BİÇİMLENDİRME (NUMERIC FORMATTING)
+                row.getCell('vol').numFmt = '#,##0.000';
+                row.getCell('wt').numFmt = '#,##0.00';
+                row.getCell('qty').numFmt = '#,##0';
+
+                if (item.photoUrl && item.photoUrl.startsWith('http')) {
+                    try {
+                        const imgData = await getImageBuffer(item.photoUrl);
+                        const imageId = workbook.addImage({
+                            buffer: imgData.buffer,
+                            extension: imgData.extension,
+                        });
+
+                        worksheet.addImage(imageId, {
+                            tl: { col: 0, row: row.number - 1 },
+                            ext: { width: 110, height: 75 }
+                        });
+                    } catch (e) {
+                        console.warn("Görsel Excel'e eklenemedi:", item.photoUrl, e);
+                    }
+                }
             }
 
+            // TOPLAM SATIRI (TOTAL ROW)
             const totalRow = worksheet.addRow({
-                family: 'TOTAL / TOPLAM', qty: sumQty, totalPrice: `${sumPrice.toFixed(2)} ${cart[0].currency}`, vol: sumVol.toFixed(3), wt: sumWt.toFixed(2)
+                family: 'TOTAL / TOPLAM',
+                qty: sumQty,
+                totalPrice: `${formatNumber(sumPrice)} ${cart[0].currency}`,
+                vol: sumVol,
+                wt: sumWt
             });
-            totalRow.font = { bold: true, color: { argb: 'FFFFFF' } };
+
+            totalRow.height = 32;
+            totalRow.font = { bold: true, color: { argb: 'FFFFFF' }, size: 12 };
             totalRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '00205B' } };
+            totalRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+            totalRow.getCell('vol').numFmt = '#,##0.000';
+            totalRow.getCell('wt').numFmt = '#,##0.00';
+            totalRow.getCell('qty').numFmt = '#,##0';
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
